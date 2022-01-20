@@ -1,6 +1,8 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
+require("dotenv").config();
+
 require("./db_init");
 const PORT = process.env.PORT || 9000;
 
