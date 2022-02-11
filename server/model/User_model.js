@@ -17,7 +17,8 @@ const UserSchema = mongoose.Schema({
     position: {
         type: String,
         required: true,
-        enum: ["general-manager", "kitchen-manager", "supervisor"]
+        enum: ["general-manager", "kitchen-manager", "supervisor"],
+        default: "supervisor"
     },
     status: {
         type: String,
