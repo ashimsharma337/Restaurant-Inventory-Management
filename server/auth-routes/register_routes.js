@@ -1,8 +1,16 @@
 const router = require("express").Router();
 const UserModel = require("../model/User_model");
 
-router.post("/", (req, res, next) => {
+const bcrypt = require("bcryptjs");
+const salt = bcrypt.genSaltSync(10);
+
+
+
+
+router.post("/", async (req, res, next) => {
     let user = new UserModel(req.body);
+    user.password = await bcrypt.hash(req.body.password, salt);
+
     user.save((error, user) => {
         if(error){
             next(error);
@@ -14,6 +22,7 @@ router.post("/", (req, res, next) => {
             })
         }
     })
+   
 });
 
 
