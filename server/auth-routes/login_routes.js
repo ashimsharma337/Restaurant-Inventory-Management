@@ -1,6 +1,10 @@
 const router = require("express").Router();
 const userModel = require("../model/User_model");
+require("dotenv").config();
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const isLoggedIn = require("../isLoggedIn/isLoggdIn");
+
 
 router.get("/", (req, res, next) => {
 
@@ -17,7 +21,14 @@ router.get("/", (req, res, next) => {
                     res.json({
                         data: user,
                         status: 200,
-                        msg: "Login success"
+                        msg: "Login success",
+                        token: jwt.sign(
+                            {id: user._id,
+                             name: user.name,
+                             email: user.email,
+                             position: user.position
+                            }, 
+                            process.env.PRIVATEKEY)
                     })
                 }
             })
@@ -30,6 +41,16 @@ router.get("/", (req, res, next) => {
         }
     })
 
+})
+
+
+router.get('/dashboard', isLoggedIn, (req, res, next) => {
+    // verify
+    res.json({
+        data: req.user,
+        status: true,
+        msg: "welcome to admin panel"
+    })
 })
 
 module.exports = router;
