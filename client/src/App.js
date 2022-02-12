@@ -1,9 +1,10 @@
+import Header from "./components/headers/header_component";
 
 
 function App() {
   return (
     <> 
-      <h1>Hello from react front end.</h1>
+      <Header/>
     </>
   );
 }
