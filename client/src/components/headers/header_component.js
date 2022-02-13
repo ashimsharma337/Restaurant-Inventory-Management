@@ -1,6 +1,7 @@
 import React from 'react';
 import { MdOutlineInventory, MdOutlineLogin } from "react-icons/md"
 import { GiArchiveRegister } from "react-icons/gi";
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   return (
@@ -12,13 +13,13 @@ const Header = () => {
                     </button>
                     <ul className="nav">
                       <li className="nav-link">
-                        <a href="/contact" className = "navbar-brand">About us</a>
+                        <Link to="/contact" className = "navbar-brand">About us</Link>
                       </li>
                       <li className="nav-link">
-                        <a href="/login" className = "navbar-brand" ><MdOutlineLogin/>&nbsp;Login</a>
+                        <Link to="/login" className = "navbar-brand" ><MdOutlineLogin/>&nbsp;Login</Link>
                       </li>
                       <li className="nav-link">
-                        <a href="/register" className = "navbar-brand"><GiArchiveRegister/>&nbsp;Register</a>
+                        <Link to="/register" className = "navbar-brand"><GiArchiveRegister/>&nbsp;Register</Link>
                       </li>
                     </ul>
                </div>
