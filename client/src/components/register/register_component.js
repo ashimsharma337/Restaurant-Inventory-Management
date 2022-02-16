@@ -10,37 +10,37 @@ const Register = () => {
     <div className="container mt-2">
       <form className="row g-3">
           <div className="col-12">
-            <label for="name" className="form-label">Name</label>
+            <label htmlFor="name" className="form-label">Name</label>
             <input type="text" className="form-control" placeholder="Enter Name"/>
           </div>
           <div className="col-md-6">
-            <label for="email" className="form-label">Email</label>
+            <label htmlFor="email" className="form-label">Email</label>
             <input type="email" className="form-control" placeholder="Enter Email"/>
           </div>
           <div className="col-md-3">
-            <label for="Password" className="form-label">Password</label>
+            <label htmlFor="Password" className="form-label">Password</label>
             <input type="password" className="form-control" placeholder="Enter Password"/>
           </div>
           <div className="col-md-3">
-            <label for="cPassword" className="form-label">Re-Password</label>
+            <label htmlFor="cPassword" className="form-label">Re-Password</label>
             <input type="cpassword" className="form-control" placeholder="Enter Password"/>
           </div>
           <div className="col-md-12">
-            <label for="position" className="form-label">Position</label>
+            <label htmlFor="position" className="form-label">Position</label>
             <select id="position" className="form-select">
               <option selected>Choose...</option>
               <option>...</option>
             </select>
           </div>
           <div className="col-md-12">
-            <label for="status" className="form-label">Status</label>
+            <label htmlFor="status" className="form-label">Status</label>
             <select id="status" className="form-select">
               <option selected>Choose...</option>
               <option>...</option>
             </select>
           </div>
           <div className="col-md-12">
-            <label for="restaurantName" className="form-label">Restaurant Name</label>
+            <label htmlFor="restaurantName" className="form-label">Restaurant Name</label>
             <input type="text" className="form-control" placeholder="Enter Restaurant Name"/>
           </div>
           <div className="col-12 mb-3">
