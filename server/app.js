@@ -8,11 +8,10 @@ const PORT = process.env.PORT || 9000;
 
 
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var productRouter = require("./routes/product");
+var productRouter = require("./controller/product");
 var registerRouter = require("./auth-routes/register_routes");
 var loginRouter = require("./auth-routes/login_routes");
+
 
 var app = express();
 
@@ -24,8 +23,8 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+
+
 app.use("/products", productRouter);
 app.use("/register", registerRouter);
 app.use("/login", loginRouter);
