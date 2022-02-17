@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./components/login/login_component";
 import Dashboard from "./components/dashboard/dashboard_component";
 import Register from "./components/register/register_component";
+import AddProduct from "./components/addProduct";
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
             <Route path="/login" element={<Login/>}></Route>
             <Route path="/dashboard" element={<Dashboard/>}></Route>
             <Route path="/register" element={<Register/>}></Route>
+            <Route path="/addproduct" element={<AddProduct/>}></Route>
           </Routes>
       </BrowserRouter>
     </>

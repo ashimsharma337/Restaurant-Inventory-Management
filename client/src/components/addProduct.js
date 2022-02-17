@@ -1,14 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { MdSpaceDashboard, MdList, MdShoppingCart, MdPeopleAlt, MdAdd } from "react-icons/md";
-import toast, { Toaster } from 'react-hot-toast';
-import { Link } from 'react-router-dom';
 
-const Dashboard = () => {
-
-  useEffect(() => {
-    toast.success('Welcome to Dashboard!');
-  }, []);
-
+const AddProduct = () => {
   return (
     <>
       <header className="navbar navbar-dark sticky-top bg-primary flex-md-nowrap p-0 shadow">
@@ -24,7 +17,8 @@ const Dashboard = () => {
             </div>
        </header>
 
-        <div className="container-fluid">
+
+       <div className="container-fluid">
           <div className="row">
             <nav id="sidebarMenu" className="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
               <div className="position-sticky pt-3">
@@ -48,10 +42,10 @@ const Dashboard = () => {
                     </a>
                   </li>
                   <li className="nav-item">
-                    <Link to="/addproduct" className="nav-link">
+                    <a className="nav-link" href="#">
                       <MdAdd/>&nbsp;
                       Add Product
-                    </Link>
+                    </a>
                   </li>
                   <li className="nav-item">
                     <a className="nav-link" href="#">
@@ -75,46 +69,55 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <h2>Product Page</h2>
-              <div className="table-responsive">
-                <table className="table table-striped table-sm">
-                  <thead>
-                    <tr>
-                      <th scope="col">Item</th>
-                      <th scope="col">Category</th>
-                      <th scope="col">Vender</th>
-                      <th scope="col">Quantity</th>
-                      <th scope="col">Price</th>
-                      <th scope="col">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>1,001</td>
-                      <td>random</td>
-                      <td>data</td>
-                      <td>placeholder</td>
-                      <td>text</td>
-                      <td>text</td>
-                    </tr>
-                    <tr>
-                      <td>1,002</td>
-                      <td>placeholder</td>
-                      <td>irrelevant</td>
-                      <td>visual</td>
-                      <td>layout</td>
-                      <td>text</td>
-                    </tr>
-                  </tbody>
-                </table>
+              <h2>Add Product</h2>
+              <div className="container-fluid">
+                  <div className="row">
+                      <div className="col-md-12">
+                          <label htmlFor="name" className="col-md-3 h4">Item-Name:</label>
+                          <input type="text" className="col-md-9"></input>
+                      </div>
+                  </div>
+                  <div className="row">
+                      <div className="col-md-12">
+                          <label htmlFor="category" className="col-md-3 h4">Category:</label>
+                          <input type="text" className="col-md-9"></input>
+                      </div>
+                  </div>
+                  <div className="row">
+                      <div className="col-md-12">
+                          <label htmlFor="vender" className="col-md-3 h4">Vendor:</label>
+                          <input type="text" className="col-md-9"></input>
+                      </div>
+                  </div>
+                  <div className="row">
+                      <div className="col-md-12">
+                          <label htmlFor="category" className="col-md-3 h4">Quantity:</label>
+                          <input type="number" className="col-md-9"></input>
+                      </div>
+                  </div>
+                  <div className="row">
+                      <div className="col-md-12">
+                          <label htmlFor="category" className="col-md-3 h4">Price:</label>
+                          <input type="number" className="col-md-9"></input>
+                      </div>
+                  </div>
+                  
+                  <div className="row mb-3">
+                      <div className="offset-md-3 col-md-9">
+                          <button type="submit" className="btn btn-md btn-dark mt-3"><MdAdd/>&nbsp;Add</button>
+                      </div> 
+                  </div>
+                  
               </div>
             </main>
           </div>
         </div>
-        <Toaster />
+
+
+
 
     </>
   )
 }
 
-export default Dashboard
+export default AddProduct;
