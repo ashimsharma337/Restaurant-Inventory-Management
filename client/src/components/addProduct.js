@@ -1,5 +1,6 @@
 import React from 'react';
 import { MdSpaceDashboard, MdList, MdShoppingCart, MdPeopleAlt, MdAdd } from "react-icons/md";
+import { Link } from 'react-router-dom';
 
 const AddProduct = () => {
   return (
@@ -24,10 +25,10 @@ const AddProduct = () => {
               <div className="position-sticky pt-3">
                 <ul className="nav flex-column">
                   <li className="nav-item">
-                    <a className="nav-link active" aria-current="page" href="#">
+                    <Link to="/dashboard" className="nav-link active" aria-current="page">
                     <MdSpaceDashboard/>&nbsp;
                       Dashboard
-                    </a>
+                    </Link>
                   </li>
                   <li className="nav-item">
                     <a className="nav-link" href="#">
@@ -42,10 +43,10 @@ const AddProduct = () => {
                     </a>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link" href="#">
+                    <Link to="/addproduct" className="nav-link">
                       <MdAdd/>&nbsp;
                       Add Product
-                    </a>
+                    </Link>
                   </li>
                   <li className="nav-item">
                     <a className="nav-link" href="#">
