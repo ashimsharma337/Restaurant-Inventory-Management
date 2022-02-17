@@ -26,7 +26,9 @@ router.get("/", (req, res, next) => {
                             {id: user._id,
                              name: user.name,
                              email: user.email,
-                             position: user.position
+                             position: user.position,
+                             status: user.status,
+                             restaurantName: user.restaurantName
                             }, 
                             process.env.PRIVATEKEY)
                     })
