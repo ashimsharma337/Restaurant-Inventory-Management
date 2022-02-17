@@ -1,7 +1,13 @@
-import React from 'react'
-import { MdSpaceDashboard, MdList, MdShoppingCart, MdPeopleAlt } from "react-icons/md"
+import React, { useEffect } from 'react';
+import { MdSpaceDashboard, MdList, MdShoppingCart, MdPeopleAlt } from "react-icons/md";
+import toast, { Toaster } from 'react-hot-toast';
 
 const Dashboard = () => {
+
+  useEffect(() => {
+    toast.success('Welcome to Dashboard!');
+  }, []);
+
   return (
     <>
       <header className="navbar navbar-dark sticky-top bg-primary flex-md-nowrap p-0 shadow">
@@ -95,6 +101,7 @@ const Dashboard = () => {
             </main>
           </div>
         </div>
+        <Toaster />
 
     </>
   )

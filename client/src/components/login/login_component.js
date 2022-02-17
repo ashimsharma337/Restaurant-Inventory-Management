@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useState } from 'react';
 import Header from '../headers/header_component';
 import Footer from '../footers/footer_component';
 import { useNavigate } from 'react-router-dom';
+
 
 
 
@@ -33,6 +34,7 @@ const Login = () => {
     const is_loggedIn = localStorage.getItem("is_loggedIn");
     if(is_loggedIn){
       navigate("/dashboard");
+  
     }
     console.log(is_loggedIn);
     
