@@ -3,6 +3,8 @@ import { useState } from 'react';
 import Header from '../headers/header_component';
 import Footer from '../footers/footer_component';
 import { useNavigate } from 'react-router-dom';
+import axios from "axios";
+import toast, { Toaster } from 'react-hot-toast';
 
 
 
@@ -14,6 +16,7 @@ const Login = () => {
        email: "",
        password: ""
   });
+
   
 
   const handleChange = (e) => {
@@ -28,15 +31,39 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Data: ", data);
-    localStorage.setItem("is_loggedIn", true);
     
-    const is_loggedIn = localStorage.getItem("is_loggedIn");
-    if(is_loggedIn){
-      navigate("/dashboard");
-  
-    }
-    console.log(is_loggedIn);
+    axios.post(process.env.REACT_APP_BASE_URL+"/login",
+         {
+           email: data.email,
+           password: data.password
+         },
+         {
+           responseType: "json",
+           headers: {
+             "content-type": "application/json"
+           },
+           timeout: 30000,
+           timeoutErrorMessage: "Request timeout"
+         }   
+    )
+    .then((response) => {
+        const result = response.data;
+
+        if(result.status === 400){
+           toast.error(result.msg);
+
+        } else if(result.status === 200){
+          localStorage.setItem("token", result.token);
+          navigate("/dashboard");
+
+        }
+         else {
+          toast.error(result.msg);
+         }
+    })
+    .catch((error) => {
+      console.log("Error: ", error);
+    })
     
   }
 
@@ -73,6 +100,7 @@ const Login = () => {
           </form>
        </div>
      <Footer/>
+     <Toaster/>
     </>
   )
 }

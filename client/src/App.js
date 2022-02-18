@@ -6,7 +6,7 @@ import Register from "./components/register/register_component";
 import AddProduct from "./components/addProduct";
 
 function PrivateRoute({component}){
-      const is_Logged_In = localStorage.getItem("is_loggedIn");
+      const is_Logged_In = localStorage.getItem("token");
 
       return is_Logged_In ? component : <Navigate to="/login"/>;
 
