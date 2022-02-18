@@ -3,7 +3,7 @@ import { MdOutlineInventory, MdOutlineLogin } from "react-icons/md"
 import { GiArchiveRegister } from "react-icons/gi";
 import { Link } from 'react-router-dom';
 
-const Header = () => {
+const MainHeader = () => {
   return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
               <div className="container-fluid">
@@ -12,9 +12,6 @@ const Header = () => {
                       <span className="navbar-toggler-icon"></span>
                     </button>
                     <ul className="nav">
-                      <li className="nav-link">
-                        <Link to="/contact" className = "navbar-brand">About us</Link>
-                      </li>
                       <li className="nav-link">
                         <Link to="/login" className = "navbar-brand" ><MdOutlineLogin/>&nbsp;Login</Link>
                       </li>
@@ -27,4 +24,4 @@ const Header = () => {
   )
 }
 
-export default Header;
+export default MainHeader;

@@ -2,8 +2,12 @@ import React, { useEffect } from 'react';
 import { MdSpaceDashboard, MdList, MdShoppingCart, MdPeopleAlt, MdAdd } from "react-icons/md";
 import toast, { Toaster } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
+import HeaderN from './common/header/header_component';
+import Sidebar from './common/sidebar/sidebar_component';
 
 const Dashboard = () => {
+  const userInfo = JSON.parse(localStorage.getItem("user_info"));
+  
 
   useEffect(() => {
     toast.success('Welcome to Dashboard!');
@@ -11,62 +15,16 @@ const Dashboard = () => {
 
   return (
     <>
-      <header className="navbar navbar-dark sticky-top bg-primary flex-md-nowrap p-0 shadow">
-         <a className="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Company name</a>
-            <button className="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-              <span className="navbar-toggler-icon"></span>
-            </button>
-            <input className="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"/>
-            <div className="navbar-nav">
-              <div className="nav-item text-nowrap">
-                <a className="nav-link px-3" href="#">Sign out</a>
-              </div>
-            </div>
-       </header>
+      <HeaderN/>
 
         <div className="container-fluid">
           <div className="row">
-            <nav id="sidebarMenu" className="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-              <div className="position-sticky pt-3">
-                <ul className="nav flex-column">
-                  <li className="nav-item">
-                    <Link to="/dashboard" className="nav-link active" aria-current="page">
-                    <MdSpaceDashboard/>&nbsp;
-                      Dashboard
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <a className="nav-link" href="#">
-                    <MdList/>&nbsp;
-                      Orders
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a className="nav-link" href="#">
-                    <MdShoppingCart/>&nbsp;
-                      All Products
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="/addproduct" className="nav-link">
-                      <MdAdd/>&nbsp;
-                      Add Product
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <a className="nav-link" href="#">
-                      <MdPeopleAlt/>&nbsp;
-                      Venders
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </nav>
+            <Sidebar/>
 
             <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
               <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 className="h2">Dashboard</h1>
-                <span>Hi, John Doe Welcome!</span>
+                <span>Hi, {userInfo.name} Welcome!</span>
                 <div className="btn-toolbar mb-2 mb-md-0">
                   <div className="btn-group me-2">
                     <button type="button" className="btn btn-sm btn-outline-secondary">Share</button>

@@ -1,12 +1,12 @@
 import React from 'react';
-import Header from '../headers/header_component';
+import MainHeader from '../headers/header_component';
 import Footer from '../footers/footer_component';
 
 const Register = () => {
   return (
       
     <>
-    <Header/>
+    <MainHeader/>
     <div className="container mt-2">
       <form className="row g-3">
           <div className="col-12">

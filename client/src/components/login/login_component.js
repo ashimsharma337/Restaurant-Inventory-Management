@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import Header from '../headers/header_component';
+import MainHeader from '../headers/header_component';
 import Footer from '../footers/footer_component';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
@@ -53,7 +53,14 @@ const Login = () => {
            toast.error(result.msg);
 
         } else if(result.status === 200){
-          localStorage.setItem("token", result.token);
+          localStorage.setItem("att", result.token);
+           let user = {
+             name: result.data.name,
+             email: result.data.email,
+             restaurantName: result.data.restaurantName
+          };
+        
+          localStorage.setItem("user_info", JSON.stringify(user));
           navigate("/dashboard");
 
         }
@@ -69,7 +76,7 @@ const Login = () => {
 
   return (
     <>
-     <Header/>
+     <MainHeader/>
        <div className='container'>
           <h4 className='mt-3'>Please Enter Your Information to Login</h4>
           <hr></hr>

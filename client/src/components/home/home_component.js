@@ -1,12 +1,12 @@
 import React from 'react';
 import "../../components/home/home_component.css";
-import Header from "../headers/header_component";
+import MainHeader from "../headers/header_component";
 import Footer from "../footers/footer_component";
 
 const Home = () => {
   return (
     <>
-     <Header/>
+     <MainHeader/>
       <div className='container-fluid' id="homeContainer">
         <div className='row'>
             <div className="col-sm-3">
