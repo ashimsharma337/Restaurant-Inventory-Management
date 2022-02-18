@@ -6,19 +6,19 @@ const jwt = require("jsonwebtoken");
 const isLoggedIn = require("../isLoggedIn/isLoggdIn");
 
 
-router.get("/", (req, res, next) => {
+router.post("/", (req, res, next) => {
 
     userModel.findOne({email: req.body.email}, function(err, user){
         if(user){
             bcrypt.compare(req.body.password, user.password, function(error, success){
                 if(!success){
-                    res.json({
+                    res.status(200).json({
                         data: null,
                         status: 400,
                         msg: "Wrong Password"
                     })
                 } else {
-                    res.json({
+                    res.status(200).json({
                         data: user,
                         status: 200,
                         msg: "Login success",
@@ -35,10 +35,10 @@ router.get("/", (req, res, next) => {
                 }
             })
         } else {
-            res.json({
+            res.status(200).json({
                 data: null,
                 status: 404,
-                msg: "No user found"
+                msg: "Email does not exits."
             })
         }
     })

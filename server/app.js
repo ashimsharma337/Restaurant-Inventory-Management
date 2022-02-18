@@ -2,6 +2,7 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 require("dotenv").config();
+var cors = require("cors");
 
 require("./db_init");
 const PORT = process.env.PORT || 9000;
@@ -24,7 +25,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-
+app.use(cors());
 app.use("/products", productRouter);
 app.use("/register", registerRouter);
 app.use("/login", loginRouter);
