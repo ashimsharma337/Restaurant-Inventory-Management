@@ -10,6 +10,7 @@ const AddCategory = () => {
     const [title, setTitle] = useState("");
     const [parent_id, setParent_id] = useState(null);
     const [allCategories, setAllCategories] = useState([]);
+    const [allParentCat, setAllParentCat] = useState([]);
     const [isLoading, setIsLoding] = useState(true);
     
     useEffect(() => {
@@ -20,14 +21,14 @@ const AddCategory = () => {
 
           let allparents = response.data.result.filter((o) => (o.parent_id === null));
           console.log(allparents);
-          setAllCategories(allparents);
+          setAllParentCat(allparents);
           //console.log(response);
         }
       })
       .catch((error) => {
         console.log(error);
       })
-    },[isLoading]);
+    },[]);
 
     //console.log(allCategories);
     
@@ -71,7 +72,7 @@ const AddCategory = () => {
                   <div className='container-fluid'>
                     <div className='row'>
                       <div className="col-md-12">
-                        <label htmlFor="Title mt-3" className= "col-md-3 h4">Product-Name:</label>
+                        <label htmlFor="Title mt-3" className= "col-md-3 h4">Category-Name:</label>
                         <input type="text" name="title" className='col-md-9 mt-3' onChange={(e) => setTitle(e.target.value)} placeholder='Enter Category Name'></input>
                       </div>
                     </div>
@@ -79,11 +80,13 @@ const AddCategory = () => {
                     <div className='row'>
                       <div className="col-md-12">
                         <label htmlFor="parenId mt-3" className= "col-md-3 h4">Child of:</label>
-                        <select type="text" name="parent_id" className='col-md-9 mt-3' onChange={(e) => setParent_id(e.target.value)} placeholder='Enter Category type'>
+                        <select type="text" name="parent_id" className='col-md-9 mt-3' onChange={(e) => {
+                          return setParent_id(e.target.value)
+                        }} placeholder='Enter Category type'>
                           <option value="">Choose One</option>
                           {
-                               allCategories.map((cat, index) => (
-                                 <option key={index} value={cat.id}>
+                               allParentCat.map((cat, index) => (
+                                 <option key={index} value={cat._id}>
                                    {cat.title}
                                  </option>
                                ))

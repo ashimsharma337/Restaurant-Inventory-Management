@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import HeaderN from '../dashboard/common/header/header_component';
 import Sidebar from '../dashboard/common/sidebar/sidebar_component';
 import { MdSend } from "react-icons/md";
@@ -7,16 +7,21 @@ import { httpRequest } from "../../services/httpclient";
 const Category = () => {
     const userInfo = JSON.parse(localStorage.getItem("user_info"));
      
+    const [allCategories, setAllCategories] = useState([]);
+
     // Fetch all the categories from server
     useEffect(() => {
        httpRequest.getItems("/category")
        .then((response) => {
-           console.log(response);
+           let categoryList = response.data.result;
+           setAllCategories(categoryList);
+           console.log(allCategories);
        })
        .catch((error) => {
            console.log(error);
        })
-    });
+
+    },[]);
 
   return (
     <>
@@ -46,15 +51,26 @@ const Category = () => {
                       <th scope="col">Category</th>
                       <th scope="col">Parent-Category</th>
                       <th scope="col">Actions</th>
+                      <th scope="col">Parent-id</th>
                     </tr>
                   </thead>
                   <tbody>
-                      <tr>
-                      <td>1</td>
-                      <td>random</td>
-                      <td>data</td>
-                      <td>placeholder</td>
-                    </tr>
+                    {
+                      allCategories.map((o, i) => (
+                        <tr key={i}>
+                          <td>{i+1}</td>
+                          <td>{o.title}</td>
+                          <td>{o.parent_id ? o.parent_id.title : "-"}</td>
+                          <td>
+                          
+                            <button className='btn btn-sm btn-warning'>Edit</button>&nbsp;
+                            <button className='btn btn-sm btn-danger'>Delete</button>
+                          
+                          </td>
+                        </tr>
+                      ))
+                    }
+                      
                   </tbody>
                  </table>
                 </div>
