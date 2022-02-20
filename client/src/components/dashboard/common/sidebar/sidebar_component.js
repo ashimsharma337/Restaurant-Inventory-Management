@@ -29,15 +29,21 @@ const Sidebar = () => {
                     </a>
                   </li>
                   <li className="nav-item">
+                    <Link to="/category" className="nav-link">
+                    <MdShoppingCart/>&nbsp;
+                      All Category
+                    </Link>
+                  </li>
+                  <li className="nav-item">
                     <Link to="/addproduct" className="nav-link">
                       <MdAdd/>&nbsp;
                       Add Product
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link to="/category" className="nav-link">
+                    <Link to="/addcategory" className="nav-link">
                       <MdAdd/>&nbsp;
-                      Category
+                      Add Category
                     </Link>
                   </li>
                   <li className="nav-item">

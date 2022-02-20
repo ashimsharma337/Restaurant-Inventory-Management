@@ -26,7 +26,8 @@ const AddProduct = () => {
                 </div>
               </div>
 
-              <h2>Add Product</h2>
+              <h4>Add Product</h4>
+              <hr></hr>
               <div className="container-fluid">
                   <div className="row">
                       <div className="col-md-12">

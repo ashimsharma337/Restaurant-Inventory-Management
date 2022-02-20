@@ -1,10 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import HeaderN from '../dashboard/common/header/header_component';
 import Sidebar from '../dashboard/common/sidebar/sidebar_component';
 import { MdSend } from "react-icons/md";
+import { httpRequest } from "../../services/httpclient";
 
 const Category = () => {
     const userInfo = JSON.parse(localStorage.getItem("user_info"));
+     
+    // Fetch all the categories from server
+    useEffect(() => {
+       httpRequest.getItems("/category")
+       .then((response) => {
+           console.log(response);
+       })
+       .catch((error) => {
+           console.log(error);
+       })
+    });
+
   return (
     <>
       <HeaderN/>
@@ -23,30 +36,28 @@ const Category = () => {
                     </div>
                   </div>
 
-                  <h4>Add category</h4>
+                  <h4>All category</h4>
                   <hr></hr>
                   <div className='container-fluid'>
-                    <div className='row'>
-                      <div className="col-md-12">
-                        <label htmlFor="Title mt-3" className= "col-md-3 h4">Title:</label>
-                        <input className='col-md-9 mt-3' placeholder='Enter Category Name'></input>
-                      </div>
-                    </div>
-
-                    <div className='row'>
-                      <div className="col-md-12">
-                        <label htmlFor="parenId mt-3" className= "col-md-3 h4">Child of:</label>
-                        <input className='col-md-9 mt-3' placeholder='Enter Category type'></input>
-                      </div>
-                    </div>
-
-                    <div className='row'>
-                      <div className="offset-3 col-md-9 mt-3">
-                        <button type='submit' className='btn btn-sm btn-primary'><MdSend/>&nbsp;Send</button>
-                      </div>
-                    </div>
-                  </div>
-                  
+                  <table className="table table-striped table-sm">
+                  <thead>
+                    <tr>
+                      <th scope="col">S.N</th>
+                      <th scope="col">Category</th>
+                      <th scope="col">Parent-Category</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                      <td>1</td>
+                      <td>random</td>
+                      <td>data</td>
+                      <td>placeholder</td>
+                    </tr>
+                  </tbody>
+                 </table>
+                </div>
                </main>
              </div>
         </div>
