@@ -3,6 +3,7 @@ const Category = require("../model/Category_model");
 class CategoryController{
     getAllCategories = (req, res, next) => {
        Category.find()
+       .populate("parent_id")
        .then((categories) => {
            res.json({
                result: categories,
@@ -25,7 +26,7 @@ class CategoryController{
 
         newCat.save()
         .then((success) => {
-            res.json({
+            res.status(200).json({
                 result: newCat,
                 status: 200,
                 msg: "Category added successfully"
