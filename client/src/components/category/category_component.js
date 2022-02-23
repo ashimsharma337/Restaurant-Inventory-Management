@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import HeaderN from '../dashboard/common/header/header_component';
 import Sidebar from '../dashboard/common/sidebar/sidebar_component';
-import { MdSend } from "react-icons/md";
+import { MdSend, MdEdit, MdOutlineDeleteForever } from "react-icons/md";
 import { httpRequest } from "../../services/httpclient";
+import toast, { Toaster } from 'react-hot-toast';
+import { NavLink } from "react-router-dom";
 
 const Category = () => {
     const userInfo = JSON.parse(localStorage.getItem("user_info"));
@@ -15,13 +17,31 @@ const Category = () => {
        .then((response) => {
            let categoryList = response.data.result;
            setAllCategories(categoryList);
-           console.log(allCategories);
+           // console.log(allCategories);
        })
        .catch((error) => {
            console.log(error);
        })
 
     },[]);
+
+    const handleDelete = (index, catId) => {
+      httpRequest.deleteItem("/category/"+catId, true)
+      .then((response) => {
+        //  if(response.result.status == 200){
+           // ToDo: axios call to get data
+           let new_categories = allCategories.filter((o, i) => (i !== index))
+           setAllCategories(new_categories);
+           toast.success("Category deleted successfully.");
+           
+        //  } else {
+        //    toast.error(response.data.msg);
+        //  }
+      })
+      .catch((error) => {
+           toast.error(error);
+      })
+    }
 
   return (
     <>
@@ -63,8 +83,13 @@ const Category = () => {
                           <td>{o.parent_id ? o.parent_id.title : "-"}</td>
                           <td>
                           
-                            <button className='btn btn-sm btn-warning'>Edit</button>&nbsp;
-                            <button className='btn btn-sm btn-danger'>Delete</button>
+                            <NavLink to={"/category/"+o._id} className='btn btn-sm btn-warning'><MdEdit/>&nbsp;Edit</NavLink>&nbsp;
+                            <button className='btn btn-sm btn-danger' onClick={(event) => {
+                              let confirmed = window.confirm("Are you sure you want to delete this category?");
+                              if(confirmed){
+                              return handleDelete(i, o._id);
+                              }
+                            }}><MdOutlineDeleteForever/>&nbsp;Delete</button>
                           
                           </td>
                         </tr>
@@ -77,6 +102,7 @@ const Category = () => {
                </main>
              </div>
         </div>
+        <Toaster/>
     </>
   )
 }

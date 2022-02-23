@@ -29,7 +29,40 @@ const getItems = (url, params = {}) => {
      return http.get(url, post_headers);
 }
 
+const deleteItem = (url, is_strict=false) => {
+    let headers = getHeaders();
+    if(is_strict){
+        headers.headers = {
+           "authorization": localStorage.getItem("att")
+        }
+    }
+    return http.delete(url, headers);
+}
+
+const getItemById = (url, is_strict=false) => {
+    let headers = getHeaders();
+    if(is_strict){
+        headers.headers = {
+           "authorization": localStorage.getItem("att")
+        }
+    }
+    return http.get(url, headers);
+}
+
+const updateById = (url, data, is_strict=false) => {
+    let headers = getHeaders();
+    if(is_strict){
+        headers.headers = {
+           "authorization": localStorage.getItem("att")
+        }
+    }
+    return http.put(url, data, headers);
+}
+
 export const httpRequest = {
     postItem,
-    getItems
+    getItems,
+    deleteItem,
+    getItemById,
+    updateById
 };

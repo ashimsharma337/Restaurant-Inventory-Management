@@ -7,6 +7,7 @@ import AddProduct from "./components/addProduct";
 import AddCategory from "../src/components/category/categoryCreate_component";
 import { useEffect } from "react";
 import Category from "./components/category/category_component";
+import EditCategory from "./components/category/category_edit.component";
 
 
 function PrivateRoute({component}){
@@ -47,6 +48,9 @@ function App() {
               
             </Route>
             <Route path="/addcategory" element={<PrivateRoute component={<AddCategory/>}></PrivateRoute>}>
+              
+            </Route>
+            <Route path="/category/:id" element={<PrivateRoute component={<EditCategory/>}></PrivateRoute>}>
               
             </Route>
 
