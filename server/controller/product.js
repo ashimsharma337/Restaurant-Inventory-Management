@@ -7,7 +7,7 @@ router.get("/", (req, res) => {
     ProductModel.find((error, products) => {
         if(products){
             res.json({
-                data: products
+                result: products
             });
         } else {
             res.json({
@@ -17,6 +17,7 @@ router.get("/", (req, res) => {
            });
         }
     })
+    .populate("category_id")
 });
 
 router.post("/", (req, res, next) => {
@@ -64,10 +65,10 @@ router.put("/:id", (req, res, next) => {
 })
 
 router.get("/:id", (req, res, next) => {
-      ProductModel.find({_id: req.params.id}, {}, {})
+      ProductModel.findOne({_id: req.params.id}, {}, {})
       .then((product) => {
           res.json({
-              data: product,
+              result: product,
               status: 200,
           })
       })

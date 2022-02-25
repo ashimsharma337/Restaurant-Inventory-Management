@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const ProductSchema = mongoose.Schema({
-    name: {
+    title: {
         type: String,
         required: true,
     },
@@ -16,6 +16,10 @@ const ProductSchema = mongoose.Schema({
     },
     quantity: {
         type: Number,
+        required: true
+    },
+    unit: {
+        type: String,
         required: true
     },
     price: {
