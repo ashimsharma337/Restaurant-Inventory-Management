@@ -3,11 +3,12 @@ import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-route
 import Login from "./components/login/login_component";
 import Dashboard from "./components/dashboard/dashboard_component";
 import Register from "./components/register/register_component";
-import AddProduct from "./components/addProduct";
+import AddProduct from "./components/products/addProduct";
 import AddCategory from "../src/components/category/categoryCreate_component";
 import { useEffect } from "react";
 import Category from "./components/category/category_component";
 import EditCategory from "./components/category/category_edit.component";
+import EditProduct from "./components/products/editProduct_component";
 
 
 function PrivateRoute({component}){
@@ -47,6 +48,10 @@ function App() {
             <Route path="/addproduct" element={<PrivateRoute component={<AddProduct/>}></PrivateRoute>}>
               
             </Route>
+            <Route path="/product/:id" element={<PrivateRoute component={<EditProduct/>}></PrivateRoute>}>
+               
+            </Route>
+            
             <Route path="/addcategory" element={<PrivateRoute component={<AddCategory/>}></PrivateRoute>}>
               
             </Route>

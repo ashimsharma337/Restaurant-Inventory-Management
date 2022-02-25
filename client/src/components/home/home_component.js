@@ -2,6 +2,7 @@ import React from 'react';
 import "../../components/home/home_component.css";
 import MainHeader from "../headers/header_component";
 import Footer from "../footers/footer_component";
+import inventoryImage from "../../assets/inventory_image.webp"
 
 const Home = () => {
   return (
@@ -30,13 +31,16 @@ const Home = () => {
                   repellendus exercitationem unde porro sapiente molestias, dolores vitae ad 
                   debitis culpa natus ut?</p>
             </div>
-            <div className="col-sm-3">
+            {/* <div className="col-sm-3">
               <h4>Success Story</h4>
               <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. 
               Necessitatibus iusto molestiae vitae ducimus ex! Aliquam odio quia 
               repellendus exercitationem unde porro sapiente molestias, dolores vitae ad 
               debitis culpa natus ut?</p>
-          </div>
+          </div> */}
+          <div className="col-sm-12">
+                <img src={inventoryImage} style={{maxHeight:"100%", maxWidth:"100%"}}/>
+            </div>
         </div>
       </div>
       <Footer/>

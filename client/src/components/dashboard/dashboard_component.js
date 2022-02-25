@@ -1,17 +1,45 @@
-import React, { useEffect } from 'react';
-import { MdSpaceDashboard, MdList, MdShoppingCart, MdPeopleAlt, MdAdd } from "react-icons/md";
+import React, { useEffect, useState } from 'react';
+import { MdEdit, MdOutlineDeleteForever } from "react-icons/md";
 import toast, { Toaster } from 'react-hot-toast';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import HeaderN from './common/header/header_component';
 import Sidebar from './common/sidebar/sidebar_component';
+import { httpRequest } from '../../services/httpclient';
 
 const Dashboard = () => {
   const userInfo = JSON.parse(localStorage.getItem("user_info"));
   
+  const [allProducts, setAllProducts] = useState([]);
 
   useEffect(() => {
     toast.success('Welcome to Dashboard!');
   }, []);
+
+  useEffect(() => {
+    httpRequest.getItems("/products")
+    .then((response) => {
+      // console.log(response.data.result);
+      let productList = response.data.result;
+      setAllProducts(productList);
+      console.log(productList);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+  },[])
+
+  const handleDelete = (index, productId) => {
+        httpRequest.deleteItem("/products/"+productId, true)
+        .then((success) => {
+          let new_products = allProducts.filter((o, i) => (i !== index))
+          setAllProducts(new_products);
+          toast.success("Product deleted successfully.");
+        })
+        .catch((error) => {
+          console.log(error);
+          toast.error("Error while deleting product!");
+        })
+  }
 
   return (
     <>
@@ -33,11 +61,14 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <h2>Product Page</h2>
-              <div className="table-responsive">
+              <h4>Product Page</h4>
+              <hr></hr>
+              <div className='container-fluid'>
+              {/* <div className="table-responsive"> */}
                 <table className="table table-striped table-sm">
                   <thead>
                     <tr>
+                      <th scope="col">S.N</th>
                       <th scope="col">Item</th>
                       <th scope="col">Category</th>
                       <th scope="col">Vender</th>
@@ -47,24 +78,32 @@ const Dashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>1,001</td>
-                      <td>random</td>
-                      <td>data</td>
-                      <td>placeholder</td>
-                      <td>text</td>
-                      <td>text</td>
-                    </tr>
-                    <tr>
-                      <td>1,002</td>
-                      <td>placeholder</td>
-                      <td>irrelevant</td>
-                      <td>visual</td>
-                      <td>layout</td>
-                      <td>text</td>
-                    </tr>
+                    {
+                      allProducts.map((o, i) => (
+                        <tr key={i}>
+                          <td>{i+1}</td>
+                          <td>{o.title}</td>
+                          <td>{o.category_id?.title}</td>
+                          <td>{o.vendor}</td>
+                          <td>{o.quantity}&nbsp;{o.unit}</td>
+                          <td>${o.price}</td>
+                          <td>
+
+                          <NavLink to={"/product/"+o._id} className='btn btn-sm btn-warning' ><MdEdit/>&nbsp;Edit</NavLink>&nbsp;
+                          <button onClick = {(event) => {
+                            let confirmed = window.confirm("Are you sure you want want to delete this product?");
+                            if(confirmed){
+                              return handleDelete(i, o._id);
+                            }
+                          }} className='btn btn-sm btn-danger'><MdOutlineDeleteForever/>&nbsp;Delete</button>
+
+                          </td>
+                        </tr>
+                      ))
+                    }
                   </tbody>
                 </table>
+              {/* </div> */}
               </div>
             </main>
           </div>
