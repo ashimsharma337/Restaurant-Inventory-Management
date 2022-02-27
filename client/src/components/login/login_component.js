@@ -5,6 +5,7 @@ import Footer from '../footers/footer_component';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import toast, { Toaster } from 'react-hot-toast';
+import secondPic from "../../assets/secondInventoryPic.jpg";
 
 
 
@@ -106,6 +107,11 @@ const Login = () => {
               <button type="submit" onClick={handleSubmit} className="btn btn-primary mb-3">Log In</button>
           </form>
        </div>
+       
+       
+          <img src={secondPic} style={{height: "300px", width: "100%", marginLeft: "0px"}}/>
+       
+      
      <Footer/>
      <Toaster/>
     </>

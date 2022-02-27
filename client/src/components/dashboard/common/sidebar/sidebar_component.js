@@ -23,10 +23,10 @@ const Sidebar = () => {
                     </a>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link" href="#">
+                    <Link to="/product" className="nav-link">
                     <MdShoppingCart/>&nbsp;
                       All Products
-                    </a>
+                    </Link>
                   </li>
                   <li className="nav-item">
                     <Link to="/category" className="nav-link">

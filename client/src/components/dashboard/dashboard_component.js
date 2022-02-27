@@ -61,9 +61,9 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <h4>Product Page</h4>
-              <hr></hr>
+              
               <div className='container-fluid'>
+              <h4>Total Stocks</h4>
               {/* <div className="table-responsive"> */}
                 <table className="table table-striped table-sm">
                   <thead>
@@ -103,7 +103,53 @@ const Dashboard = () => {
                     }
                   </tbody>
                 </table>
+                <hr></hr>
+                <div className='row'>
+                  <div className='col-md-4'>
+                      <h4>Manage Users</h4>
+                        <table className='table table-bordered'>
+                          <thead>
+                            <th>S.N</th>
+                            <th>Name</th>
+                            <th>Position</th>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>1</td>
+                              <td>Ashim</td>
+                              <td>General-Manager</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                  </div>
+                  
+                  <div className='col-md-4'>
+                  <h4>Total stocks</h4>
+                    <table className='table table-bordered'>
+                      <thead>
+                        <th>S.N</th>
+                        <th>Product</th>
+                        <th>Stocks</th>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>1</td>
+                          <td>chicken</td>
+                          <td>4 kg</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                </div>
+
+                <div className='col-md-4'>
+                  <h4>Create orders</h4>
+                    <h6>Place order</h6>
+                </div>
+              
+  
+                
               {/* </div> */}
+               </div>
               </div>
             </main>
           </div>

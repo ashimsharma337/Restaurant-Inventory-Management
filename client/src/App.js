@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import Category from "./components/category/category_component";
 import EditCategory from "./components/category/category_edit.component";
 import EditProduct from "./components/products/editProduct_component";
+import Product from "./components/products/product_component";
 
 
 function PrivateRoute({component}){
@@ -43,6 +44,9 @@ function App() {
                
             </Route>
             <Route path="/category" element={<PrivateRoute component={<Category/>}></PrivateRoute>}>
+               
+            </Route>
+            <Route path="/product" element={<PrivateRoute component={<Product/>}></PrivateRoute>}>
                
             </Route>
             <Route path="/addproduct" element={<PrivateRoute component={<AddProduct/>}></PrivateRoute>}>
