@@ -18,7 +18,7 @@ export default function Footer() {
             <h5 className='text-uppercase'>About RESINSO</h5>
 
             <p>
-            RESINSO is a Restaurant Inventory Management Software which helps to provide information 
+            RESINSO is a Restaurant Inventory Management Web App which helps to provide information 
             about Restaurant Food, Alcohol, Furniture, and others restaurants equipments in order to 
             keep track of all stuff to minimize cost.
             </p>
