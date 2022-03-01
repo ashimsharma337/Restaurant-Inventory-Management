@@ -1,16 +1,26 @@
+import { httpRequest } from "../../services/httpclient";
 import { ActionTypes } from "../constants/actionTypes"
 
 
-export const setProducts = (products) => {
-    return {
-        type: ActionTypes.SET_PRODUCTS,
-        payload: products,
-    };
-}
+export const getProducts = () => {
+    
+    return async function (dispatch) {
+        const response = await httpRequest.getItems("/products");
 
-export const selectedProducts = (product) => {
-    return {
-        type: ActionTypes.SELECTED_PRODUCT,
-        payload: product,
+        dispatch({type: ActionTypes.GET_PRODUCTS, payload: response.data.result});
     };
-}
+
+};
+
+export const getUsers = () => {
+    
+    return async function (dispatch) {
+        const response = await httpRequest.getItems("/users");
+
+        dispatch({type: ActionTypes.GET_USERS, payload: response.data.result});
+    };
+
+};
+
+
+

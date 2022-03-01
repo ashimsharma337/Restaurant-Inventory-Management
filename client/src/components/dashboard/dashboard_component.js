@@ -4,53 +4,28 @@ import toast, { Toaster } from 'react-hot-toast';
 import { NavLink } from 'react-router-dom';
 import HeaderN from './common/header/header_component';
 import Sidebar from './common/sidebar/sidebar_component';
-import { httpRequest } from '../../services/httpclient';
 import { useDispatch, useSelector } from "react-redux";
-import { setProducts } from "../../redux/actions/productActions";
-import { setUsers } from '../../redux/actions/userActions';
+import { getProducts, getUsers } from "../../redux/actions/productActions";
+
 
 const Dashboard = () => {
   const userInfo = JSON.parse(localStorage.getItem("user_info"));
   
   const data = useSelector((state) => state);
-  //const users = useSelector((state) => state);
+
   const dispatch = useDispatch();
 
-  const getAllProducts = () => {
-
-    httpRequest.getItems("/products")
-    .then((response) =>  {
-      dispatch(setProducts(response.data.result));
-    })
-    .catch((error) => {
-        console.log("Error: ", error);
-    });
-    
-  };
-
-  const getAllUsers = () => {
-
-    httpRequest.getItems("/users")
-    .then((response) =>  {
-      dispatch(setUsers(response.data.result));
-    })
-    .catch((error) => {
-        console.log("Error: ", error);
-    });
-    
-  };
-
-
   useEffect(() => {
+
     toast.success('Welcome to Dashboard!');
-    getAllProducts();
-    getAllUsers();
+    dispatch(getProducts());
+    dispatch(getUsers());
+
   }, []);
   
   console.log("Data: ", data);
   let productsArr = data.allProducts.products;
   let usersArr = data.allUsers.users;
-  // console.log(usersArr);
  
 
   return (
