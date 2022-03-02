@@ -1,5 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const uploader = require("../uploader/uploader");
+
+
 const ProductModel = require("../model/Product_model");
 
 
@@ -20,7 +23,12 @@ router.get("/", (req, res) => {
     .populate("category_id")
 });
 
-router.post("/", (req, res, next) => {
+router.post("/", uploader.single("image"), (req, res, next) => {
+    
+    if(req.file){
+        req.body.image = req.file.filename;
+    }
+
     const product = new ProductModel(req.body);
     product.save((error, product) => {
         if(product){
@@ -40,7 +48,7 @@ router.post("/", (req, res, next) => {
     
 });
 
-router.put("/:id", (req, res, next) => {
+router.put("/:id", uploader.single("image"), (req, res, next) => {
       ProductModel.updateOne({
           _id: req.params.id
       }, {
