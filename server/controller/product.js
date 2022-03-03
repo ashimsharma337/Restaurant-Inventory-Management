@@ -23,11 +23,14 @@ router.get("/", (req, res) => {
     .populate("category_id")
 });
 
-router.post("/", uploader.single("image"), (req, res, next) => {
+router.post("/", uploader.array("image", 4), (req, res, next) => {
     
-    if(req.file){
-        req.body.image = req.file.filename;
+    if(req.files){
+        let image = [];
+        image = req.files.map((o) => o.filename);
+        req.body.image = image;
     }
+    
 
     const product = new ProductModel(req.body);
     product.save((error, product) => {
@@ -48,7 +51,7 @@ router.post("/", uploader.single("image"), (req, res, next) => {
     
 });
 
-router.put("/:id", uploader.single("image"), (req, res, next) => {
+router.put("/:id", uploader.array("image", 4), (req, res, next) => {
       ProductModel.updateOne({
           _id: req.params.id
       }, {
@@ -70,6 +73,30 @@ router.put("/:id", uploader.single("image"), (req, res, next) => {
               msg: JSON.stringify(error)
           })
       })
+})
+
+router.patch("/:id", uploader.array("image", 4), (req, res, next) => {
+    ProductModel.updateOne({
+        _id: req.params.id
+    }, {
+        $set: req.body
+    }, {
+        upsert: false
+    })
+    .then((product) => {
+        res.json({
+            data: product,
+            status: 200,
+            msg: "Product updated successfully!"
+        });
+    })
+    .catch((error) => {
+        res.json({
+            data: null,
+            status: 400,
+            msg: JSON.stringify(error)
+        })
+    })
 })
 
 router.get("/:id", (req, res, next) => {
