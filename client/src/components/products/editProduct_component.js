@@ -15,10 +15,13 @@ const EditProduct = () => {
         vendor: "",
         quantity: 0,
         unit: "",
-        price: 0
+        price: 0,
+        image:[]
   });
 
   const [categories, setCategories] = useState([]);
+
+  // const [images, setImages] = useState([]);
 
   useEffect(() => {
        httpRequest.getItems("/category")
@@ -46,12 +49,22 @@ const EditProduct = () => {
   },[])
 
   const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value, type, files} = e.target;
     
-        setProductData({
-          ...productData,
-          [name]: value
-        });
+        // if(type == "file"){
+        //   let {filesToUpload} = images;
+
+        //   filesToUpload = Object.keys(files).map((key) => files[key]);
+
+        //   setImages(filesToUpload);
+        // } else {
+          setProductData({
+
+            ...productData,
+            [name]: value
+
+          });
+        // }
   }
 
   const handleSubmit = (e) => {
@@ -88,7 +101,7 @@ const EditProduct = () => {
                 </div>
               </div>
 
-              <h4>Add Product</h4>
+              <h4>Edit Product</h4>
               <hr></hr>
               <div className="container-fluid">
                   <div className="row">
@@ -134,6 +147,21 @@ const EditProduct = () => {
                           <input name="price" onChange={handleChange} defaultValue = {productData.price || ""} type="number" className="col-md-9"></input>
                       </div>
                   </div>
+                  <div className="row mb-3">
+                      <div className="col-md-12">
+                          <label className="col-md-3 h4">Image:</label>
+                          <input name="image" onChange={handleChange} defaultValue = {productData.image || ""} type="file" className="col-md-9" multiple></input>
+                      </div>
+                  </div>
+                  {/* <div className="row">
+                     {
+                       productData.image.map((image, i) => (
+                         <div key={i} className="col-md-3">
+                           <img src={URL.createObjectURL(image)} className='img img-fluid img-thumbnail'/>
+                         </div>
+                       ))
+                     }
+                  </div> */}
                   
                   <div className="row mb-3">
                       <div className="offset-md-3 col-md-9">

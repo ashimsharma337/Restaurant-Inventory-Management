@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
-import { MdSpaceDashboard, MdList, MdShoppingCart, MdPeopleAlt, MdAdd } from "react-icons/md";
-import { Link } from 'react-router-dom';
+import { MdAdd } from "react-icons/md";
 import { httpRequest } from '../../services/httpclient';
 import HeaderN  from "../dashboard/common/header/header_component";
 import Sidebar from '../dashboard/common/sidebar/sidebar_component';
@@ -9,42 +8,80 @@ import Sidebar from '../dashboard/common/sidebar/sidebar_component';
 const AddProduct = () => {
 
   const [productData, setProductData] = useState({
-
-        title: "",
-        category_id: "",
-        vendor: "",
-        quantity: 0,
-        unit: "",
-        price: 0
+                   title: "",
+                   category_id: "",
+                   vendor: "",
+                   quantity: 0,
+                   unit: "",
+                   price: 0
+                  
   });
 
+
   const [categories, setCategories] = useState([]);
+
+  const [images, setImages] = useState([]);
+
+  const [newProduct, setNewProduct] = useState({});
 
   useEffect(() => {
         httpRequest.getItems("/category")
         .then((response) => {
-          // console.log(response);
           setCategories(response.data.result);
           console.log(categories);
         })
         .catch((error) => {
           console.log(error);
         })
-  },[])
+  },[]);
 
   const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value, type, files } = e.target;
+
+        console.log("type", type);
+        console.log("files", files);
+
+        if(type == "file"){
+          let {filesToUpload} = images;
+
+          filesToUpload = Object.keys(files).map((key) => files[key]);
+
+          setImages(filesToUpload);
+        } else {
+          setProductData({
+
+            ...productData,
+            [name]: value
+
+          });
+        }
     
-        setProductData({
-          ...productData,
-          [name]: value
-        });
   }
+        
+
 
   const handleSubmit = (e) => {
-        console.log(productData);
-        console.log(productData.title);
-        httpRequest.postItem(process.env.REACT_APP_BASE_URL+"/products", productData, true)
+        e.preventDefault();
+
+        console.log("Product: ", productData);
+        console.log("Images: ", images);
+
+        let formData = new FormData();
+        
+        // file data
+        images.map((obj) => {
+           formData.append("image", obj, obj.name);
+        })
+        
+        // product data
+        for(let key in productData){
+            formData.append(key, productData[key])
+        }
+
+        
+      
+       
+        httpRequest.postItem(process.env.REACT_APP_BASE_URL+"/products", formData, true)
         .then((success) => {
              toast.success("Product added successfully.");
              console.log(success);
@@ -52,7 +89,7 @@ const AddProduct = () => {
         .catch((error) => {
              toast.error(error);
         })
-  }
+  };
 
 
   return (
@@ -78,6 +115,7 @@ const AddProduct = () => {
 
               <h4>Add Product</h4>
               <hr></hr>
+              <form>
               <div className="container-fluid">
                   <div className="row">
                       <div className="col-md-12">
@@ -116,11 +154,26 @@ const AddProduct = () => {
                           <input name="unit" onChange={handleChange} type="text" className="col-md-9"></input>
                       </div>
                   </div>
-                  <div className="row">
+                  <div className="row mb-3">
                       <div className="col-md-12">
                           <label className="col-md-3 h4">Price:</label>
                           <input name="price" onChange={handleChange} type="number" className="col-md-9"></input>
                       </div>
+                  </div>
+                  <div className="row mb-3">
+                      <div className="col-md-12">
+                          <label className="col-md-3 h4">Image:</label>
+                          <input name="image" onChange={handleChange} type="file" className="col-md-9" multiple></input>
+                      </div>
+                  </div>
+                  <div className="row">
+                     {
+                       images.map((image, i) => (
+                         <div key={i} className="col-md-3">
+                           <img src={URL.createObjectURL(image)} className='img img-fluid img-thumbnail'/>
+                         </div>
+                       ))
+                     }
                   </div>
                   
                   <div className="row mb-3">
@@ -130,6 +183,7 @@ const AddProduct = () => {
                   </div>
                   
               </div>
+              </form>
             </main>
           </div>
         </div>

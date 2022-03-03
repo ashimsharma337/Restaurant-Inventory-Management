@@ -23,7 +23,7 @@ const Dashboard = () => {
 
   }, []);
   
-  console.log("Data: ", data);
+  // console.log("Data: ", data);
   let productsArr = data.allProducts.products;
   let usersArr = data.allUsers.users;
  
