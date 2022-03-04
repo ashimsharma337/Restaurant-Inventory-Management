@@ -5,8 +5,8 @@ const uploader = require("../uploader/uploader");
 
 const ProductModel = require("../model/Product_model");
 
-
-router.get("/", (req, res) => {
+router.route("/")
+.get((req, res) => {
     ProductModel.find((error, products) => {
         if(products){
             res.json({
@@ -21,9 +21,9 @@ router.get("/", (req, res) => {
         }
     })
     .populate("category_id")
-});
+})
 
-router.post("/", uploader.array("image", 4), (req, res, next) => {
+.post(uploader.array("image", 4), (req, res, next) => {
     
     if(req.files){
         let image = [];
@@ -51,7 +51,8 @@ router.post("/", uploader.array("image", 4), (req, res, next) => {
     
 });
 
-router.put("/:id", uploader.array("image", 4), (req, res, next) => {
+router.route(":id")
+.put(uploader.array("image", 4), (req, res, next) => {
       ProductModel.updateOne({
           _id: req.params.id
       }, {
@@ -75,7 +76,7 @@ router.put("/:id", uploader.array("image", 4), (req, res, next) => {
       })
 })
 
-router.patch("/:id", uploader.array("image", 4), (req, res, next) => {
+.patch(uploader.array("image", 4), (req, res, next) => {
     ProductModel.updateOne({
         _id: req.params.id
     }, {
@@ -99,7 +100,7 @@ router.patch("/:id", uploader.array("image", 4), (req, res, next) => {
     })
 })
 
-router.get("/:id", (req, res, next) => {
+.get((req, res, next) => {
       ProductModel.findOne({_id: req.params.id}, {}, {})
       .then((product) => {
           res.json({
@@ -116,7 +117,7 @@ router.get("/:id", (req, res, next) => {
       })
 })
 
-router.delete("/:id", (req, res, next) => {
+.delete((req, res, next) => {
     ProductModel.deleteOne({_id: req.params.id})
     .then((success) => {
         res.json({

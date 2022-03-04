@@ -26,6 +26,10 @@ const ProductSchema = mongoose.Schema({
         type: Number,
         required: true
     },
+    parLevel: {
+        type: Number,
+        required: true
+    },
     image: [String]
 },  {
     timestamps: true
