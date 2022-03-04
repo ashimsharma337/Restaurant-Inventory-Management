@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { MdEdit, MdOutlineDeleteForever } from "react-icons/md";
 import toast, { Toaster } from 'react-hot-toast';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import HeaderN from './common/header/header_component';
 import Sidebar from './common/sidebar/sidebar_component';
 import { useDispatch, useSelector } from "react-redux";
 import { getProducts, getUsers } from "../../redux/actions/productActions";
+import Heading from './common/heading/heading';
 
 
 const Dashboard = () => {
-  const userInfo = JSON.parse(localStorage.getItem("user_info"));
+ 
   
   const data = useSelector((state) => state);
 
@@ -23,10 +24,21 @@ const Dashboard = () => {
 
   }, []);
   
+  
   // console.log("Data: ", data);
   let productsArr = data.allProducts.products;
   let usersArr = data.allUsers.users;
  
+
+  // display order under par level
+  const orderToBePlaced = productsArr.filter(function(item) {
+  if (item.quantity < item.parLevel) {
+      return(true);
+  }
+  });
+
+  //console.log(orderToBePlaced);
+  console.log(usersArr);
 
   return (
     <>
@@ -37,17 +49,8 @@ const Dashboard = () => {
             <Sidebar/>
 
             <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-              <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 className="h2">Dashboard</h1>
-                <span>Hi, {userInfo.name} Welcome!</span>
-                <div className="btn-toolbar mb-2 mb-md-0">
-                  <div className="btn-group me-2">
-                    <button type="button" className="btn btn-sm btn-outline-secondary">Share</button>
-                    <button type="button" className="btn btn-sm btn-outline-secondary">Export</button>
-                  </div>
-                </div>
-              </div>
-
+              
+              <Heading/>
               
               <div className='container-fluid'>
               <h4>Total Stocks</h4>
@@ -60,8 +63,9 @@ const Dashboard = () => {
                       <th scope="col">Category</th>
                       <th scope="col">Vender</th>
                       <th scope="col">Quantity</th>
-                      <th scope="col">Price</th>
-                      <th scope="col">Actions</th>
+                      <th scope="col">Unit Price</th>
+                      <th scope="col">Par Level</th>
+                      <th scope="col">Add Order Received</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -74,16 +78,9 @@ const Dashboard = () => {
                           <td>{o.vendor}</td>
                           <td>{o.quantity}&nbsp;{o.unit}</td>
                           <td>${o.price}</td>
+                          <td>{o.parLevel}</td>
                           <td>
-
-                          <NavLink to={"/product/"+o._id} className='btn btn-sm btn-warning' ><MdEdit/>&nbsp;Edit</NavLink>&nbsp;
-                          <button onClick = {(event) => {
-                            let confirmed = window.confirm("Are you sure you want want to delete this product?");
-                            // if(confirmed){
-                            //   return handleDelete(i, o._id);
-                            // }
-                          }} className='btn btn-sm btn-danger'><MdOutlineDeleteForever/>&nbsp;Delete</button>
-
+                            <NavLink to={"/product/managequantity/"+o._id} className='btn btn-sm btn-primary'>Add quantity</NavLink>
                           </td>
                         </tr>
                       ))
@@ -91,69 +88,95 @@ const Dashboard = () => {
                   </tbody>
                 </table>
                 <hr></hr>
+
                 <div className='row'>
-                  <div className='col-md-4'>
+     
+                <div className='col-md-6'>
+                  <h4>Weekly Uses</h4>
+                  <table className="table table-bordered table-warning">
+                    <thead>
+                      <tr>
+                        <th>S.N</th>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Deduction</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                     {
+                        productsArr.map((o, i) => (
+                          <tr key={i} className="table-warning">
+                            <td>{i+1}</td>
+                            <td>{o.title}</td>
+                            <td>{o.quantity}&nbsp;{o.unit}</td>
+                            <td>
+                            <NavLink to={"/product/managequantity/"+o._id} className='btn btn-sm btn-warning'>Deduct quantity</NavLink>
+                            </td>
+                          </tr>
+                        ))
+                     }
+                    </tbody>
+                  </table>
+                </div>
+
+                  <div className='col-md-6'>
+                  <h4>Order to be placed</h4>
+                    <table className='table table-bordered'>
+                      <thead>
+                       <tr className="table-danger">
+                        <th>S.N</th>
+                        <th>Product</th>
+                        <th>Stocks</th>
+                        <th>Par Level</th>
+                       </tr>
+                      </thead>
+                      <tbody>
+                        {
+                             orderToBePlaced.map((o, i) => (
+                                <tr key={i} className="table-danger">
+                                  <td>{i+1}</td>
+                                  <td>{o.title}</td>
+                                  <td>{o.quantity}&nbsp;{o.unit}</td>
+                                  <td>{o.parLevel}</td>
+                                </tr>
+                             ))
+                                
+                        }
+                      </tbody>
+                    </table>
+                </div>
+
+
+                <div className='col-md-12'>
                       <h4>Manage Users</h4>
-                        <table className='table table-bordered'>
+                        <table className='table table-bordered table-success'>
                           <thead>
                            <tr>
                             <th>S.N</th>
                             <th>Name</th>
                             <th>Position</th>
+                            <th>Email</th>
+                            <th>Manage</th>
                            </tr>
                           </thead>
                           <tbody>
-                            <tr>
-                              <td>1</td>
-                              <td>Ashim</td>
-                              <td>General-Manager</td>
-                            </tr>
                             {
                                  usersArr.map((o, i) => (
                                    <tr key={i}>
                                      <td>{i+1}</td>
                                      <td>{o.name}</td>
                                      <td>{o.position}</td>
+                                     <td>{o.email}</td>
+                                     <td>
+                                       <NavLink to="/manageuser" className="btn btn-md btn-success">Edit</NavLink>&nbsp;
+                                       <NavLink to="/manageuser" className="btn btn-md btn-success">Delete</NavLink>
+                                     </td>
                                    </tr>
                                  )) 
                             }
                           </tbody>
                         </table>
                   </div>
-                  
-                  <div className='col-md-4'>
-                  <h4>Total stocks</h4>
-                    <table className='table table-bordered'>
-                      <thead>
-                       <tr>
-                        <th>S.N</th>
-                        <th>Product</th>
-                        <th>Stocks</th>
-                       </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td>chicken</td>
-                          <td>4 kg</td>
-                        </tr>
-                        {
-                             productsArr.map((o, i) => (
-                                  <tr key={i}>
-                                    <td>{i+1}</td>
-                                    <td>{o.title}</td>
-                                    <td>{o.quantity}&nbsp;{o.unit}</td>
-                                  </tr>
-                             ))
-                        }
-                      </tbody>
-                    </table>
-                </div>
-
-                <div className='col-md-4'>
-                  <h4>Create orders</h4>
-                    <h6>Place order</h6>
-                </div>
               
   
                 

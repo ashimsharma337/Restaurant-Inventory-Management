@@ -3,8 +3,9 @@ import { toast, Toaster } from 'react-hot-toast';
 import { MdSend } from "react-icons/md";
 import { useParams } from 'react-router-dom';
 import { httpRequest } from '../../services/httpclient';
-import HeaderN  from "../dashboard/common/header/header_component";
 import Sidebar from '../dashboard/common/sidebar/sidebar_component';
+import Heading from "../dashboard/common/heading/heading";
+import DashboardHeader from '../dashboard/common/header/header_component';
 
 const EditProduct = () => {
   let params = useParams();
@@ -21,7 +22,6 @@ const EditProduct = () => {
 
   const [categories, setCategories] = useState([]);
 
-  // const [images, setImages] = useState([]);
 
   useEffect(() => {
        httpRequest.getItems("/category")
@@ -82,7 +82,7 @@ const EditProduct = () => {
 
   return (
     <>
-      <HeaderN/>
+      <DashboardHeader/>
 
 
        <div className="container-fluid">
@@ -90,16 +90,7 @@ const EditProduct = () => {
             <Sidebar/>
 
             <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-              <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 className="h2">Dashboard</h1>
-                <span>Hi, John Doe Welcome!</span>
-                <div className="btn-toolbar mb-2 mb-md-0">
-                  <div className="btn-group me-2">
-                    <button type="button" className="btn btn-sm btn-outline-secondary">Share</button>
-                    <button type="button" className="btn btn-sm btn-outline-secondary">Export</button>
-                  </div>
-                </div>
-              </div>
+              <Heading/>
 
               <h4>Edit Product</h4>
               <hr></hr>

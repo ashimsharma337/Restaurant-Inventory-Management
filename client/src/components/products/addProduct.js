@@ -4,6 +4,7 @@ import { MdAdd } from "react-icons/md";
 import { httpRequest } from '../../services/httpclient';
 import HeaderN  from "../dashboard/common/header/header_component";
 import Sidebar from '../dashboard/common/sidebar/sidebar_component';
+import Heading from "../dashboard/common/heading/heading";
 
 const AddProduct = () => {
 
@@ -63,9 +64,6 @@ const AddProduct = () => {
   const handleSubmit = (e) => {
         e.preventDefault();
 
-        console.log("Product: ", productData);
-        console.log("Images: ", images);
-
         let formData = new FormData();
         
         // file data
@@ -102,16 +100,7 @@ const AddProduct = () => {
             <Sidebar/>
 
             <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-              <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 className="h2">Dashboard</h1>
-                <span>Hi, John Doe Welcome!</span>
-                <div className="btn-toolbar mb-2 mb-md-0">
-                  <div className="btn-group me-2">
-                    <button type="button" className="btn btn-sm btn-outline-secondary">Share</button>
-                    <button type="button" className="btn btn-sm btn-outline-secondary">Export</button>
-                  </div>
-                </div>
-              </div>
+              <Heading/>
 
               <h4>Add Product</h4>
               <hr></hr>
@@ -156,13 +145,19 @@ const AddProduct = () => {
                   </div>
                   <div className="row mb-3">
                       <div className="col-md-12">
-                          <label className="col-md-3 h4">Price:</label>
+                          <label className="col-md-3 h4">Unit Price:</label>
                           <input name="price" onChange={handleChange} type="number" className="col-md-9"></input>
                       </div>
                   </div>
                   <div className="row mb-3">
                       <div className="col-md-12">
-                          <label className="col-md-3 h4">Image:</label>
+                          <label className="col-md-3 h4">Par Level:</label>
+                          <input name="parLevel" onChange={handleChange} type="number" className="col-md-9"></input>
+                      </div>
+                  </div>
+                  <div className="row mb-3">
+                      <div className="col-md-12">
+                          <label className="col-md-3 h4">Image(optional):</label>
                           <input name="image" onChange={handleChange} type="file" className="col-md-9" multiple></input>
                       </div>
                   </div>
@@ -175,6 +170,7 @@ const AddProduct = () => {
                        ))
                      }
                   </div>
+                  
                   
                   <div className="row mb-3">
                       <div className="offset-md-3 col-md-9">

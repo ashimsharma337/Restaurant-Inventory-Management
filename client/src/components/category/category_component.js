@@ -5,6 +5,8 @@ import { MdSend, MdEdit, MdOutlineDeleteForever } from "react-icons/md";
 import { httpRequest } from "../../services/httpclient";
 import toast, { Toaster } from 'react-hot-toast';
 import { NavLink } from "react-router-dom";
+import Heading from '../dashboard/common/heading/heading';
+import DashboardHeader from '../dashboard/common/header/header_component';
 
 const Category = () => {
     const userInfo = JSON.parse(localStorage.getItem("user_info"));
@@ -45,21 +47,12 @@ const Category = () => {
 
   return (
     <>
-      <HeaderN/>
+      <DashboardHeader/>
       <div className='container-fluid'>
         <div className='row'>
            <Sidebar/>
               <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                  <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 className="h2">Dashboard</h1>
-                    <span>Hi, {userInfo.name} Welcome!</span>
-                    <div className="btn-toolbar mb-2 mb-md-0">
-                      <div className="btn-group me-2">
-                        <button type="button" className="btn btn-sm btn-outline-secondary">Share</button>
-                        <button type="button" className="btn btn-sm btn-outline-secondary">Export</button>
-                      </div>
-                    </div>
-                  </div>
+                  <Heading/>
 
                   <h4>All category</h4>
                   <hr></hr>
@@ -71,7 +64,6 @@ const Category = () => {
                       <th scope="col">Category</th>
                       <th scope="col">Parent-Category</th>
                       <th scope="col">Actions</th>
-                      <th scope="col">Parent-id</th>
                     </tr>
                   </thead>
                   <tbody>

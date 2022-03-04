@@ -5,6 +5,7 @@ import { NavLink } from 'react-router-dom';
 import HeaderN from '../dashboard/common/header/header_component';
 import Sidebar from '../dashboard/common/sidebar/sidebar_component';
 import { httpRequest } from '../../services/httpclient';
+import Heading from '../dashboard/common/heading/heading';
 
 const Product = () => {
   const userInfo = JSON.parse(localStorage.getItem("user_info"));
@@ -50,16 +51,7 @@ const Product = () => {
             <Sidebar/>
 
             <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-              <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 className="h2">Dashboard</h1>
-                <span>Hi, {userInfo.name} Welcome!</span>
-                <div className="btn-toolbar mb-2 mb-md-0">
-                  <div className="btn-group me-2">
-                    <button type="button" className="btn btn-sm btn-outline-secondary">Share</button>
-                    <button type="button" className="btn btn-sm btn-outline-secondary">Export</button>
-                  </div>
-                </div>
-              </div>
+              <Heading/>
 
               <h4>Product Page</h4>
               <hr></hr>
@@ -73,7 +65,8 @@ const Product = () => {
                       <th scope="col">Category</th>
                       <th scope="col">Vender</th>
                       <th scope="col">Quantity</th>
-                      <th scope="col">Price</th>
+                      <th scope="col">Unit Price</th>
+                      <th scope="col">Par Level</th>
                       <th scope="col">Actions</th>
                     </tr>
                   </thead>
@@ -87,6 +80,7 @@ const Product = () => {
                           <td>{o.vendor}</td>
                           <td>{o.quantity}&nbsp;{o.unit}</td>
                           <td>${o.price}</td>
+                          <td>{o.parLevel}</td>
                           <td>
 
                           <NavLink to={"/product/"+o._id} className='btn btn-sm btn-warning' ><MdEdit/>&nbsp;Edit</NavLink>&nbsp;

@@ -5,6 +5,7 @@ import { MdSend } from "react-icons/md";
 import { httpRequest } from '../../services/httpclient';
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate,  useParams } from 'react-router-dom';
+import Heading from '../dashboard/common/heading/heading';
 
 const EditCategory = () => {
     const userInfo = JSON.parse(localStorage.getItem("user_info"));
@@ -76,21 +77,12 @@ const EditCategory = () => {
     
   return (
     <>
-      <HeaderN/>
+      <Heading/>
       <div className='container-fluid'>
         <div className='row'>
            <Sidebar/>
               <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                  <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 className="h2">Dashboard</h1>
-                    <span>Hi, {userInfo.name} Welcome!</span>
-                    <div className="btn-toolbar mb-2 mb-md-0">
-                      <div className="btn-group me-2">
-                        <button type="button" className="btn btn-sm btn-primary">All Category</button>
-                        <button type="button" className="btn btn-sm btn-outline-secondary">Export</button>
-                      </div>
-                    </div>
-                  </div>
+                  <Heading/>
 
                   <h4>Edit category</h4>
                   <hr></hr>

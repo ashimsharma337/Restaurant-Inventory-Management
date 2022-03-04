@@ -59,10 +59,21 @@ const updateById = (url, data, is_strict=false) => {
     return http.put(url, data, headers);
 }
 
+const updateQuantityById = (url, data, is_strict=false) => {
+    let headers = getHeaders();
+    if(is_strict){
+        headers.headers = {
+           "authorization": localStorage.getItem("att")
+        }
+    }
+    return http.patch(url, data, headers);
+}
+
 export const httpRequest = {
     postItem,
     getItems,
     deleteItem,
     getItemById,
-    updateById
+    updateById,
+    updateQuantityById
 };

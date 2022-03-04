@@ -10,6 +10,7 @@ import Category from "./components/category/category_component";
 import EditCategory from "./components/category/category_edit.component";
 import EditProduct from "./components/products/editProduct_component";
 import Product from "./components/products/product_component";
+import EditQuantity from "./components/products/addQuantity";
 
 
 function PrivateRoute({component}){
@@ -53,6 +54,10 @@ function App() {
               
             </Route>
             <Route path="/product/:id" element={<PrivateRoute component={<EditProduct/>}></PrivateRoute>}>
+               
+            </Route>
+
+            <Route path="/product/managequantity/:id" element={<PrivateRoute component={<EditQuantity/>}></PrivateRoute>}>
                
             </Route>
             
