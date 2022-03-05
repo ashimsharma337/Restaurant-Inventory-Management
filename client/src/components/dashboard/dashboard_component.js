@@ -189,7 +189,6 @@ const Dashboard = () => {
                                      <td>{o.position}</td>
                                      <td>{o.email}</td>
                                      <td>
-                                       <NavLink to="/manageuser" className="btn btn-md btn-success">Edit</NavLink>&nbsp;
                                        <button className="btn btn-md btn-success" onClick={(event) => {
                                          let confirmed = window.confirm("Are you sure you want to delete this User");
                                          if(confirmed) {

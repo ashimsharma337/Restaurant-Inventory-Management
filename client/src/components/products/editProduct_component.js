@@ -71,7 +71,7 @@ const EditProduct = () => {
         
         httpRequest.updateById(process.env.REACT_APP_BASE_URL+"/products/"+params.id, productData, true)
         .then((success) => {
-             toast.success("Product updated successfully.");
+             toast.success("Product updated successfully. Check, All Products!.");
              console.log(success);
         })
         .catch((error) => {

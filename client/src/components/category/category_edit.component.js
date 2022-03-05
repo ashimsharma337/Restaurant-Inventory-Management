@@ -67,10 +67,11 @@ const EditCategory = () => {
       httpRequest.updateById("/category/"+params.id, data, true)
       .then((response) => {
            console.log(response);
-           toast.success("Category updated successfully!"); 
+           toast.success("Category updated successfully!. Check, All Category!."); 
       })
       .catch((error) => {
            console.log(error);
+           toast.danger(error);
       })
     }
 
