@@ -12,6 +12,7 @@ const AddProduct = () => {
                    title: "",
                    category_id: "",
                    vendor: "",
+                   vendorInfo: "",
                    quantity: 0,
                    unit: "",
                    price: 0
@@ -81,7 +82,7 @@ const AddProduct = () => {
        
         httpRequest.postItem(process.env.REACT_APP_BASE_URL+"/products", formData, true)
         .then((success) => {
-             toast.success("Product added successfully.");
+             toast.success("Product added successfully. Check, all products!.");
              console.log(success);
         })
         .catch((error) => {
@@ -129,6 +130,12 @@ const AddProduct = () => {
                       <div className="col-md-12">
                           <label className="col-md-3 h4">Vendor:</label>
                           <input name="vendor" onChange={handleChange} type="text" className="col-md-9"></input>
+                      </div>
+                  </div>
+                  <div className="row">
+                      <div className="col-md-12">
+                          <label className="col-md-3 h4">Vendor-PhoneNum:</label>
+                          <input name="vendorInfo" onChange={handleChange} type="text" className="col-md-9"></input>
                       </div>
                   </div>
                   <div className="row">

@@ -14,6 +14,7 @@ const EditProduct = () => {
         title: "",
         category_id: "",
         vendor: "",
+        vendorInfo: "",
         quantity: 0,
         unit: "",
         price: 0,
@@ -118,6 +119,12 @@ const EditProduct = () => {
                       <div className="col-md-12">
                           <label className="col-md-3 h4">Vendor:</label>
                           <input name="vendor" defaultValue = {productData.vendor || ""} onChange={handleChange} type="text" className="col-md-9"></input>
+                      </div>
+                  </div>
+                  <div className="row">
+                      <div className="col-md-12">
+                          <label className="col-md-3 h4">Vendor-PhoneNum:</label>
+                          <input name="vendorInfo" onChange={handleChange} type="text" className="col-md-9"></input>
                       </div>
                   </div>
                   <div className="row">
