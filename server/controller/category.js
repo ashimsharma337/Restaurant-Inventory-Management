@@ -1,6 +1,6 @@
 const router = require('express').Router();
-const isLoggedIn = require('../isLoggedIn/isLoggdIn');
 const CategoryController = require("../routeController/category_controller");
+const isLoggedIn = require("../middleware/isLoggedIn/isLoggedIn");
 
 const categoryController = new CategoryController();
 

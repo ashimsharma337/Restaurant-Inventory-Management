@@ -4,9 +4,10 @@ const uploader = require("../uploader/uploader");
 
 
 const ProductModel = require("../model/Product_model");
+const isLoggedIn = require("../middleware/isLoggedIn/isLoggedIn");
 
 router.route("/")
-.get((req, res) => {
+.get(isLoggedIn, (req, res) => {
     ProductModel.find((error, products) => {
         if(products){
             res.json({
@@ -23,7 +24,7 @@ router.route("/")
     .populate("category_id")
 })
 
-.post(uploader.array("image", 4), (req, res, next) => {
+.post(isLoggedIn, uploader.array("image", 4), (req, res, next) => {
     
     if(req.files){
         let image = [];
@@ -51,8 +52,8 @@ router.route("/")
     
 });
 
-router.route(":id")
-.put(uploader.array("image", 4), (req, res, next) => {
+router.route("/:id")
+.put(isLoggedIn, uploader.array("image", 4), (req, res, next) => {
       ProductModel.updateOne({
           _id: req.params.id
       }, {
@@ -76,7 +77,7 @@ router.route(":id")
       })
 })
 
-.patch(uploader.array("image", 4), (req, res, next) => {
+.patch(isLoggedIn, uploader.array("image", 4), (req, res, next) => {
     ProductModel.updateOne({
         _id: req.params.id
     }, {
@@ -100,7 +101,7 @@ router.route(":id")
     })
 })
 
-.get((req, res, next) => {
+.get(isLoggedIn, (req, res, next) => {
       ProductModel.findOne({_id: req.params.id}, {}, {})
       .then((product) => {
           res.json({
@@ -117,7 +118,7 @@ router.route(":id")
       })
 })
 
-.delete((req, res, next) => {
+.delete(isLoggedIn, (req, res, next) => {
     ProductModel.deleteOne({_id: req.params.id})
     .then((success) => {
         res.json({

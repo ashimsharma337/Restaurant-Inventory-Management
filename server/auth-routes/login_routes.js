@@ -3,7 +3,7 @@ const userModel = require("../model/User_model");
 require("dotenv").config();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const isLoggedIn = require("../isLoggedIn/isLoggdIn");
+const isLoggedIn = require("../middleware/isLoggedIn/isLoggedIn");
 
 
 router.post("/", (req, res, next) => {
@@ -22,8 +22,8 @@ router.post("/", (req, res, next) => {
                         data: user,
                         status: 200,
                         msg: "Login success",
-                        token: jwt.sign(
-                            {id: user._id,
+                        token: jwt.sign({
+                             _id: user._id,
                              name: user.name,
                              email: user.email,
                              position: user.position,
