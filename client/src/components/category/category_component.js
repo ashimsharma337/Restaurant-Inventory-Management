@@ -15,7 +15,7 @@ const Category = () => {
 
     // Fetch all the categories from server
     useEffect(() => {
-       httpRequest.getItems("/category")
+       httpRequest.getItems("/category", true)
        .then((response) => {
            let categoryList = response.data.result;
            setAllCategories(categoryList);

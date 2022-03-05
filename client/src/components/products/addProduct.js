@@ -26,7 +26,7 @@ const AddProduct = () => {
   const [newProduct, setNewProduct] = useState({});
 
   useEffect(() => {
-        httpRequest.getItems("/category")
+        httpRequest.getItems("/category", true)
         .then((response) => {
           setCategories(response.data.result);
           console.log(categories);
@@ -39,8 +39,8 @@ const AddProduct = () => {
   const handleChange = (e) => {
         const { name, value, type, files } = e.target;
 
-        console.log("type", type);
-        console.log("files", files);
+        // console.log("type", type);
+        // console.log("files", files);
 
         if(type == "file"){
           let {filesToUpload} = images;

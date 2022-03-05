@@ -31,7 +31,7 @@ const EditCategory = () => {
     },[]);
 
     useEffect(() => {
-        httpRequest.getItems("/category")
+        httpRequest.getItems("/category", true)
         .then((response) => {
           
           if(response.data.result.length > 0 ){

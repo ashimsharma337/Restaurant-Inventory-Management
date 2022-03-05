@@ -55,10 +55,11 @@ const Login = () => {
 
         } else if(result.status === 200){
           localStorage.setItem("att", result.token);
-           let user = {
+          let user = {
              name: result.data.name,
              email: result.data.email,
-             restaurantName: result.data.restaurantName
+             restaurantName: result.data.restaurantName,
+             position: result.data.position
           };
         
           localStorage.setItem("user_info", JSON.stringify(user));

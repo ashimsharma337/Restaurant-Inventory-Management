@@ -17,7 +17,7 @@ const Product = () => {
   }, []);
 
   useEffect(() => {
-    httpRequest.getItems("/products")
+    httpRequest.getItems("/products", true)
     .then((response) => {
       // console.log(response.data.result);
       let productList = response.data.result;

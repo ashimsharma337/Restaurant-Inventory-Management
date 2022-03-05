@@ -24,7 +24,7 @@ const EditProduct = () => {
 
 
   useEffect(() => {
-       httpRequest.getItems("/category")
+       httpRequest.getItems("/category", true)
        .then((categories) => {
          console.log("Categories: ", categories);
          let allCategory = categories.data.result;
@@ -36,7 +36,7 @@ const EditProduct = () => {
   },[])
 
   useEffect(() => {
-        httpRequest.getItemById("/products/"+params.id)
+        httpRequest.getItemById("/products/"+params.id, true)
         .then((response) => {
       
           let product = response.data.result;

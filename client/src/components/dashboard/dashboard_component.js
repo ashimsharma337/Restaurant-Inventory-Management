@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { MdEdit, MdOutlineDeleteForever } from "react-icons/md";
+import React, { useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import HeaderN from './common/header/header_component';
 import Sidebar from './common/sidebar/sidebar_component';
 import { useDispatch, useSelector } from "react-redux";
 import { getProducts, getUsers } from "../../redux/actions/productActions";
 import Heading from './common/heading/heading';
+import axios from 'axios';
 
 
 const Dashboard = () => {
- 
+  const user = JSON.parse(localStorage.getItem("user_info"));
   
   const data = useSelector((state) => state);
 
@@ -24,7 +24,28 @@ const Dashboard = () => {
 
   }, []);
   
-  
+  function handleDelete(index, id){
+    axios.delete(process.env.REACT_APP_BASE_URL+`/users/${id}`,  
+    {
+      data: user,
+      headers: {
+        "content-type": "application/json",
+        "authorization": localStorage.getItem("att")
+      }
+    })
+    .then((response) => {
+      if(response.data.status == 400){
+        alert(response.data.msg);
+      } else {
+        dispatch(getUsers());
+        toast.success("User deleted succesfully.")
+      }
+    })
+    .catch((error) => {
+      console.log("error", error);
+    })
+
+  }
   // console.log("Data: ", data);
   let productsArr = data.allProducts.products;
   let usersArr = data.allUsers.users;
@@ -38,7 +59,7 @@ const Dashboard = () => {
   });
 
   //console.log(orderToBePlaced);
-  console.log(usersArr);
+  // console.log(usersArr);
 
   return (
     <>
@@ -148,7 +169,7 @@ const Dashboard = () => {
 
 
                 <div className='col-md-12'>
-                      <h4>Manage Users</h4>
+                      <h4>Manage Users (For GM Only!.)</h4>
                         <table className='table table-bordered table-success'>
                           <thead>
                            <tr>
@@ -169,7 +190,12 @@ const Dashboard = () => {
                                      <td>{o.email}</td>
                                      <td>
                                        <NavLink to="/manageuser" className="btn btn-md btn-success">Edit</NavLink>&nbsp;
-                                       <NavLink to="/manageuser" className="btn btn-md btn-success">Delete</NavLink>
+                                       <button className="btn btn-md btn-success" onClick={(event) => {
+                                         let confirmed = window.confirm("Are you sure you want to delete this User");
+                                         if(confirmed) {
+                                           return handleDelete(i, o._id);
+                                         }
+                                       }}>Delete</button>
                                      </td>
                                    </tr>
                                  )) 
@@ -192,4 +218,4 @@ const Dashboard = () => {
   )
 }
 
-export default Dashboard
+export default Dashboard;

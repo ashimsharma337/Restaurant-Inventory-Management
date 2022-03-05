@@ -19,7 +19,7 @@ const EditQuantity = () => {
 
 
   useEffect(() => {
-        httpRequest.getItemById("/products/"+params.id)
+        httpRequest.getItemById("/products/"+params.id, true)
         .then((response) => {
       
           let product = response.data.result;
