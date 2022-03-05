@@ -15,6 +15,7 @@ const Category = () => {
 
     // Fetch all the categories from server
     useEffect(() => {
+      toast.success("Welcome to Category Page!.");
        httpRequest.getItems("/category", true)
        .then((response) => {
            let categoryList = response.data.result;
@@ -30,15 +31,11 @@ const Category = () => {
     const handleDelete = (index, catId) => {
       httpRequest.deleteItem("/category/"+catId, true)
       .then((response) => {
-        //  if(response.result.status == 200){
-           // ToDo: axios call to get data
+
            let new_categories = allCategories.filter((o, i) => (i !== index))
            setAllCategories(new_categories);
            toast.success("Category deleted successfully.");
            
-        //  } else {
-        //    toast.error(response.data.msg);
-        //  }
       })
       .catch((error) => {
            toast.error(error);
@@ -99,4 +96,4 @@ const Category = () => {
   )
 }
 
-export default Category
+export default Category;

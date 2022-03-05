@@ -8,7 +8,7 @@ import Heading from '../dashboard/common/heading/heading';
 import DashboardHeader from '../dashboard/common/header/header_component';
 
 const EditCategory = () => {
-    const userInfo = JSON.parse(localStorage.getItem("user_info"));
+
     const navigate = useNavigate();
     let params = useParams();
     
@@ -66,8 +66,7 @@ const EditCategory = () => {
       
       httpRequest.updateById("/category/"+params.id, data, true)
       .then((response) => {
-           console.log(response);
-           toast.success("Category updated successfully!. Check, All Category!."); 
+           navigate("/category");
       })
       .catch((error) => {
            console.log(error);

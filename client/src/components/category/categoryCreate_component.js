@@ -8,6 +8,7 @@ import Heading from '../dashboard/common/heading/heading';
 import DashboardHeader from '../dashboard/common/header/header_component';
 
 const AddCategory = () => {
+    const navigate = useNavigate();
     
     const [title, setTitle] = useState("");
     const [parent_id, setParent_id] = useState(null);
@@ -41,11 +42,11 @@ const AddCategory = () => {
 
       httpRequest.postItem("/category", data, true)
       .then((response) => {
-           console.log(response);
-           toast.success("Category added successfully! Check, all category!");
+           navigate("/category");
       })
       .catch((error) => {
            console.log(error);
+           toast.error(error);
       })
     }
 

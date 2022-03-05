@@ -8,15 +8,11 @@ import { httpRequest } from '../../services/httpclient';
 import Heading from '../dashboard/common/heading/heading';
 
 const Product = () => {
-  const userInfo = JSON.parse(localStorage.getItem("user_info"));
   
   const [allProducts, setAllProducts] = useState([]);
 
   useEffect(() => {
     toast.success('Welcome to Product Page!');
-  }, []);
-
-  useEffect(() => {
     httpRequest.getItems("/products", true)
     .then((response) => {
       // console.log(response.data.result);

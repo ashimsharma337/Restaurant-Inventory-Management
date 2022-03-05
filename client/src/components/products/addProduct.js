@@ -5,8 +5,10 @@ import { httpRequest } from '../../services/httpclient';
 import HeaderN  from "../dashboard/common/header/header_component";
 import Sidebar from '../dashboard/common/sidebar/sidebar_component';
 import Heading from "../dashboard/common/heading/heading";
+import { useNavigate } from 'react-router-dom';
 
 const AddProduct = () => {
+  const navigate = useNavigate();
 
   const [productData, setProductData] = useState({
                    title: "",
@@ -89,8 +91,7 @@ const AddProduct = () => {
 
       httpRequest.postItem(process.env.REACT_APP_BASE_URL+"/products", formData, true)
       .then((success) => {
-          toast.success("Product added successfully. Check, all products!.");
-          console.log(success);
+          navigate("/product"); 
       })
       .catch((error) => {
           toast.error(error);

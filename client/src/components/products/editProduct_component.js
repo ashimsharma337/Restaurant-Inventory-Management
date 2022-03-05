@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
 import { GiConfirmed } from "react-icons/gi";
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { httpRequest } from '../../services/httpclient';
 import Sidebar from '../dashboard/common/sidebar/sidebar_component';
 import Heading from "../dashboard/common/heading/heading";
 import DashboardHeader from '../dashboard/common/header/header_component';
 
 const EditProduct = () => {
+  const navigate = useNavigate();
   let params = useParams();
   const [productData, setProductData] = useState({
 
@@ -72,8 +73,7 @@ const EditProduct = () => {
         
         httpRequest.updateById(process.env.REACT_APP_BASE_URL+"/products/"+params.id, productData, true)
         .then((success) => {
-             toast.success("Product updated successfully. Check, All Products!.");
-             console.log(success);
+            navigate("/product");
         })
         .catch((error) => {
              toast.error(error);
@@ -124,7 +124,7 @@ const EditProduct = () => {
                   <div className="row">
                       <div className="col-md-12">
                           <label className="col-md-3 h4">Vendor-PhoneNum:</label>
-                          <input name="vendorInfo" onChange={handleChange} type="text" className="col-md-9"></input>
+                          <input name="vendorInfo" defaultValue = {productData.vendorInfo || ""} onChange={handleChange} type="text" className="col-md-9"></input>
                       </div>
                   </div>
                   <div className="row">
