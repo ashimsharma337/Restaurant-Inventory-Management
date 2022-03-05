@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
-import { MdSend } from "react-icons/md";
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { GiConfirmed } from "react-icons/gi";
+import { useNavigate, useParams } from 'react-router-dom';
 import { httpRequest } from '../../services/httpclient';
 import HeaderN  from "../dashboard/common/header/header_component";
 import Sidebar from '../dashboard/common/sidebar/sidebar_component';
@@ -68,7 +68,7 @@ const EditQuantity = () => {
             <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
               <Heading/>
 
-              <h4>Add Quantity</h4>
+              <h4>Manage Quantity</h4>
               <hr></hr>
               <div className="container-fluid">
                   <div className="row">
@@ -88,7 +88,7 @@ const EditQuantity = () => {
                   
                   <div className="row mb-3">
                       <div className="offset-md-3 col-md-9">
-                          <button type="submit" onClick={handleSubmit} className="btn btn-md btn-dark mt-3"><MdSend/>&nbsp;Send</button>
+                          <button type="submit" onClick={handleSubmit} className="btn btn-md btn-dark mt-3"><GiConfirmed/>&nbsp;Confirm</button>
                       </div> 
                   </div>
                   

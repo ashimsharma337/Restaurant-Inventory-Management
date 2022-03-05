@@ -1,11 +1,11 @@
 import React, {useEffect, useState } from 'react';
-import HeaderN from '../dashboard/common/header/header_component';
 import Sidebar from '../dashboard/common/sidebar/sidebar_component';
-import { MdSend } from "react-icons/md";
+import { GiConfirmed } from "react-icons/gi";
 import { httpRequest } from '../../services/httpclient';
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate,  useParams } from 'react-router-dom';
 import Heading from '../dashboard/common/heading/heading';
+import DashboardHeader from '../dashboard/common/header/header_component';
 
 const EditCategory = () => {
     const userInfo = JSON.parse(localStorage.getItem("user_info"));
@@ -77,7 +77,7 @@ const EditCategory = () => {
     
   return (
     <>
-      <Heading/>
+      <DashboardHeader/>
       <div className='container-fluid'>
         <div className='row'>
            <Sidebar/>
@@ -117,7 +117,7 @@ const EditCategory = () => {
 
                     <div className='row'>
                       <div className="offset-3 col-md-9 mt-3">
-                        <button type='submit' onClick={handleSubmit} className='btn btn-sm btn-primary'><MdSend/>&nbsp;Send</button>
+                        <button type='submit' onClick={handleSubmit} className='btn btn-sm btn-primary'><GiConfirmed/>&nbsp;Confirm</button>
                       </div>
                     </div>
                   </div>
@@ -130,4 +130,4 @@ const EditCategory = () => {
   )
 }
 
-export default EditCategory
+export default EditCategory;

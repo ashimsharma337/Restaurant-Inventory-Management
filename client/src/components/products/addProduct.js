@@ -174,7 +174,7 @@ const AddProduct = () => {
                   
                   <div className="row mb-3">
                       <div className="offset-md-3 col-md-9">
-                          <button type="submit" onClick={handleSubmit} className="btn btn-md btn-dark mt-3"><MdAdd/>&nbsp;Add</button>
+                          <button type="submit" onClick={handleSubmit} className="btn btn-md btn-primary mt-3"><MdAdd/>&nbsp;Add</button>
                       </div> 
                   </div>
                   

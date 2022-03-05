@@ -1,10 +1,10 @@
 import React from 'react';
-import { MdSpaceDashboard, MdList, MdShoppingCart, MdPeopleAlt, MdAdd } from "react-icons/md";
+import { MdSpaceDashboard, MdList, MdShoppingCart, MdPeopleAlt, MdAdd, MdOutlineInventory2, MdAddCircle, MdMiscellaneousServices } from "react-icons/md";
 import { Link } from 'react-router-dom';
 
 
 const Sidebar = () => {
-    const userInfo = JSON.parse(localStorage.getItem("user_info"));
+
   return (
     <>     
             <nav id="sidebarMenu" className="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
@@ -16,12 +16,9 @@ const Sidebar = () => {
                       Dashboard
                     </Link>
                   </li>
-                  <li className="nav-item">
-                    <a className="nav-link" href="#">
-                    <MdList/>&nbsp;
-                      Orders
-                    </a>
-                  </li>
+                  <h6 class="sidebar-heading  justify-content-between  px-3 mt-2 mb-1 text-muted">
+                    <MdOutlineInventory2/>&nbsp;&nbsp;Stocks
+                  </h6>
                   <li className="nav-item">
                     <Link to="/product" className="nav-link">
                     <MdShoppingCart/>&nbsp;
@@ -34,6 +31,9 @@ const Sidebar = () => {
                       All Category
                     </Link>
                   </li>
+                  <h6 class="sidebar-heading  justify-content-between  px-3 mt-2 mb-1 text-muted">
+                    <MdAddCircle/>&nbsp;&nbsp;Add
+                  </h6>
                   <li className="nav-item">
                     <Link to="/addproduct" className="nav-link">
                       <MdAdd/>&nbsp;
@@ -45,6 +45,15 @@ const Sidebar = () => {
                       <MdAdd/>&nbsp;
                       Add Category
                     </Link>
+                  </li>
+                  <h6 class="sidebar-heading  justify-content-between  px-3 mt-2 mb-1 text-muted">
+                    <MdMiscellaneousServices/>&nbsp;&nbsp;Miscellaneous
+                  </h6>
+                  <li className="nav-item">
+                    <a className="nav-link" href="#">
+                    <MdList/>&nbsp;
+                      Orders
+                    </a>
                   </li>
                   <li className="nav-item">
                     <a className="nav-link" href="#">

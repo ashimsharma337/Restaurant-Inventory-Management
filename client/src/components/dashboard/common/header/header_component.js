@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MdFastfood } from "react-icons/md";
+import { MdFastfood, MdLogout } from "react-icons/md";
 
 const DashboardHeader = () => {
     const userInfo = JSON.parse(localStorage.getItem("user_info"));
@@ -11,7 +11,7 @@ const DashboardHeader = () => {
             
             <div className="navbar-nav">
               <div className="nav-item text-nowrap">
-                <Link to="/logout" className="navbar-brand px-3" >Log out</Link>
+                <Link to="/logout" className="navbar-brand px-3" ><MdLogout/>&nbsp;Log out</Link>
               </div>
             </div>
        </header>

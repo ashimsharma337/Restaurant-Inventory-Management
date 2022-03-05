@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Sidebar from '../dashboard/common/sidebar/sidebar_component';
-import { MdSend } from "react-icons/md";
+import { MdAdd } from "react-icons/md";
 import { httpRequest } from '../../services/httpclient';
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,6 @@ import Heading from '../dashboard/common/heading/heading';
 import DashboardHeader from '../dashboard/common/header/header_component';
 
 const AddCategory = () => {
-    const navigate = useNavigate();
     
     const [title, setTitle] = useState("");
     const [parent_id, setParent_id] = useState(null);
@@ -43,7 +42,7 @@ const AddCategory = () => {
       httpRequest.postItem("/category", data, true)
       .then((response) => {
            console.log(response);
-           toast.success("Category added successfully!");
+           toast.success("Category added successfully! Check, all category!");
       })
       .catch((error) => {
            console.log(error);
@@ -90,7 +89,7 @@ const AddCategory = () => {
 
                     <div className='row'>
                       <div className="offset-3 col-md-9 mt-3">
-                        <button type='submit' onClick={handleSubmit} className='btn btn-sm btn-primary'><MdSend/>&nbsp;Send</button>
+                        <button type='submit' onClick={handleSubmit} className='btn btn-sm btn-primary'><MdAdd/>&nbsp;Add</button>
                       </div>
                     </div>
                   </div>

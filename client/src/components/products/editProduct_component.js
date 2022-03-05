@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
-import { MdSend } from "react-icons/md";
+import { GiConfirmed } from "react-icons/gi";
 import { useParams } from 'react-router-dom';
 import { httpRequest } from '../../services/httpclient';
 import Sidebar from '../dashboard/common/sidebar/sidebar_component';
@@ -156,7 +156,7 @@ const EditProduct = () => {
                   
                   <div className="row mb-3">
                       <div className="offset-md-3 col-md-9">
-                          <button type="submit" onClick={handleSubmit} className="btn btn-md btn-dark mt-3"><MdSend/>&nbsp;Send</button>
+                          <button type="submit" onClick={handleSubmit} className="btn btn-md btn-primary mt-3"><GiConfirmed/>&nbsp;Confirm</button>
                       </div> 
                   </div>
                   
