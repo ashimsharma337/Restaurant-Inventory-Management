@@ -16,7 +16,7 @@ const Sidebar = () => {
                       Dashboard
                     </Link>
                   </li>
-                  <h6 class="sidebar-heading  justify-content-between  px-3 mt-2 mb-1 text-muted">
+                  <h6 className="sidebar-heading  justify-content-between  px-3 mt-2 mb-1 text-muted">
                     <MdOutlineInventory2/>&nbsp;&nbsp;Stocks
                   </h6>
                   <li className="nav-item">
@@ -31,7 +31,7 @@ const Sidebar = () => {
                       All Category
                     </Link>
                   </li>
-                  <h6 class="sidebar-heading  justify-content-between  px-3 mt-2 mb-1 text-muted">
+                  <h6 className="sidebar-heading  justify-content-between  px-3 mt-2 mb-1 text-muted">
                     <MdAddCircle/>&nbsp;&nbsp;Add
                   </h6>
                   <li className="nav-item">
@@ -46,20 +46,20 @@ const Sidebar = () => {
                       Add Category
                     </Link>
                   </li>
-                  <h6 class="sidebar-heading  justify-content-between  px-3 mt-2 mb-1 text-muted">
+                  <h6 className="sidebar-heading  justify-content-between  px-3 mt-2 mb-1 text-muted">
                     <MdMiscellaneousServices/>&nbsp;&nbsp;Miscellaneous
                   </h6>
                   <li className="nav-item">
-                    <a className="nav-link" href="#">
+                    <Link to="/order" className="nav-link">
                     <MdList/>&nbsp;
                       Orders
-                    </a>
+                    </Link>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link" href="#">
+                    <Link to="/vendor" className="nav-link">
                       <MdPeopleAlt/>&nbsp;
                       Venders
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
