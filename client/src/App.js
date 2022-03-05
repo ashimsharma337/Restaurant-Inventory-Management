@@ -12,6 +12,8 @@ import EditCategory from "./components/category/category_edit.component";
 import EditProduct from "./components/products/editProduct_component";
 import Product from "./components/products/product_component";
 import EditQuantity from "./components/products/addQuantity";
+import Order from "./components/orders/order";
+import Vendor from "./components/vendors/vendor";
 
 
 function App() {
@@ -32,6 +34,8 @@ function App() {
             <Route path="/product/managequantity/:id" element={<PrivateRoute component={<EditQuantity/>}></PrivateRoute>}></Route>
             <Route path="/addcategory" element={<PrivateRoute component={<AddCategory/>}></PrivateRoute>}></Route>
             <Route path="/category/:id" element={<PrivateRoute component={<EditCategory/>}></PrivateRoute>}></Route>
+            <Route path="/order" element={<PrivateRoute component={<Order/>}></PrivateRoute>}></Route>
+            <Route path="/vendor" element={<PrivateRoute component={<Vendor/>}></PrivateRoute>}></Route>
           </Routes>
       </BrowserRouter>
     </>
