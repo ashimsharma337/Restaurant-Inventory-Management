@@ -38,31 +38,9 @@ const AddProduct = () => {
         })
   },[]);
 
-  const validateForm = (values) => {
-    let errors = {};
-    if(!values.title){
-      errors.title = "Name is required";
-    } 
-    if(!values.vendor){
-      errors.vendor = "Vendor is required";
-    } 
-    if(!values.vendorInfo){
-      errors.vendorInfo = "Vendor phone number is required";
-    }
-    if(!values.quantity){
-      errors.quantity = "Quantity is required";
-    } 
-    if(!values.unit){
-      errors.unit = "Unit is required";
-    }
-    if(!values.price){
-      errors.price = "Unit price is required";
-    }
-    if(!values.parLevel){
-      errors.parLevel = "Par Level is required";
-    }
-    return errors;
-}
+ 
+
+ 
 
 
   const handleChange = (e) => {
@@ -92,34 +70,59 @@ const AddProduct = () => {
 
   const handleSubmit = (e) => {
         e.preventDefault();
+        setErrors(validateForm(productData));
+        setIsSubmit(true);
+  };
 
-        let formData = new FormData();
+  useEffect(() => {
+    if(Object.keys(errors).length === 0 && isSubmit){
+      let formData = new FormData();
         
         // file data
         images.map((obj) => {
            formData.append("image", obj, obj.name);
         })
-        
-        setErrors(validateForm(productData));
         // product data
         for(let key in productData){
-            formData.append(key, productData[key])
-        }
+          formData.append(key, productData[key])
+      }
 
-        //setErrors(validateForm(productData));
-        setIsSubmit(true);
-      
-        if(Object.keys(errors).length === 0 && isSubmit){
-              httpRequest.postItem(process.env.REACT_APP_BASE_URL+"/products", formData, true)
-              .then((success) => {
-                  toast.success("Product added successfully. Check, all products!.");
-                  console.log(success);
-              })
-              .catch((error) => {
-                  toast.error(error);
-              })
-        }
-  };
+      httpRequest.postItem(process.env.REACT_APP_BASE_URL+"/products", formData, true)
+      .then((success) => {
+          toast.success("Product added successfully. Check, all products!.");
+          console.log(success);
+      })
+      .catch((error) => {
+          toast.error(error);
+      })
+    }
+  },[errors])
+
+  const validateForm = (values) => {
+    let errors = {};
+    if(!values.title){
+      errors.title = "Name is required";
+    } 
+    if(!values.vendor){
+      errors.vendor = "Vendor is required";
+    } 
+    if(!values.vendorInfo){
+      errors.vendorInfo = "Vendor phone number is required";
+    }
+    if(!values.quantity){
+      errors.quantity = "Quantity is required";
+    } 
+    if(!values.unit){
+      errors.unit = "Unit is required";
+    }
+    if(!values.price){
+      errors.price = "Unit price is required";
+    }
+    if(!values.parLevel){
+      errors.parLevel = "Par Level is required";
+    }
+    return errors;
+}
 
 
   return (
