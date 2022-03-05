@@ -1,6 +1,7 @@
 import Home from "./components/home/home_component";
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import Login from "./components/login/login_component";
+import PrivateRoute from "./components/private-route/privateRoute_component";
 import Dashboard from "./components/dashboard/dashboard_component";
 import Register from "./components/register/register_component";
 import AddProduct from "./components/products/addProduct";
@@ -12,13 +13,6 @@ import EditProduct from "./components/products/editProduct_component";
 import Product from "./components/products/product_component";
 import EditQuantity from "./components/products/addQuantity";
 
-
-function PrivateRoute({component}){
-      const is_Logged_In = localStorage.getItem("att");
-
-      return is_Logged_In ? component : <Navigate to="/login"/>;
-
-}
 
 function Logout(){
       localStorage.clear();
