@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import MainHeader from '../headers/header_component';
 import Footer from '../footers/footer_component';
-import { MdHttp } from 'react-icons/md';
 import { httpRequest } from '../../services/httpclient';
-import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
@@ -47,7 +45,7 @@ const Register = () => {
   useEffect(() => {
     console.log(errors);
      if(Object.keys(errors).length === 0 && isSubmit){
-       console.log(userDetail);
+       // console.log(userDetail);
        httpRequest.postItem("/register", userDetail, true)
        .then((success) => {
          navigate('/login');
@@ -124,13 +122,6 @@ const Register = () => {
             </select>
             <span className='text-danger'>{errors.position}</span>
           </div>
-          {/* <div className="col-md-12">
-            <label className="form-label">Status</label>
-            <select id="status" className="form-select">
-              <option value="">Choose...</option>
-              <option></option>
-            </select>
-          </div> */}
           <div className="col-md-12">
             <label className="form-label">Restaurant Name</label>
             <input onChange={handleChange} name="restaurantName" type="text" className="form-control" placeholder="Enter Restaurant Name"/>
@@ -142,7 +133,7 @@ const Register = () => {
       </form>
     </div>
     <Footer/>
-    <Toaster/>
+    
     </>
   )
 }

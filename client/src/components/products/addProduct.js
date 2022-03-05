@@ -24,18 +24,46 @@ const AddProduct = () => {
 
   const [images, setImages] = useState([]);
 
-  const [newProduct, setNewProduct] = useState({});
+  const [errors, setErrors] = useState({});
+  const [isSubmit, setIsSubmit] = useState(false);
 
   useEffect(() => {
         httpRequest.getItems("/category", true)
         .then((response) => {
           setCategories(response.data.result);
-          console.log(categories);
+          //console.log(categories);
         })
         .catch((error) => {
           console.log(error);
         })
   },[]);
+
+  const validateForm = (values) => {
+    let errors = {};
+    if(!values.title){
+      errors.title = "Name is required";
+    } 
+    if(!values.vendor){
+      errors.vendor = "Vendor is required";
+    } 
+    if(!values.vendorInfo){
+      errors.vendorInfo = "Vendor phone number is required";
+    }
+    if(!values.quantity){
+      errors.quantity = "Quantity is required";
+    } 
+    if(!values.unit){
+      errors.unit = "Unit is required";
+    }
+    if(!values.price){
+      errors.price = "Unit price is required";
+    }
+    if(!values.parLevel){
+      errors.parLevel = "Par Level is required";
+    }
+    return errors;
+}
+
 
   const handleChange = (e) => {
         const { name, value, type, files } = e.target;
@@ -72,22 +100,25 @@ const AddProduct = () => {
            formData.append("image", obj, obj.name);
         })
         
+        setErrors(validateForm(productData));
         // product data
         for(let key in productData){
             formData.append(key, productData[key])
         }
 
-        
+        //setErrors(validateForm(productData));
+        setIsSubmit(true);
       
-       
-        httpRequest.postItem(process.env.REACT_APP_BASE_URL+"/products", formData, true)
-        .then((success) => {
-             toast.success("Product added successfully. Check, all products!.");
-             console.log(success);
-        })
-        .catch((error) => {
-             toast.error(error);
-        })
+        if(Object.keys(errors).length === 0 && isSubmit){
+              httpRequest.postItem(process.env.REACT_APP_BASE_URL+"/products", formData, true)
+              .then((success) => {
+                  toast.success("Product added successfully. Check, all products!.");
+                  console.log(success);
+              })
+              .catch((error) => {
+                  toast.error(error);
+              })
+        }
   };
 
 
@@ -111,6 +142,7 @@ const AddProduct = () => {
                       <div className="col-md-12">
                           <label className="col-md-3 h4">Item-Name:</label>
                           <input name="title" onChange={handleChange} type="text" className="col-md-9"></input>
+                          <span className='text-danger col-md-9'>{errors.title}</span>
                       </div>
                   </div>
                   <div className="row">
@@ -130,36 +162,42 @@ const AddProduct = () => {
                       <div className="col-md-12">
                           <label className="col-md-3 h4">Vendor:</label>
                           <input name="vendor" onChange={handleChange} type="text" className="col-md-9"></input>
+                          <span className='text-danger col-md-9'>{errors.vendor}</span>
                       </div>
                   </div>
                   <div className="row">
                       <div className="col-md-12">
                           <label className="col-md-3 h4">Vendor-PhoneNum:</label>
                           <input name="vendorInfo" onChange={handleChange} type="text" className="col-md-9"></input>
+                          <span className='text-danger col-md-9'>{errors.vendorInfo}</span>
                       </div>
                   </div>
                   <div className="row">
                       <div className="col-md-12">
                           <label className="col-md-3 h4">Quantity:</label>
                           <input name="quantity" onChange={handleChange} type="number" className="col-md-9"></input>
+                          <span className='text-danger col-md-9'>{errors.quantity}</span>
                       </div>
                   </div>
                   <div className="row">
                       <div className="col-md-12">
                           <label className="col-md-3 h4">Unit:</label>
                           <input name="unit" onChange={handleChange} type="text" className="col-md-9"></input>
+                          <span className='text-danger col-md-9'>{errors.unit}</span>
                       </div>
                   </div>
                   <div className="row mb-3">
                       <div className="col-md-12">
                           <label className="col-md-3 h4">Unit Price:</label>
                           <input name="price" onChange={handleChange} type="number" className="col-md-9"></input>
+                          <span className='text-danger col-md-9'>{errors.price}</span>
                       </div>
                   </div>
                   <div className="row mb-3">
                       <div className="col-md-12">
                           <label className="col-md-3 h4">Par Level:</label>
                           <input name="parLevel" onChange={handleChange} type="number" className="col-md-9"></input>
+                          <span className='text-danger col-md-9'>{errors.parLevel}</span>
                       </div>
                   </div>
                   <div className="row mb-3">
