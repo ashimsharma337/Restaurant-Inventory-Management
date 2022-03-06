@@ -50,7 +50,7 @@ app.use(function(err, req, res, next) {
   res.json(err);
 });
 
-app.listen(PORT, "localhost", (err) => {
+app.listen(PORT, function(err) {
    if(err){
       console.log(`Error Listening at ${PORT}`);
    } else {
