@@ -1,6 +1,5 @@
 const router = require("express").Router();
 const userModel = require("../model/User_model");
-require("dotenv").config();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const isLoggedIn = require("../middleware/isLoggedIn/isLoggedIn");
@@ -30,7 +29,7 @@ router.post("/", (req, res, next) => {
                              status: user.status,
                              restaurantName: user.restaurantName
                             }, 
-                            process.env.PRIVATEKEY)
+                            "MYPRIVATEKEYFORJWT")
                     })
                 }
             })

@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
-require("dotenv").config();
-const DATABASE = process.env.DATABASE;
 
-mongoose.connect(DATABASE)
+mongoose.connect("mongodb+srv://ashim:ashimsharma@cluster0.6ktkn.mongodb.net/mern-class-project?retryWrites=true&w=majority")
 .then(() => {
     console.log("Database connection successfull..");
 })
