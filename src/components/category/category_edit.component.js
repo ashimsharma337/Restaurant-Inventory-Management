@@ -99,11 +99,11 @@ const EditCategory = () => {
                     <div className='row'>
                       <div className="col-md-12">
                         <label htmlFor="parenId mt-3" className= "col-md-3 h4">Child of:</label>
-                        <select type="text" name="parent_id" defaultValue={category.parent_id || ""} className='col-md-9 mt-3' onChange={(e) => {
-                          return setParent_id(e.target.value)
-                        }} placeholder='Enter Category type'>
-                          <option value="">Choose One</option>
-                          <option value="">None</option>
+                        <select type="text" name="parent_id"  className='col-md-9 mt-3' onChange={(e) => {
+                          return setParent_id(e.target.value || null)
+                        }} defaultValue={category.parent_id || ""} placeholder='Enter Category type'>
+                          <option value="" >Choose One</option>
+                          <option value="" >This product is a category.</option>
                           {
                                allParentCat.map((cat, index) => (
                                  <option key={index} value={cat._id}>

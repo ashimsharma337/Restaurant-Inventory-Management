@@ -7,12 +7,15 @@ import { useNavigate } from 'react-router-dom';
 import Heading from '../dashboard/common/heading/heading';
 import DashboardHeader from '../dashboard/common/header/header_component';
 
+
 const AddCategory = () => {
     const navigate = useNavigate();
     
     const [title, setTitle] = useState("");
     const [parent_id, setParent_id] = useState(null);
     const [allParentCat, setAllParentCat] = useState([]);
+
+   
     
     
     useEffect(() => {
@@ -43,6 +46,7 @@ const AddCategory = () => {
       httpRequest.postItem("/category", data, true)
       .then((response) => {
            navigate("/category");
+           console.log(response);
       })
       .catch((error) => {
            console.log(error);
@@ -74,9 +78,10 @@ const AddCategory = () => {
                       <div className="col-md-12">
                         <label htmlFor="parenId mt-3" className= "col-md-3 h4">Category:</label>
                         <select name="parent_id" className='col-md-9 mt-3' onChange={(e) => {
-                          return setParent_id(e.target.value)
-                        }} placeholder='Enter Item Name'>
-                          <option value = "">Choose One</option>
+                          return setParent_id(e.target.value || null) 
+                        }} value={parent_id || ""} placeholder='Enter Item Name'>
+                          <option value="" >Choose One</option>
+                          <option value="" >This product is a category.</option>
                           {
                                allParentCat.map((cat, index) => (
                                  <option key={index} value={cat._id}>
