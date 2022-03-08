@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-mongoose.connect("mongodb+srv://ashim:ashimsharma@cluster0.6ktkn.mongodb.net/mern-class-project?retryWrites=true&w=majority")
+mongoose.connect("YOUR_MONGODB_URI")
 .then(() => {
     console.log("Database connection successfull..");
 })
