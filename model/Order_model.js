@@ -13,10 +13,10 @@ const OrderItemSchema = new mongoose.Schema({
     timeStamps: true
 });
 
-const OrderItem = mongoose.model("OrderItem", OrderItemSchema);
+module.exports = mongoose.model("OrderItem", OrderItemSchema);
 
 const OrderTableSchema = new mongoose.Schema({
-    items: [OrderItem],
+    items: [OrderItemSchema],
     user: {
         type: mongoose.Types.ObjectId,
         ref: "User",
@@ -31,14 +31,6 @@ const OrderTableSchema = new mongoose.Schema({
 });
 
 
-const OrderTable = mongoose.model("OrderTable", OrderTableSchema);
 
-
-const Order = {
-    
-      orderItem: OrderItem,
-      orderTable: OrderTable,
-}
-
-module.exports = Order;
+module.exports = mongoose.model("OrderTable", OrderTableSchema);
 
