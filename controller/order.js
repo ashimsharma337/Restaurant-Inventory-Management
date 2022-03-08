@@ -1,8 +1,8 @@
 const router = require("express").Router();
 const orderModel = require("../model/Order_model");
 
-const OrderItem = orderModel.orderItem;
-const OrderTable = orderModel.orderTable;
+const OrderItem = require("../model/Order_model");
+const OrderTable = require("../model/Order_model");
 
 router.post("/", (req, res, next) => {
     const orderItem = new OrderItem(req.body);
@@ -41,3 +41,6 @@ router.get("/", (req, res, next) => {
         }
     })
 })
+
+
+module.exports = router;
