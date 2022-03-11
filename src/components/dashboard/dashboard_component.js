@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import HeaderN from './common/header/header_component';
 import Sidebar from './common/sidebar/sidebar_component';
 import { useDispatch, useSelector } from "react-redux";
-import { getProducts, getUsers } from "../../redux/actions/productActions";
+import { getProducts, getUsers } from "../../redux/actions/actions";
 import Heading from './common/heading/heading';
 import axios from 'axios';
 

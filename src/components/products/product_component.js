@@ -18,7 +18,7 @@ const Product = () => {
       // console.log(response.data.result);
       let productList = response.data.result;
       setAllProducts(productList);
-      console.log(productList);
+      // console.log(productList);
     })
     .catch((error) => {
       console.log(error);

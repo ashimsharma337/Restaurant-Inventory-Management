@@ -69,14 +69,14 @@ const AddCategory = () => {
                   <div className='container-fluid'>
                     <div className='row'>
                       <div className="col-md-12">
-                        <label htmlFor="Title mt-3" className= "col-md-3 h4">Item:</label>
+                        <label htmlFor="Title mt-3" className= "col-md-3 h4">Category:</label>
                         <input type="text" name="title" className='col-md-9 mt-3' onChange={(e) => setTitle(e.target.value)} placeholder='Enter Category Name'></input>
                       </div>
                     </div>
 
                     <div className='row'>
                       <div className="col-md-12">
-                        <label htmlFor="parenId mt-3" className= "col-md-3 h4">Category:</label>
+                        <label htmlFor="parenId mt-3" className= "col-md-3 h4">Parent-Category:</label>
                         <select name="parent_id" className='col-md-9 mt-3' onChange={(e) => {
                           return setParent_id(e.target.value || null) 
                         }} value={parent_id || ""} placeholder='Enter Item Name'>
