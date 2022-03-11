@@ -1,43 +1,49 @@
 const router = require("express").Router();
-const orderModel = require("../model/Order_model");
+const OrderModel = require("../model/Order_model");
 
-const OrderItem = require("../model/Order_model");
-const OrderTable = require("../model/Order_model");
+
 
 router.post("/", (req, res, next) => {
-    const orderItem = new OrderItem(req.body);
-    
-    orderItem.save((err, item) => {
+    console.log(req.body);
+    //const { OrderItem, quantity, unitPrice, totalPrice, userName } = req.body;
+    const item = req.body;
+    console.log("item+>>", item);
+    const orderInfo = new OrderModel({
+          items: [item],
+    });
+    console.log(orderInfo);
+    orderInfo.save((err, item) => {
         if(item){
-            res.json({
-                data: item,
+            res.status(200).json({
+                result: item,
                 status: 200,
                 msg: "item added succesfully"
             });
         } else {
-            res.json({
-                data: null,
+            res.status(200).json({
+                result: null,
                 status: 400,
-                msg: JSON.stringify(error)
+                msg: JSON.stringify(err)
             })
         }
-    })
+    });
 })
 
 router.get("/", (req, res, next) => {
-     OrderItem.find((err, items) => {
-        if(items){
-            res.json({
-                data: items,
-                status: 200,
-                msg: "items list"
+    OrderModel.find((err, list) => {
+        if(err){
+            res.status(200).json({
+                result: null,
+                status: 400,
+                msg: JSON.stringify(err)
             });
         } else {
-            res.json({
-                data: null,
-                status: 400,
-                msg: JSON.stringify(error)
-            })
+            let preItem = list[list.length-1];
+            res.status(200).json({
+                result: preItem,
+                status: 200,
+                msg: "Order List."
+            });
         }
     })
 })
