@@ -6,9 +6,10 @@ import Sidebar from '../dashboard/common/sidebar/sidebar_component';
 import Heading from "../dashboard/common/heading/heading";
 import ReactToPrint from 'react-to-print';
 import { useDispatch, useSelector } from "react-redux";
-import { getOrders, getProducts, getUsers, setOrders } from "../../redux/actions/actions";
-import { Navigate, useNavigate } from 'react-router-dom';
+import { getProducts, getUsers, setOrders } from "../../redux/actions/actions";
+import { useNavigate } from 'react-router-dom';
 import { httpRequest } from '../../services/httpclient';
+import moment  from 'moment';
 
 
 
@@ -96,13 +97,12 @@ const Order = () => {
 
     let total = 0;
     orderList.forEach((item) => {
-        total = total + item.totalPrice;
+        total += item.totalPrice;
     })
-    console.log("Total: ", total);
 
     let preTotal = 0;
     preOrder.forEach((item) => {
-        preTotal = preTotal + item.totalPrice;
+        preTotal += preTotal + item.totalPrice;
     })
 
     const sendOrder = () => {
@@ -126,7 +126,7 @@ const Order = () => {
         })
     }
    console.log("preOrder: ", preOrder);
-   
+
   return (
     <>
       <Header/>
@@ -178,7 +178,7 @@ const Order = () => {
                                   
                          }
                      </tbody>
-                     <tfoot>
+                     <tfoot className='table-info'>
                          <tr>
                              <td>Total</td>
                              <td>{orderList.length}</td>
@@ -248,14 +248,14 @@ const Order = () => {
                                   
                          }
                      </tbody>
-                     <tfoot>
+                     <tfoot className='table-info'>
                          <tr>
                              <td>Total</td>
                              <td>{preOrder.length}</td>
                              <td>--</td>
                              <td>--</td>
                              <td>$&nbsp;{preTotal}</td>
-                             <td>Order At&nbsp;{preDate}</td>
+                             <td>Order At&nbsp;{moment(preDate).format('MMMM Do YYYY, h:mm:ss a')}</td>
                          </tr>
                      </tfoot>
                   </table>
