@@ -22,6 +22,25 @@ export const getUsers = () => {
 
 };
 
+export const getOrders = () => {
+    
+    return async function (dispatch) {
+        const response = await httpRequest.getItems("/orders", true);
+
+        dispatch({type: ActionTypes.GET_ORDERS, payload: response.data.result});
+    };
+
+};
+
+export const setOrders = (data) => {
+    
+    return async function (dispatch) {
+        const response = await httpRequest.postItem("/orders", data, true);
+
+        dispatch({type: ActionTypes.SET_ORDERS, payload: response.data.result});
+    };
+}
+
 
 
 

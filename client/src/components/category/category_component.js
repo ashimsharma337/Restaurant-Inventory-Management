@@ -58,8 +58,8 @@ const Category = () => {
                   <thead>
                     <tr>
                       <th scope="col">S.N</th>
-                      <th scope="col">Item</th>
                       <th scope="col">Category</th>
+                      <th scope="col">Parent-Category</th>
                       <th scope="col">Actions</th>
                     </tr>
                   </thead>

@@ -3,7 +3,7 @@ import HeaderN  from "../dashboard/common/header/header_component";
 import Sidebar from '../dashboard/common/sidebar/sidebar_component';
 import Heading from "../dashboard/common/heading/heading";
 import { useDispatch, useSelector } from "react-redux";
-import { getProducts } from "../../redux/actions/productActions";
+import { getProducts } from "../../redux/actions/actions";
 import ReactToPrint from 'react-to-print';
 
 const Vendor = () => {

@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
 
 const isLoggedIn = (req, res, next) => {
     
@@ -22,7 +21,7 @@ const isLoggedIn = (req, res, next) => {
         next("Access denied.");
     }
 
-    const data = jwt.verify(token, process.env.PRIVATEKEY);
+    const data = jwt.verify(token, "MYPRIVATEKEYFORJWT");
     if(!data){
         next('Invalid token')
     }
