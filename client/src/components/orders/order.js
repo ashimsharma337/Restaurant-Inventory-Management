@@ -10,6 +10,7 @@ import { getProducts, getUsers, setOrders } from "../../redux/actions/actions";
 import { useNavigate } from 'react-router-dom';
 import { httpRequest } from '../../services/httpclient';
 import moment  from 'moment';
+import { MdPrint, MdAdd, MdSend, MdNavigateBefore } from "react-icons/md";
 
 
 
@@ -141,7 +142,7 @@ const Order = () => {
 
               
               <ReactToPrint 
-                  trigger={() =>  <button className='btn btn-sm btn-primary mb-2'>Print the order table.</button>}
+                  trigger={() =>  <button className='btn btn-sm btn-primary mb-2'><MdPrint/>&nbsp;Print the order table.</button>}
                   content= {() => componentRef.current}
                   documentTitle="New order"
                   pageStyle="print"
@@ -185,7 +186,7 @@ const Order = () => {
                              <td>--</td>
                              <td>--</td>
                              <td>$&nbsp;{total}</td>
-                             <td>--</td>
+                             <td>&nbsp;{moment().format('MMMM Do YYYY, h:mm:ss a')}</td>
                          </tr>
                      </tfoot>
                   </table>
@@ -208,10 +209,10 @@ const Order = () => {
                             <input name="quantity" onChange={handleChange} type="number"></input>
                         </div>
                         <div className='col-sm-3'>
-                            <button type='submit' onClick={handleClick} className='btn btn-sm btn-primary mt-3'>Add Order Item</button>
+                            <button type='submit' onClick={handleClick} className='btn btn-sm btn-primary mt-3'><MdAdd/>&nbsp;Add Order Item</button>
                         </div>
                         <div className='col-sm-3'>
-                            <button className='btn btn-sm btn-primary  mt-3' onClick={sendOrder}>Send Order</button>
+                            <button className='btn btn-sm btn-primary  mt-3' onClick={sendOrder}><MdSend/>&nbsp;Send Order</button>
                         </div>
                     
                    </div>
@@ -220,7 +221,7 @@ const Order = () => {
 
                   
                   <h4 className='mt-3'>Previous Order</h4><br/>
-                  <button className='btn btn-sm btn-primary mb-2' onClick={handlePreOrder}>See Previous Orders</button>
+                  <button className='btn btn-sm btn-primary mb-2' onClick={handlePreOrder}><MdNavigateBefore/>&nbsp;See Previous Orders</button>
                   <table className="table table-secondary table-bordered">
                      <thead>
                          <tr>
