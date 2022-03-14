@@ -103,7 +103,7 @@ const Order = () => {
 
     let preTotal = 0;
     preOrder.forEach((item) => {
-        preTotal += preTotal + item.totalPrice;
+        preTotal += item.totalPrice;
     })
 
     const sendOrder = () => {
