@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-mongoose.connect("Your db url")
+mongoose.connect("Your mongo atlas url")
 .then(() => {
     console.log("Database connection successfull..");
 })     
