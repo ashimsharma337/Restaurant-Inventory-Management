@@ -75,7 +75,7 @@ const Dashboard = () => {
               
               <div className='container-fluid'>
               <h4>Total Stocks</h4>
-              {/* <div className="table-responsive"> */}
+              <div className="table-responsive">
                 <table className="table table-striped table-sm">
                   <thead>
                     <tr>
@@ -205,8 +205,8 @@ const Dashboard = () => {
               
   
                 
-              {/* </div> */}
-               </div>
+              </div>
+              </div>
               </div>
             </main>
           </div>

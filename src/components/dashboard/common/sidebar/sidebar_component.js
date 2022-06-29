@@ -7,7 +7,7 @@ const Sidebar = () => {
 
   return (
     <>     
-            <nav id="sidebarMenu" className="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <nav id="sidebarMenu" className="col-md-3 col-lg-2 d-md-block bg-light sidebar ">
               <div className="position-sticky pt-3">
                 <ul className="nav flex-column">
                   <li className="nav-item">
