@@ -9,8 +9,8 @@ app.use("/", function(req, res, next) {
     res.sendFile(path.join(process.cwd(), "build/index.html"));
 })
 
-app.listen(process.env.PORT || 8080, function(err) {
+app.listen(process.env.PORT || 80, function(err) {
     if(!err){
-        console.log("Server is listening");
+        console.log("Server is listening at port 80");
     }
 })

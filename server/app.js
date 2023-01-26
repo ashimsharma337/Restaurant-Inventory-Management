@@ -2,6 +2,7 @@ var createError = require('http-errors');
 var express = require('express');
 var cors = require("cors");
 
+require('dotenv').config();
 require("./db_init");
 const PORT = process.env.PORT || 9000;
 

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
+const DBurl = process.env.MONGOURL;
 
-mongoose.connect("Your mongo atlas url...")
+mongoose.connect(DBurl)
 .then(() => {
     console.log("Database connection successfull..");
 })     
