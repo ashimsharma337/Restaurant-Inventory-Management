@@ -3,7 +3,7 @@ const router = express.Router();
 const uploader = require("../uploader/uploader");
 
 
-const ProductModel = require("../model/Product_model");
+const ProductModel = require("../models/Product_model");
 const isLoggedIn = require("../middleware/isLoggedIn/isLoggedIn");
 
 router.route("/")
