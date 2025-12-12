@@ -1,6 +1,6 @@
 var express = require('express');
 const req = require('express/lib/request');
-const User = require('../model/User_model');
+const User = require('../models/User_model');
 var router = express.Router();
 const isLoggedIn = require("../middleware/isLoggedIn/isLoggedIn");
 const isGM = require("../middleware/isGeneralManager/isGM");

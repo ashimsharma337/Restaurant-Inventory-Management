@@ -1,4 +1,4 @@
-const Category = require("../model/Category_model");
+const Category = require("../models/Category_model");
 
 class CategoryController{
     getAllCategories = (req, res, next) => {

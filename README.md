@@ -8,4 +8,6 @@ password: supervisor123
 
 general manager:
 email: ashimsharma123@test.com
-password: admin123
+password: admin123 
+
+Note: Please go through the inventory management using kafka
