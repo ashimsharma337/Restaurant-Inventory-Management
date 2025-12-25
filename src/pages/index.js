@@ -1,9 +1,12 @@
+import Layout from '@/components/layout/Layout';
+import HeroSection from '@/components/landing/HeroSection';
+import Features from '@/components/landing/Features';
+
 export default function Home() {
   return (
-    <main className="p-8">
-      <h1 className="text-2xl font-bold">
-
-      </h1>
-    </main>
+    <Layout>
+      <HeroSection />
+      <Features />
+    </Layout>
   );
 }
