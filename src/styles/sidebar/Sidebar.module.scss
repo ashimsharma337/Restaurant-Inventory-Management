@@ -1,0 +1,67 @@
+/* Root class coming from Sidebar.module.scss
+   This class is attached to MUI Drawer via PaperProps.className */
+.sidebar {
+
+    width: 240px;
+
+
+  /* & means "the same selector as parent"
+     This becomes:
+     .sidebar.MuiDrawer-paper
+
+     MuiDrawer-paper is the actual visible panel of MUI Drawer
+     (NOT the outer wrapper) */
+  &.MuiDrawer-paper {
+
+    /* Dark slate background color
+       WCAG-compliant dark background
+       Used for sidebar surface */
+    background-color: #0f172a;
+
+    /* Light gray text color
+       High contrast against dark background (AAA compliant)
+       Applied to all text inside the sidebar */
+    color: #e5e7eb;
+  }
+
+  /* Targets all MUI ListItemButton components inside the sidebar
+     These are usually sidebar menu items */
+  .MuiListItemButton-root {
+
+    /* Rounds the corners of each menu item
+       Makes UI look modern and soft */
+    border-radius: 8px;
+
+    /* Adds spacing around each menu item
+       4px top/bottom, 8px left/right */
+    margin: 4px 8px;
+
+    /* &:hover means "when user hovers this menu item" */
+    &:hover {
+
+      /* Subtle white overlay on hover
+         Improves discoverability without hurting contrast
+         Uses transparency instead of solid color */
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    /* &.Mui-selected means:
+       A ListItemButton that is currently active/selected
+       (usually based on route) */
+    &.Mui-selected {
+
+      /* Blue background for active menu item
+         WCAG AA compliant contrast
+         Common enterprise dashboard pattern */
+      background-color: #1d4ed8;
+
+      /* Hover state for the selected item */
+      &:hover {
+
+        /* Slightly darker blue on hover
+           Gives feedback without changing meaning */
+        background-color: #1e40af;
+      }
+    }
+  }
+}
