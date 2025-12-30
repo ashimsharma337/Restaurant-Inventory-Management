@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import {
   Drawer,
   List,
@@ -19,19 +20,18 @@ const Sidebar = () => {
       PaperProps={{
         className: styles.sidebar,
       }}
-      sx={{
-        width: SIDEBAR_WIDTH,
-        flexShrink: 0,
-      }}
+      sx={{ width: SIDEBAR_WIDTH, flexShrink: 0 }}
     >
       <List>
         {NAV_ITEMS
           .filter(item => item.roles.includes(userRole))
           .map(item => (
             <ListItem disablePadding key={item.label}>
-              <ListItemButton>
-                <ListItemText primary={item.label} />
-              </ListItemButton>
+              <Link href={item.path} passHref legacyBehavior>
+                <ListItemButton component="a">
+                  <ListItemText primary={item.label} />
+                </ListItemButton>
+              </Link>
             </ListItem>
           ))}
       </List>
