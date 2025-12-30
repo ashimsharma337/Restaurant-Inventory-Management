@@ -1,0 +1,27 @@
+.tableWrapper {
+  height: 500px;
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+
+  // WCAG-compliant contrast
+  .MuiDataGrid-root {
+    border: none;
+    color: #0f172a; // Dark slate (AA compliant)
+  }
+
+  .MuiDataGrid-columnHeaders {
+    background-color: #f1f5f9;
+    color: #0f172a;
+    font-weight: 600;
+  }
+
+  .MuiDataGrid-row:hover {
+    background-color: #e2e8f0;
+  }
+
+  .MuiDataGrid-footerContainer {
+    border-top: 1px solid #e5e7eb;
+  }
+}
