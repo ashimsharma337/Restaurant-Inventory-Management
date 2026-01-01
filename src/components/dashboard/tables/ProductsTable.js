@@ -1,14 +1,15 @@
 import dynamic from 'next/dynamic';
+import { useQuery } from '@apollo/client/react';
+import { GET_PRODUCTS } from '@/graphql/client/queries';
+import styles from '@/styles/dashboard/ProductsTable.module.scss';
 
 const DataGrid = dynamic(
   () => import('@mui/x-data-grid').then(mod => mod.DataGrid),
   { ssr: false }
 );
 
-import styles from '@/styles/dashboard/ProductsTable.module.scss';
-
 const columns = [
-  { field: 'id', headerName: 'ID', width: 90 },
+  // { field: 'id', headerName: 'ID', width: 90 },
   { field: 'name', headerName: 'Product Name', flex: 1 },
   { field: 'category', headerName: 'Category', width: 160 },
   { field: 'quantity', headerName: 'Quantity', type: 'number', width: 120 },
@@ -17,16 +18,17 @@ const columns = [
   { field: 'status', headerName: 'Status', width: 140 },
 ];
 
-const rows = [
-  { id: 1, name: 'Tomatoes', category: 'Vegetables', quantity: 50, unit: 'kg', price: 2.5, status: 'In Stock' },
-  { id: 2, name: 'Olive Oil', category: 'Grocery', quantity: 10, unit: 'liters', price: 12, status: 'Low Stock' },
-];
 
 export default function ProductsTable() {
+  const { data, loading, error } = useQuery(GET_PRODUCTS);
+
+  if (loading) return <p>Loading products...</p>
+  if (error) return <p>Error loading products</p>
+
   return (
     <div className={styles.tableWrapper}>
       <DataGrid
-        rows={rows}
+        rows={data.products}
         columns={columns}
         pageSizeOptions={[5, 10, 25]}
         checkboxSelection
