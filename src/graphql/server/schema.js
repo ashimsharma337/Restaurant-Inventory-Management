@@ -12,6 +12,7 @@ export const typeDefs = gql`
     unit: String!
     price: Float!
     status: String!
+    stockValue: Float!
     createdAt: String
     updatedAt: String
   }

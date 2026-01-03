@@ -18,6 +18,12 @@ export const resolvers = {
     },
   },
 
+  Product: {
+      createdAt: (parent) => parent.created_at,
+      updatedAt: (parent) => parent.updated_at,
+      stockValue: (parent) => parent.price * parent.quantity
+  },
+
   Mutation: {
     createProduct: async (_, { input }) => {
       const { name, category, quantity, unit, price } = input;
