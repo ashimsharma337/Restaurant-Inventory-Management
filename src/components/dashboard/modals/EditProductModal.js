@@ -14,7 +14,8 @@ import { UPDATE_PRODUCT, GET_PRODUCTS } from '@/graphql/client/queries';
 export default function EditProductModal({ open, onClose, product }) {
   const [form, setForm] = useState({
     name: '',
-    category: '',
+    categoryId: '',
+    categoryName: '',
     quantity: '',
     unit: '',
     price: '',
@@ -30,7 +31,8 @@ export default function EditProductModal({ open, onClose, product }) {
     if (product) {
       setForm({
         name: product.name,
-        category: product.category,
+        categoryId: product.category?.id??'',
+        categoryName: product.category?.name??'',
         quantity: product.quantity,
         unit: product.unit,
         price: product.price,
@@ -54,7 +56,7 @@ export default function EditProductModal({ open, onClose, product }) {
         id: product.id,
         input: {
           name: form.name,
-          category: form.category,
+          categoryId: form.categoryId,
           quantity: Number(form.quantity),
           unit: form.unit,
           price: Number(form.price),
@@ -83,8 +85,8 @@ export default function EditProductModal({ open, onClose, product }) {
           <Grid item xs={6}>
             <TextField
               label="Category"
-              name="category"
-              value={form.category}
+              name="categoryName"
+              value={form.categoryName}
               onChange={handleChange}
               fullWidth
             />

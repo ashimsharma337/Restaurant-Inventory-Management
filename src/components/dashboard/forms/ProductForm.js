@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { TextField, Button, Stack, MenuItem, ListSubheader } from '@mui/material';
 import { UNIT_GROUPS } from '@/utility/units';
+import { useQuery } from '@apollo/client/react';
+import { GET_CATEGORIES } from '@/graphql/client/queries';
 
 const ProductForm = ({ onSubmit, loading }) => {
   const [form, setForm] = useState({
     name: '',
-    category: '',
+    categoryId: '',
     quantity: '',
     unit: '',
     price: '',
@@ -27,11 +29,28 @@ const ProductForm = ({ onSubmit, loading }) => {
     });
   };
 
+  const { data } = useQuery(GET_CATEGORIES);
+
   return (
     <form onSubmit={handleSubmit}>
       <Stack spacing={2}>
         <TextField label="Product Name" name="name" required value={form.name} onChange={handleChange} />
-        <TextField label="Category" name="category" required value={form.category} onChange={handleChange} />
+        <TextField 
+          select
+          label="Category" 
+          name="categoryId" 
+          required value={form.categoryId} 
+          onChange={handleChange}
+        >
+          <MenuItem value="">
+            <em>Select Category</em>
+          </MenuItem>
+          {data?.categories.map(cat => (
+            <MenuItem key={cat.id} value={cat.id}>
+              {cat.name}
+            </MenuItem>
+          ))}
+        </TextField>
         <TextField label="Quantity" name="quantity" type="number" required value={form.quantity} onChange={handleChange} />
         <TextField 
           select label="Unit" 

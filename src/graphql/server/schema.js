@@ -7,7 +7,8 @@ export const typeDefs = gql`
   type Product {
     id: ID!
     name: String!
-    category: String!
+    categoryId: ID!
+    category: Category
     quantity: Int!
     unit: String!
     price: Float!
@@ -22,7 +23,7 @@ export const typeDefs = gql`
   """
   input CreateProductInput {
     name: String!
-    category: String!
+    categoryId: ID!
     quantity: Int!
     unit: String!
     price: Float!
@@ -33,7 +34,7 @@ export const typeDefs = gql`
   """
   input UpdateProductInput {
     name: String
-    category: String
+    categoryId: ID
     quantity: Int
     unit: String
     price: Float
@@ -49,6 +50,22 @@ export const typeDefs = gql`
     createProduct(input: CreateProductInput!): Product!
     updateProduct(id: ID!, input: UpdateProductInput!): Product!
     deleteProduct(id: ID!): Boolean!
+  }
+
+  type Category {
+    id: ID!
+    name: String!
+    description: String
+    createdAt: String
+    updatedAt: String
+  }
+
+  extend type Query {
+    categories: [Category!]!
+  }
+
+  extend type Mutation {
+    createCategory(name: String!, description: String): Category!
   }
 `;
 

@@ -5,7 +5,10 @@ export const GET_PRODUCTS = gql`
     products {
       id
       name
-      category
+      category {
+        id
+        name
+      }
       quantity
       unit
       price
@@ -19,7 +22,10 @@ export const CREATE_PRODUCT = gql`
     createProduct(input: $input) {
       id
       name
-      category
+      category {
+        id
+        name
+      }
       quantity
       unit
       price
@@ -45,4 +51,13 @@ export const DELETE_PRODUCT = gql`
   mutation DeleteProduct($id: ID!) {
    deleteProduct(id: $id)
   } 
+`;
+
+export const GET_CATEGORIES = gql`
+  query GetCategories {
+    categories {
+      id
+      name
+    }
+  }
 `;
