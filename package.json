@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "next lint",
+    "test": "echo \"No tests yet\""
   },
   "dependencies": {
     "@apollo/client": "^4.0.11",
