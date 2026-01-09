@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . && echo 'All files passed linting checks!'"
+    "lint": "eslint . && echo 'All files passed linting checks!'",
+    "test": "echo \"No tests yet\""
   },
   "dependencies": {
     "@apollo/client": "^4.0.11",
@@ -31,5 +32,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.0.10",
     "tailwindcss": "^4"
+  },
+  "engines": {
+  "node": ">=20.9.0"
   }
 }
