@@ -13,33 +13,19 @@ import { UPDATE_PRODUCT, GET_PRODUCTS } from '@/graphql/client/queries';
 
 export default function EditProductModal({ open, onClose, product }) {
   const [form, setForm] = useState({
-    name: '',
-    categoryId: '',
-    categoryName: '',
-    quantity: '',
-    unit: '',
-    price: '',
-    status: '',
+    name: product?.name ?? '',
+    categoryId: product?.category?.id ?? '',
+    categoryName: product?.category?.name ?? '',
+    quantity: product?.quantity ?? '',
+    unit: product?.unit ?? '',
+    price: product?.price ?? '',
+    status: product?.status ?? '',
   });
 
   const [updateProduct, { loading }] = useMutation(UPDATE_PRODUCT, {
     refetchQueries: [{ query: GET_PRODUCTS }],
     onCompleted: onClose,
   });
-
-  useEffect(() => {
-    if (product) {
-      setForm({
-        name: product.name,
-        categoryId: product.category?.id??'',
-        categoryName: product.category?.name??'',
-        quantity: product.quantity,
-        unit: product.unit,
-        price: product.price,
-        status: product.status,
-      });
-    }
-  }, [product]);
 
   const handleChange = (e) => {
     setForm({

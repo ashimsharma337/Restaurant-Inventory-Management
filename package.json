@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint . && echo 'All files passed linting checks!'"
   },
   "dependencies": {
     "@apollo/client": "^4.0.11",
