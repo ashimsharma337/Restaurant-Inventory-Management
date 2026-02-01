@@ -1,8 +1,9 @@
-import { query } from "@/utility/db";
+import { query } from "../../utility/db";
 
 export const resolvers = {
   Query: {
     products: async () => {
+     try {
       const { rows } = await query(`
         SELECT p.*, c.id as category_id, c.name as category_name
         FROM products p
@@ -21,6 +22,10 @@ export const resolvers = {
         updated_at: row.updated_at,
         category: row.category_id ? { id: row.category_id, name: row.category_name } : null,
       }));
+    } catch (err) {
+      console.error("PRODUCTS RESOLVER ERROR:", err);
+      throw err;
+      }
     },
 
     product: async (_, { id }) => {

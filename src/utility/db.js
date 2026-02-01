@@ -9,7 +9,7 @@ const pool = new Pool({
 
   // Important for local dev + production stability
   ssl:
-    process.env.NODE_ENV === 'production'
+    process.env.DB_SSL === 'true'
       ? { rejectUnauthorized: false }
       : false,
 });
