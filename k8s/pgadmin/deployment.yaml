@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgadmin
+  namespace: inventory
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgadmin
+  template:
+    metadata:
+      labels:
+        app: pgadmin
+    spec:
+      containers:
+        - name: pgadmin
+          image: dpage/pgadmin4
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          env:
+            - name: PGADMIN_DEFAULT_EMAIL
+              value: admin@admin.com
+            - name: PGADMIN_DEFAULT_PASSWORD
+              value: admin
+            - name: PGADMIN_CONFIG_SERVER_MODE
+              value: "True"
+            - name: PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED
+              value: "False"
+            - name: PGADMIN_CONFIG_WTF_CSRF_ENABLED
+              value: "False"
