@@ -1,3 +1,58 @@
+Kubernetes is an open-source platform for managing containerized applications through a `declarative model` and `automation`. The core concepts can be broadly categorized into the `cluster architecture and the objects used to define application workloads and their desired state`. 
+
+# Cluster Architecture
+A Kubernetes cluster is a set of machines, called nodes, that work together as a single unit. 
+
+- `Control Plane (Master Node)`: The "brain" that manages the cluster's overall state and makes global decisions, such as scheduling applications and responding to events.
+
+- `Worker Nodes`: The machines that run the containerized applications (workloads). Each node contains a kubelet agent to communicate with the control plane and a container runtime (e.g., containerd) to execute containers.
+
+- `etcd`: A distributed, highly-available key-value store that serves as the cluster's single source of truth for all configuration and state data. 
+
+# Core Kubernetes Objects
+Users interact with the cluster by creating API objects that represent the desired state of their applications. The control plane then works continuously to match the actual state to this desired state. 
+
+- `Pods`: The smallest deployable unit in Kubernetes. A Pod is a logical group that wraps one or more containers (which share the same IP address, network, and storage) and provides a shared environment for them to run. Pods are ephemeral, meaning they are created and destroyed frequently.
+
+- `Deployments`: A higher-level abstraction that manages a set of identical Pods. You use a Deployment to declare how many replicas of an application you want to run and how to update them (e.g., rolling updates) without downtime. It handles self-healing by automatically replacing failed Pods.
+
+- `Services`: An abstraction that defines a stable, persistent way to access a set of Pods. Services provide a consistent IP address and DNS name, acting as internal load balancers for traffic to healthy Pods, decoupling application access from the ephemeral nature of Pods.
+
+`Ingress`: Manages external access to services, typically HTTP/HTTPS traffic. It provides external routable URLs, load balancing, and TLS termination, allowing traffic from outside the cluster to reach the appropriate services.
+
+`Volumes`: Represents a directory that can hold data, accessible to the containers within a Pod. Volumes outlive the containers in a Pod, and Persistent Volumes (PVs) provide storage that persists beyond the life of the Pod itself, ensuring data is not lost if a Pod is restarted or moved.
+
+`ConfigMaps and Secrets`: Objects used to store configuration data and sensitive information (like passwords or API tokens), respectively. They help decouple configuration from the application code or container image, making applications more portable and secure. 
+
+
+Kubernetes networking relies on a flat networking model where every Pod receives a unique IP address, enabling direct communication without NAT. 
+
+What is Network Address Translation? 
+`Network Address Translation` (NAT) is a process that enables one, unique IP address to represent an entire group of computers. In network address translation, a network device, often a router or NAT firewall, assigns a computer or computers inside a private network a public address.
+
+Essential concepts include `CNI plugins for network configuration, Services (ClusterIP, NodePort, LoadBalancer) for stable service discovery/load balancing, Ingress controllers for external HTTP/S traffic, and Network Policies for security segmentation`. 
+
+# Key Networking Concepts & Components
+- `Container Network Interface (CNI)`: The plugin standard (e.g., Calico, Flannel, Cilium) that assigns IP addresses to Pods and manages network interfaces.
+Pod-to-Pod Communication: The fundamental requirement that all pods can communicate across nodes without NAT.
+
+- `Service Discovery & Load Balancing`: Services provide a stable IP address and DNS name to connect to dynamic, ephemeral Pods.
+Network Policies: Firewall-like rules that control traffic flow (ingress/egress) between pods and namespaces.
+
+- `Ingress/Egress`: Ingress manages external access to services (HTTP/HTTPS), while Egress controls outbound traffic.
+
+- `Overlay Networks`: Encapsulation techniques (e.g., VXLAN) commonly used to create a virtual network layer for pods across physical nodes.
+
+`Linux Networking Fundamentals`: Knowledge of namespaces, virtual ethernet pairs (veth), bridge devices, and routing tables is critical for debugging. 
+
+## Communication Models
+- `Container-to-Container`: Uses localhost within the same Pod.
+- `Pod-to-Pod`: Within the same node or across nodes.
+- `Pod-to-Service`: Accessing services via ClusterIP.
+- `External-to-Service`: Using Ingress or NodePort to expose apps. 
+
+
+
 - Wherever applicable, `kubectl get all` returns a list of `pods, services, daemon sets, deployments, replica sets, jobs, cronjobs, and stateful sets`. 
 
 - To display all namespaces within the cluster, use the kubectl get command: 
@@ -16,7 +71,7 @@ kube-system       Active   14d
 kubectl config view | grep namespace # gives the current name space
 ```
 
-# 🧠 Big Picture (Docker → Kubernetes mapping)
+# Big Picture (Docker → Kubernetes mapping)
 |Docker Compose	              | Kubernetes.              |
 |-----------------------------|--------------------------|
 | service	                  |     Deployment.          |
@@ -26,7 +81,7 @@ kubectl config view | grep namespace # gives the current name space
 | volume	                  |     PV + PVC             |
 | container_name	          |     Pod name (auto)      |
 
-# 🏗️ Target Architecture (Minikube)
+# Target Architecture (Minikube)
 
 You will run:
 
@@ -40,7 +95,7 @@ You will run:
     - PersistentVolume + PVC → Postgres data
     - emptyDir → optional cache / temp usage
 
-# 📁 Suggested Folder Structure
+# Suggested Folder Structure
 
 Create this in your repo:
 ```cpp
@@ -60,7 +115,7 @@ k8s/
 └── namespace.yaml (optional)
 ```
 
-# 1️⃣ Namespace (optional but professional)
+# 1. Namespace (optional but professional)
 ```yaml
 apiVersion: v1
 kind: Namespace
@@ -87,7 +142,7 @@ kube-system       Active   14d
 ```
 
 
-# 2️⃣ ConfigMap (env vars)
+# 2. ConfigMap (env vars)
 
 This replaces .env
 ```yaml
@@ -117,7 +172,7 @@ kubectl get configmaps -A # Congifmaps across all namespace
 kubectl get configmaps -n <namespace-name>
 ```
 
-# 3️⃣ Postgres Persistent Volume (PV)
+# 3. Postgres Persistent Volume (PV)
 
 Minikube supports hostPath (perfect for learning).
 ```yaml
@@ -140,7 +195,7 @@ kubectl get pv                         # List all PVs
 kubectl describe pv <pv-name>          # Get detailed information for a specific PV 
 ```
 
-# 4️⃣ Postgres Persistent Volume Claim (PVC)
+# 4. Postgres Persistent Volume Claim (PVC)
 ```yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -160,7 +215,7 @@ kubectl get pvc                                  # List all PVCs in the current 
 kubectl get pvc -A                               # List all PVCs across all namespaces
 ```
 
-# 5️⃣ Postgres Deployment (with PVC)
+# 5. Postgres Deployment (with PVC)
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -221,7 +276,7 @@ NAME       READY   UP-TO-DATE   AVAILABLE   AGE
 postgres   1/1     1            1           19h
 ```
 
-# 6️⃣ Postgres Service
+# 6. Postgres Service
 ```yaml
 apiVersion: v1
 kind: Service
@@ -255,7 +310,7 @@ kubectl get services --all-namespaces # view Services across all namespaces
 - LoadBalancer: Provisions a cloud provider balancer. The standard way to expose apps to the internet.
 
 
-# 7️⃣ Node App Deployment
+# 7. Node App Deployment
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -287,7 +342,41 @@ spec:
         - name: temp-storage
           emptyDir: {}
 ```
-## 🔍 Why emptyDir?
+## Why emptyDir?
+An emptyDir is a local, temporary volume that shares a lifecycle with its Pod. It starts empty, persists through container crashes, but is permanently wiped if the Pod is deleted or moved.
+
+### The Two Power Patterns
+
+#### 1. With Init Containers (The "Prepper")
+- `Workflow`: Init Container ➔ Writes Data ➔ Terminates ➔ Main Container ➔ Reads Data.
+
+- `Use Case`: Downloading a Git repo, pulling a database snapshot, or generating a config file before the app starts.
+
+- `Access`: The Main Container accesses the final files at its defined mountPath.
+
+#### 2. With Sidecars (The "Helper")
+- `Workflow`: Main Container ➔ Writes Data ➔ Sidecar Container ➔ Processes/Reads Data (simultaneously).
+
+- `Use Case`: Log shipping (App writes logs, Sidecar sends them to ELK) or a local cache proxy.
+
+- `Access`: Both containers read/write to the same folder in real-time.
+
+#### Quick Commands & Config
+
+- `YAML Definition`:
+
+```YAML
+volumes:
+- name: shared-storage
+  emptyDir: {}  # Use { medium: Memory } for RAM-speed
+```
+- `Accessing via CLI`: Since the Init container is gone, always exec into the Main Container to see the contents:
+
+```Bash
+kubectl exec -it <pod-name> -c <main-container-name> -- ls -la /mount/path
+```
+- `Troubleshooting`: If data is missing, run kubectl describe pod to ensure both containers have identical volumeMounts.name entries.
+
 - Lives as long as the Pod
 - Perfect for:
     - temp files
@@ -320,7 +409,7 @@ spec:
       targetPort: 80 # Matches the containerPort in your Deployment
 ```
 
-# 8️⃣ Node App Service
+# 8. Node App Service
 ```yaml
 apiVersion: v1
 kind: Service
@@ -344,7 +433,7 @@ minikube service app -n inventory    # Access in Minikube
 # Access your application
 ```
 
-# 9️⃣ pgAdmin Deployment
+# 9. pgAdmin Deployment
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -373,7 +462,7 @@ spec:
               value: admin
 ```
 ```yaml
-🔌 pgAdmin Service
+pgAdmin Service
 apiVersion: v1
 kind: Service
 metadata:
@@ -388,18 +477,18 @@ spec:
       targetPort: 80
       nodePort: 30005
 ```
-🚀 Deploy Everything
+Deploy Everything
 ```bash
 kubectl apply -f k8s/
 ```
 
-🌍 Access in Minikube
+Access in Minikube
 ```bash
 minikube service app -n inventory
 minikube service pgadmin -n inventory
 ```
 
-🧪 Debug Commands 
+Debug Commands 
 ```bash
 kubectl get pods -n inventory
 kubectl logs pod-name -n inventory
@@ -539,3 +628,33 @@ That IP you saw:
     ✔ Service exists
     ✔ Network works
     ✔ Pods can talk internally
+
+ ## The "K8s Triage" Master Checklist
+ This is your 60-second "Inside-Out" workflow to solve Networking, Resources, or Volume issues.
+ 
+ ### Phase 1: The "Inside" (Pod & App)
+- `Check Status`: kubectl get pods (Look for Pending, OOMKilled, or CrashLoop).
+
+- `Read Events`: kubectl describe pod (The "Events" section is the #1 source of truth for Mount errors or Scheduling failures).
+
+- `Audit Logs`: kubectl logs <pod> --previous (Check why it crashed before the current restart).
+
+### Phase 2: The "Path" (Connectivity & Storage)
+
+- `Networking`: Run a netshoot pod.
+    - Test IP (curl <pod-ip>) → Tests CNI/Routing.
+    - Test DNS (nslookup <svc>) → Tests CoreDNS.
+- `Volumes`: * Check `PVC Status`: `kubectl get pvc` (Must be `Bound`).
+- Check `Access Mode`: Ensure you aren't trying to attach a ReadWriteOnce disk to two different nodes.
+
+### Phase 3: The "Outside" (Cluster & Node)
+1. `Check Capacity`: kubectl top node (Is the node maxed out on CPU/RAM?).
+2. `Node Health`: kubectl describe node (Look for MemoryPressure or DiskPressure).3. `System Logs`: If the above look fine, check the CNI or Storage Driver logs in the `kube-system` namespace.
+
+### The "Big Three" Commands
+
+| Problem Area         |           Critical Command       |
+|----------------------|----------------------------------|
+|`Networking`           | `kubectl run debug --rm -it --image=nicolaka/netshoot -- bash`
+| `Resources`            | `kubectl top pod --all-namespaces --sort-by=memory` | 
+| `Volumes` | `kubectl describe pvc <pvc-name>` |
