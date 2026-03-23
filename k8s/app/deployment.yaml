@@ -15,7 +15,8 @@ spec:
     spec:
       containers:
         - name: app
-          image: ashimsharma/restaurant-inventory-management-app:v1.0
+          image: docker push ashimsharma/restaurant-inventory:latest 
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
           envFrom:
