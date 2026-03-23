@@ -3,6 +3,26 @@ Kubernetes is an open-source platform for managing containerized applications th
 # Cluster Architecture
 A Kubernetes cluster is a set of machines, called nodes, that work together as a single unit. 
 
+# What Is a Node?
+A `Node` is simply a machine in the cluster.
+It can be:
+- A VM 
+- A physical server 
+- A cloud instance 
+In Minikube: 
+- You usually have `1 node` 
+- It's basically a VM running inside your laptop 
+Check your nodes: 
+```bash
+kubectl get nodes -o wide 
+```
+Each node has:
+- CPU 
+- Memory 
+- Lables 
+- Taints 
+- Pods running on it 
+
 - `Control Plane (Master Node)`: The "brain" that manages the cluster's overall state and makes global decisions, such as scheduling applications and responding to events.
 
 - `Worker Nodes`: The machines that run the containerized applications (workloads). Each node contains a kubelet agent to communicate with the control plane and a container runtime (e.g., containerd) to execute containers.
@@ -13,6 +33,68 @@ A Kubernetes cluster is a set of machines, called nodes, that work together as a
 Users interact with the cluster by creating API objects that represent the desired state of their applications. The control plane then works continuously to match the actual state to this desired state. 
 
 - `Pods`: The smallest deployable unit in Kubernetes. A Pod is a logical group that wraps one or more containers (which share the same IP address, network, and storage) and provides a shared environment for them to run. Pods are ephemeral, meaning they are created and destroyed frequently.
+      A pod:
+        - Runs one or more container 
+        - Is scheduled onto a node 
+        - Shares network + storage within itself 
+Think:
+```cs
+Node (machine)
+  |- Pod A 
+  |- Pod B
+  |- Pod C
+```
+Pods consume resources from the node.
+## What are Resources? 
+Each node has Limited:
+- CPU
+- Memory 
+- Ephemeral storage 
+Example node capacity: 
+```makefile
+CPU: 4 cores 
+Memory: 8Gi
+```
+Pods must declare how much they need.
+Example: 
+```yaml
+resources:
+  request: 
+    cpu: "200m"
+    memory: "256Mi"
+  limits: 
+    cpu: "500m"
+    memory: "512Mi"
+```
+To decide about the resources that will be needed 
+In real production: 
+- Monitor with Prometheus
+- Collect metrics for 1-2 weeks 
+- Calculate: 
+    - P95 CPU
+    - P95 memory 
+- Set:
+    - requests = average 
+    - limits = P95 0r P99
+
+
+Most Kubernetes clusters use:
+- `Prometheus` to scrape metrics 
+- `Grafana` to visualize
+- `kube-state-metrics` for object metics
+- `metrics-server` for lightweight
+NOTE: The real data comes from `Prometheus (or another metrics backend)`, and `Grafana` `visualizes metrics`, Grafana helps us to see P50, P95 etc
+
+Mental Model
+Think of Kubernetes like a hotel:
+- Node = Hotel building
+- CPU/Memory = Rooms 
+- Pod = Guest 
+- Requests = Mninimum rooms reserved
+- Limits = Max rooms allowed
+- Taints = VIP-only floors
+- Tolerations = VIP pass
+
 
 - `Deployments`: A higher-level abstraction that manages a set of identical Pods. You use a Deployment to declare how many replicas of an application you want to run and how to update them (e.g., rolling updates) without downtime. It handles self-healing by automatically replacing failed Pods.
 
@@ -54,6 +136,74 @@ Network Policies: Firewall-like rules that control traffic flow (ingress/egress)
 
 
 - Wherever applicable, `kubectl get all` returns a list of `pods, services, daemon sets, deployments, replica sets, jobs, cronjobs, and stateful sets`. 
+
+# What are Namespaces in Kubernetes?
+In Kubernetes, `namespaces` are a way to logically divide a cluster into multiple virtual clusters. They help organize, isolate, and manage resources within the same physical cluster.
+
+Think of namespaces as folders inside a cluster -- resources like Pods, Services, Deployments, and ConfigMaps live inside a namespace. 
+
+## Why Namespaces are Useful 
+- Seperate environments (dev, staging, prod)
+- Multi-team isolation 
+- Resources control (CPU/memory quotas)
+- Access control (RBAC per namespace)
+- Avoid naming conflicts (same resources name allowed in different namespaces)
+
+## Default Namespaces in a Cluster 
+When you create a cluster (including with Minikube), you'll usually see:
+- `default`- for user workloads (if no namespace specified)
+- `kube-system` - system components (DNS, controller manager, etc.)
+- `kube-public` - publicly readable resources 
+- `kube-node-lease` - node heartbeat info 
+
+## Important Concepts Related to Namespaces 
+Here are the key concepts you should understand 
+
+### 1. Namespace-Scoped vs Cluster-Scoped Resources 
+Namepace-scoped (live inside a namespace):
+- Pods
+- Deployements 
+- Services 
+- ConfigMaps 
+- Secrets 
+- Ingress 
+- Jobs 
+Cluster-scoped (not inside a name namespace):
+- Nodes 
+- PersistentVolumes 
+- StorageClasses 
+- Namespaces themselves 
+
+### 2. Resource Quotas 
+You can limit how many resources a namespace can use
+Example:
+- Max CPU 
+- Max memory 
+- Max number of Pods 
+This prevents one team from consuming the entire cluster 
+Other, concepts RBAC, Network Policies, Namespace Isolation, creating and using namespace
+Example:
+A company might structure namespaces like:
+- dev 
+- staging 
+- production
+- monitoring 
+- logging
+
+NOTE: In real-world clusters, teams commonly use `Grafana dashboards to monitor memory/CPU usage per namespace and then adjust resource requests/limits or quotas accordingly.
+This is typically done using:
+- Grafana (visualization)
+- Prometheus (metrics collection)
+- Kubernetes metrics (via kube-state-metrics + cAdvisor)
+What do we monitor?
+- Memory usage per namespace 
+- CPU usage per namespace 
+- Memory requests vs actual usage 
+- Memory limits vs actual usage 
+- 00M kills 
+- Pod restarts 
+
+
 
 - To display all namespaces within the cluster, use the kubectl get command: 
 ```bash 
@@ -658,3 +808,6 @@ That IP you saw:
 |`Networking`           | `kubectl run debug --rm -it --image=nicolaka/netshoot -- bash`
 | `Resources`            | `kubectl top pod --all-namespaces --sort-by=memory` | 
 | `Volumes` | `kubectl describe pvc <pvc-name>` |
+
+
+# TO DO restartPolicy when to use what (NEVER and OnFailure)
