@@ -13,10 +13,77 @@ spec:
       labels:
         app: node-app
     spec:
+
+      initContainers:
+
+        # ────────────────────────────────────────────────
+        # STEP 1 — init-cache
+        #
+        # Seeds /data/inventory.db from Postgres.
+        # Runs once, exits 0 before anything else starts.
+        # ────────────────────────────────────────────────
+        - name: init-cache
+          image: ashimsharma/restaurant-inventory:latest
+          imagePullPolicy: Never
+          command: ["node", "scripts/init-cache.js"]
+          envFrom:
+            - configMapRef:
+                name: app-config
+          volumeMounts:
+            - name: temp-storage
+              mountPath: /tmp
+            - name: sqlite-cache        # ← dedicated mount for SQLite
+              mountPath: /data
+
+        # ────────────────────────────────────────────────
+        # STEP 2 — cache-sidecar (native sidecar)
+        #
+        # restartPolicy: Always keeps this alive for the
+        # entire Pod lifetime. Main app only starts after
+        # this container reaches Running state.
+        #
+        # Loop and sleep live here in args — no sleep
+        # logic inside any JS file.
+        # ────────────────────────────────────────────────
+        - name: cache-sidecar
+          image: ashimsharma/restaurant-inventory:latest
+          imagePullPolicy: Never
+          restartPolicy: Always
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "[sidecar] Started. Refreshing inventory cache every 2 minutes.";
+              while true; do
+                echo "[sidecar] $(date) - Refreshing cache...";
+                node scripts/refresh-cache.js;
+                echo "[sidecar] $(date) - Refresh done. Sleeping 2 minutes.";
+                sleep 120;
+              done
+          envFrom:
+            - configMapRef:
+                name: app-config
+          volumeMounts:
+            - name: sqlite-cache
+              mountPath: /data
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
+
+      # ────────────────────────────────────────────────
+      # STEP 3 — Next.js main app
+      #
+      # Starts after init-cache exits AND cache-sidecar
+      # is Running. Reads from /data/inventory.db for
+      # fast local reads. Writes go directly to Postgres.
+      # ────────────────────────────────────────────────
       containers:
         - name: app
-          image: docker push ashimsharma/restaurant-inventory:latest 
-          imagePullPolicy: Always
+          image: ashimsharma/restaurant-inventory:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 3000
           envFrom:
@@ -25,6 +92,8 @@ spec:
           volumeMounts:
             - name: temp-storage
               mountPath: /tmp
+            - name: sqlite-cache        # ← reads inventory.db written by sidecar
+              mountPath: /data
           resources:
             requests:
               memory: "128Mi"
@@ -32,6 +101,21 @@ spec:
             limits:
               memory: "256Mi"
               cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /api/health         # make sure this route exists in Next.js
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 15
+
       volumes:
         - name: temp-storage
+          emptyDir: {}
+        - name: sqlite-cache            # ← new dedicated volume for SQLite cache
           emptyDir: {}

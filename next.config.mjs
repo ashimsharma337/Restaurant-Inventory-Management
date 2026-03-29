@@ -13,7 +13,12 @@ const nextConfig = {
 
   // Enable this only if you need external images later
   images: {
-    remotePatterns: [],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
+    ],
   },
 };
 
