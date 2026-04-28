@@ -1,99 +1,172 @@
+# ─────────────────────────────────────────────────────────────
+# Deployment — restaurant-inventory-management
+#
+# Pod anatomy (3 containers):
+#   initContainer : init-cache   → copies SQLite DB from EFS to emptyDir on startup
+#   sidecar       : cache-sidecar → polls EFS every 5 min, hot-reloads if DB changed
+#   main          : app           → Next.js app, reads SQLite from emptyDir
+#
+# Shared volume flow:
+#   EFS (efs-pvc) ──read──→ init-cache ──copy──→ emptyDir (shared-data)
+#   EFS (efs-pvc) ──read──→ cache-sidecar ──copy──→ emptyDir (shared-data)
+#                                                         ↑
+#   main app ───────────────────────────────────reads─────┘
+# ─────────────────────────────────────────────────────────────
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app
   namespace: inventory
 spec:
-  replicas: 1
+  replicas: 2                   # minimum replica count; HPA will scale up from here
   selector:
     matchLabels:
       app: node-app
+  strategy:
+    type: RollingUpdate         # HPA requires RollingUpdate — it adds pods one at a time
+    rollingUpdate:
+      maxUnavailable: 0         # never take a pod down before a new one is ready
+      maxSurge: 1               # allow 1 extra pod during rollout (so 2→3 briefly)
   template:
     metadata:
       labels:
         app: node-app
     spec:
 
+      # ── INIT CONTAINERS ─────────────────────────────────────
+      # initContainers run sequentially before any container in
+      # `containers` starts. Each must exit 0 before the next runs.
+      # ─────────────────────────────────────────────────────────
       initContainers:
 
-        # ────────────────────────────────────────────────
-        # STEP 1 — init-cache
-        #
-        # Seeds /data/inventory.db from Postgres.
-        # Runs once, exits 0 before anything else starts.
-        # ────────────────────────────────────────────────
+        # ── init-cache ──────────────────────────────────────
+        # Runs ONCE at pod startup.
+        # Copies inventory.db from EFS into the pod's local
+        # emptyDir so the app has data immediately on start.
+        # EFS is mounted read-only at /efs-data.
+        # emptyDir is mounted at /data — same path the app reads.
+        # ────────────────────────────────────────────────────
         - name: init-cache
-          image: ashimsharma/restaurant-inventory:latest
-          imagePullPolicy: Never
-          command: ["node", "scripts/init-cache.js"]
+          image: busybox:latest
+          command:
+            - sh
+            - -c
+            - |
+              echo "=== init-cache started ==="
+              # Ensure the target directory exists in the shared emptyDir
+              mkdir -p /data
+
+              if [ -f /efs-data/inventory.db ]; then
+                echo "Found inventory.db on EFS. Copying to local emptyDir..."
+                cp /efs-data/inventory.db /data/inventory.db
+                echo "Copy complete. App will start with warm cache."
+              else
+                echo "No inventory.db found on EFS yet."
+                echo "App will start without cache — CronJob will populate EFS on next run."
+              fi
+
+              echo "=== init-cache done. Exiting. ==="
+              # Must exit for the main containers to start
           envFrom:
             - configMapRef:
                 name: app-config
           volumeMounts:
-            - name: temp-storage
-              mountPath: /tmp
-            - name: sqlite-cache        # ← dedicated mount for SQLite
+            - name: shared-data       # emptyDir — ephemeral, local to this pod, app reads from here at /data
               mountPath: /data
+            - name: efs-storage       # EFS PVC — persistent, shared across pods, read-only source
+              mountPath: /efs-data
+              readOnly: true          # initContainer only reads from EFS
 
-        # ────────────────────────────────────────────────
-        # STEP 2 — cache-sidecar (native sidecar)
-        #
-        # restartPolicy: Always keeps this alive for the
-        # entire Pod lifetime. Main app only starts after
-        # this container reaches Running state.
-        #
-        # Loop and sleep live here in args — no sleep
-        # logic inside any JS file.
-        # ────────────────────────────────────────────────
+      # ── MAIN + SIDECAR CONTAINERS ───────────────────────────
+      # All containers here start in parallel after initContainers
+      # finish. Kubernetes 1.29+ treats containers with
+      # restartPolicy: Always as native sidecars — they start
+      # before the main app and outlive it. On older clusters,
+      # they simply run alongside the main container.
+      # ─────────────────────────────────────────────────────────
+      containers:
+
+        # ── cache-sidecar ─────────────────────────────────────
+        # Runs for the entire lifetime of the pod.
+        # Polls EFS every 5 minutes. If the inventory.db has changed
+        # (detected via md5 checksum), it copies the new version to emptyDir
+        # to the emptyDir using a safe tmp→rename strategy so the
+        # main app never reads a half-written file.
+        # ──────────────────────────────────────────────────────
         - name: cache-sidecar
-          image: ashimsharma/restaurant-inventory:latest
-          imagePullPolicy: Never
-          restartPolicy: Always
-          command: ["sh", "-c"]
-          args:
+          image: busybox:latest
+          command:
+            - sh
+            - -c
             - |
-              echo "[sidecar] Started. Refreshing inventory cache every 2 minutes.";
+              echo "=== cache-sidecar started. Polling EFS every 300s ==="
+              LAST_CHECKSUM=""
+
               while true; do
-                echo "[sidecar] $(date) - Refreshing cache...";
-                node scripts/refresh-cache.js;
-                echo "[sidecar] $(date) - Refresh done. Sleeping 2 minutes.";
-                sleep 120;
+                sleep 300   # poll every 5 minutes
+
+                EFS_FILE="/efs-data/inventory.db"
+                LOCAL_FILE="/data/inventory.db"
+                TMP_FILE="/data/inventory.db.tmp"
+
+                if [ -f "$EFS_FILE" ]; then
+                  CURRENT_CHECKSUM=$(md5sum "$EFS_FILE" | awk '{print $1}')
+
+                  # Only copy if checksum has actually changed since last poll
+                  if [ "$CURRENT_CHECKSUM" != "$LAST_CHECKSUM" ]; then
+                    echo "Change detected at $(date). Checksum: $CURRENT_CHECKSUM"
+                    echo "Copying updated cache to local emptyDir..."
+
+                    # Write to .tmp first, then atomic rename — prevents the main
+                    # app from reading a partially written file mid-copy
+                    cp "$EFS_FILE" "$TMP_FILE"
+                    mv "$TMP_FILE" "$LOCAL_FILE"
+
+                    LAST_CHECKSUM="$CURRENT_CHECKSUM"
+                    echo "Local SQLite cache updated successfully."
+                  else
+                    echo "No change on EFS at $(date). Skipping copy."
+                  fi
+                else
+                  echo "EFS file not found at $(date). Waiting for CronJob to populate..."
+                fi
               done
           envFrom:
             - configMapRef:
                 name: app-config
           volumeMounts:
-            - name: sqlite-cache
+            - name: shared-data       # emptyDir — writes updated DB here
               mountPath: /data
+            - name: efs-storage       # EFS PVC — reads from here
+              mountPath: /efs-data
+              readOnly: true
           resources:
             requests:
               memory: "64Mi"
               cpu: "50m"
             limits:
               memory: "128Mi"
-              cpu: "200m"
+              cpu: "100m"
 
-      # ────────────────────────────────────────────────
-      # STEP 3 — Next.js main app
-      #
-      # Starts after init-cache exits AND cache-sidecar
-      # is Running. Reads from /data/inventory.db for
-      # fast local reads. Writes go directly to Postgres.
-      # ────────────────────────────────────────────────
-      containers:
+        # ── app (Next.js) ─────────────────────────────────────
+        # Main application container. Starts after init-cache exits.
+        # Reads SQLite from emptyDir (/data/inventory.db) — populated by
+        # init-cache at startup, refreshed by cache-sidecar at runtime.
+        # All writes (inventory mutations) go directly to PostgreSQL.
+        # ──────────────────────────────────────────────────────
         - name: app
           image: ashimsharma/restaurant-inventory:latest
-          imagePullPolicy: Never
+          imagePullPolicy: Never      # use locally built image in minikube — no registry pull
           ports:
             - containerPort: 3000
           envFrom:
             - configMapRef:
                 name: app-config
           volumeMounts:
-            - name: temp-storage
-              mountPath: /tmp
-            - name: sqlite-cache        # ← reads inventory.db written by sidecar
+            - name: shared-data       # reads SQLite DB /data/inventory.db written by init-cache / cache-sidecar
               mountPath: /data
+            - name: temp-storage      # /tmp scratch space for Next.js runtime
+              mountPath: /tmp
           resources:
             requests:
               memory: "128Mi"
@@ -103,19 +176,29 @@ spec:
               cpu: "500m"
           readinessProbe:
             httpGet:
-              path: /api/health         # make sure this route exists in Next.js
+              path: /api/health       # pod only receives traffic when this returns 200
               port: 3000
-            initialDelaySeconds: 10
+            initialDelaySeconds: 10   # give Next.js time to compile on first start
             periodSeconds: 5
           livenessProbe:
             httpGet:
-              path: /api/health
+              path: /api/health       # restart pod if this fails (app hung/crashed)
               port: 3000
-            initialDelaySeconds: 30
+            initialDelaySeconds: 30   # longer delay — don't restart during slow cold start
             periodSeconds: 15
 
+      # ── VOLUMES ──────────────────────────────────────────────
+      # Volumes are defined once here and referenced by name in
+      # each container's volumeMounts above.
+      # ─────────────────────────────────────────────────────────
       volumes:
-        - name: temp-storage
-          emptyDir: {}
-        - name: sqlite-cache            # ← new dedicated volume for SQLite cache
+        - name: shared-data           # emptyDir — lives on the node, scoped to this pod's lifetime (ephemeral)
+          emptyDir:                   # wiped when pod is deleted — init-cache repopulates on restart
+            sizeLimit: 1Gi
+
+        - name: efs-storage           # EFS PVC — persistent across pod restarts and rescheduling, shared across all pod
+          persistentVolumeClaim:
+            claimName: efs-pvc        # must match metadata.name in pv-pvc.yml
+
+        - name: temp-storage          # scratch emptyDir for /tmp — keeps node disk clean
           emptyDir: {}
