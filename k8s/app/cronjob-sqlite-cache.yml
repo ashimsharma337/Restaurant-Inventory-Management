@@ -1,0 +1,81 @@
+# ─────────────────────────────────────────────────────────────
+# CronJob — sqlite-cache-job
+#
+# Runs every 10 minutes. Fetches fresh data from TheMealDB API,
+# rebuilds the SQLite cache DB, and writes it to the EFS PVC.
+#
+# All pods (via init-cache + cache-sidecar) read from this same
+# EFS path — so one CronJob run refreshes all replicas.
+#
+# Flow:
+#   TheMealDB API → scripts/init-cache.js → meal_cache.db → EFS
+# ─────────────────────────────────────────────────────────────
+apiVersion: batch/v1
+kind: CronJob              # capital J — Kubernetes is case-sensitive
+metadata:
+  name: sqlite-cache-job
+  namespace: inventory
+spec:
+  schedule: "*/10 * * * *"             # every 10 minutes
+  concurrencyPolicy: Forbid            # if previous job is still running, skip new trigger
+                                       # prevents overlapping writes to EFS
+  startingDeadlineSeconds: 300         # if cluster was down and schedule was missed by >5min, skip it
+  successfulJobsHistoryLimit: 3        # keep last 3 successful job pods for log inspection
+  failedJobsHistoryLimit: 3            # keep last 3 failed job pods for debugging
+
+  jobTemplate:
+    spec:
+      backoffLimit: 3                  # retry up to 3 times on failure before marking job failed
+      activeDeadlineSeconds: 600       # kill job if it runs longer than 10 min (was 1hr — too long
+                                       # for a 10min schedule; would cause overlapping runs)
+      template:
+        spec:
+          restartPolicy: OnFailure     # required for CronJob pods — retry on failure up to backoffLimit
+
+          containers:
+            # ── sqlite-cache-fetcher ─────────────────────────
+            # Runs your existing init-cache.js script which:
+            #   1. Calls TheMealDB API
+            #   2. Builds/updates meal_cache.db (SQLite)
+            #   3. Writes it to /app/data/mealdb-cache/ on EFS
+            #
+            # The sidecar in each Deployment pod will detect
+            # the new checksum and hot-reload within 5 minutes.
+            # ─────────────────────────────────────────────────
+            - name: sqlite-cache-fetcher
+              image: ashimsharma/restaurant-inventory:latest
+              imagePullPolicy: Never
+              command:
+                - sh
+                - -c
+                - |
+                  echo "=== CronJob started ==="
+
+                  echo "Creating directory on EFS if it doesn't exist..."
+                  # Ensure /data exists on EFS before script runs
+                  # init-cache.js writes to /data/inventory.db
+                  mkdir -p /data 
+                  echo "Running init-cache script..."
+                  node scripts/init-cache.js
+
+                  echo "=== CronJob complete ==="
+              envFrom:
+                - configMapRef:
+                    name: app-config
+              volumeMounts:
+                # Mount EFS at /data so script writes directly to EFS
+                - name: efs-storage           # write SQLite DB directly to EFS
+                  mountPath: /data         # must match the path init-cache.js writes to
+              resources:
+                requests:
+                  cpu: "250m"
+                  memory: "512Mi"
+                limits:
+                  cpu: "500m"
+                  memory: "1Gi"
+
+          volumes:
+              # EFS PVC — persistent shared storage across all pods
+            - name: efs-storage               # same PVC as the Deployment — shared EFS
+              persistentVolumeClaim:
+                claimName: efs-pvc            # must match metadata.name in pv-pvc.yml

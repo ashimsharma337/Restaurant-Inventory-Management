@@ -1,0 +1,90 @@
+# ─────────────────────────────────────────────────────────────
+# HorizontalPodAutoscaler — node-app-hpa
+#
+# Watches CPU and memory of the `app` Deployment and
+# automatically adjusts replica count between 2 and 4.
+#
+# Requires metrics-server to be running in the cluster.
+# kubectl top pods -n inventory  ← verify metrics are flowing
+# ─────────────────────────────────────────────────────────────
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: node-app-hpa
+  namespace: inventory
+spec:
+
+  # ── Target ────────────────────────────────────────────────
+  # Which resource HPA controls. Must match your Deployment's
+  # metadata.name exactly — HPA reads pod metrics and tells
+  # the Deployment how many replicas to maintain.
+  # ──────────────────────────────────────────────────────────
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: app                       # ← matches metadata.name in deployment.yml
+
+  # ── Replica bounds ────────────────────────────────────────
+  # HPA will never go below minReplicas or above maxReplicas
+  # regardless of how high/low metrics go.
+  # minReplicas: 2 matches the `replicas: 2` in deployment.yml
+  # ──────────────────────────────────────────────────────────
+  minReplicas: 2
+  maxReplicas: 4
+
+  # ── Metrics ───────────────────────────────────────────────
+  # HPA evaluates ALL metrics and scales to satisfy the most
+  # demanding one. If CPU wants 3 replicas but memory wants 4,
+  # HPA scales to 4.
+  # ──────────────────────────────────────────────────────────
+  metrics:
+
+    # CPU — scale up when average CPU across all pods > 60%
+    # of their requested CPU (100m in deployment.yml)
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60    # 60% of 100m = 60m per pod
+
+    # Memory — scale up when average memory across all pods
+    # exceeds 75% of their requested memory (128Mi)
+    # Note: memory-based scaling is less common because memory
+    # doesn't compress — pods don't release it quickly, which
+    # can cause thrashing on scale-down
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 75    # 75% of 128Mi ≈ 96Mi per pod
+
+  # ── Behavior ──────────────────────────────────────────────
+  # Controls HOW FAST HPA scales up and down.
+  # Without this, HPA uses aggressive defaults which can cause
+  # replica thrashing (rapid scale up/down oscillation).
+  # behavior is a sibling of metrics — NOT nested inside it.
+  # ──────────────────────────────────────────────────────────
+  behavior:
+
+    scaleUp:
+      # Wait 60s of sustained high load before scaling up.
+      # Prevents reacting to a brief traffic spike.
+      stabilizationWindowSeconds: 60
+      policies:
+        - type: Pods
+          value: 1                  # add at most 1 pod per period
+          periodSeconds: 60         # evaluate every 60 seconds
+                                    # so max scale-up rate = 1 pod/min
+
+    scaleDown:
+      # Wait 300s (5 min) of sustained low load before scaling down.
+      # Longer window than scaleUp — better to keep an extra pod
+      # than to scale down and immediately need to scale back up.
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Pods
+          value: 1                  # remove at most 1 pod per period
+          periodSeconds: 120        # evaluate every 2 minutes
+                                    # so max scale-down rate = 1 pod/2min

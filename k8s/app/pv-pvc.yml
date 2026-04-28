@@ -1,0 +1,58 @@
+# ─────────────────────────────────────────────────────────────
+# PersistentVolume — hostPath (minikube equivalent of AWS EFS)
+#
+# On Minikube, "EFS" is simulated using a hostPath volume, which
+# maps a directory on the Minikube node's filesystem into pods.
+# This gives you cross-pod shared persistent storage locally.
+#
+# On EKS (production), you replace this PV with an EFS-backed
+# StorageClass — the PVC and all pod specs stay unchanged.
+# ─────────────────────────────────────────────────────────────
+# STORAGE ARCHITECTURE NOTE:
+# * Scalability Requirement: Transitioning from local SQLite to a shared storage model to support horizontal scaling.
+# * EBS Limitation: AWS EBS is restricted to single-instance attachment, 
+# preventing shared data access across multiple nodes.
+# * EFS Implementation: Utilizing Amazon EFS (Elastic File System) to provide a centralized, 
+# shared data source accessible by all application instances simultaneously.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: efs-pv
+  namespace: inventory
+  labels:
+    type: efs-local             # label used by PVC selector to bind to this specific PV
+spec:
+  capacity:
+    storage: 5Gi                # total size of this simulated EFS volume
+  accessModes:
+    - ReadWriteMany             # EFS supports ReadWriteMany — multiple pods can mount simultaneously
+                                # CronJob writes, initContainer + sidecar reads — all at the same time
+  persistentVolumeReclaimPolicy: Retain   # keep data even if PVC is deleted (safe default for shared data)
+  storageClassName: manual                # matches the PVC's storageClassName below
+  hostPath:
+    path: /mnt/data/restaurant-inventory  # directory on the minikube node
+    type: DirectoryOrCreate               # create it if it doesn't already exist
+
+---
+# ─────────────────────────────────────────────────────────────
+# PersistentVolumeClaim — what pods actually reference
+#
+# Pods never reference the PV directly — they bind via a PVC.
+# This is the same claim name referenced in deployment.yml
+# and cronjob.yml under volumes.persistentVolumeClaim.claimName
+# ─────────────────────────────────────────────────────────────
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: efs-pvc               # referenced by both CronJob and Deployment
+  namespace: inventory
+spec:
+  accessModes:
+    - ReadWriteMany           # must match the PV's accessModes exactly
+  storageClassName: manual    # must match the PV's storageClassName exactly
+  resources:
+    requests:
+      storage: 5Gi            # must be <= PV capacity for binding to succeed
+  selector:
+    matchLabels:
+      type: efs-local         # pins this PVC to our specific PV via the label above

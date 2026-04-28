@@ -811,3 +811,18 @@ That IP you saw:
 
 
 # TO DO restartPolicy when to use what (NEVER and OnFailure)
+
+# this is extra notes that I realized after deployment of my sqlite-cache-sidecar and post gres 
+Yes, the `PersistentVolumeClaim (PVC)` object lives inside the Kubernetes cluster, while the `Amazon EFS file system itself lives` outside, in AWS. The PVC serves as a Kubernetes-native request for storage, and the EFS CSI driver binds this PVC to the external AWS EFS volume, creating a persistent mount. 
+
+### Key Details on EFS and PVCs in Kubernetes:
+  - `Internal vs. External`: The PVC is a Kubernetes API object (internal). The actual EFS volume exists independently in AWS, allowing data to persist even if the pod or cluster is deleted.
+
+  - `Role of CSI Driver`: The `efs.csi.aws.com` driver connects the PVC in Kubernetes to the actual EFS volume through NFS, enabling shared access across pods.
+  - `Dynamic Provisioning`: Using the EFS CSI driver, you can dynamically create PVs and assign subdirectories on an EFS file system for each PVC, handling up to 120 PVs per file system.
+
+  - `Access Requirements`: Kubernetes nodes must have security group access to the EFS volume to mount the storage. 
+  
+  In short, the metadata (PVC/PV) lives inside K8s, while the storage lives outside on AWS, bridged by the EFS CSI driver.
+
+  The `Container Storage Interface` (CSI) in Kubernetes is a standardized interface that allows Kubernetes to interact with external block and file storage systems
