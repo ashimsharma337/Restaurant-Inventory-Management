@@ -5,9 +5,9 @@ import FAB from './FAB';
 
 const InventoryDashboard = () => {
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900 test-bg">
+    <div className="dashboard-shell">
       <Sidebar />
-      <main className="ml-64 min-h-screen bg-white">
+      <main className="dashboard-main">
         <Header />
         <InventoryTable />
       </main>

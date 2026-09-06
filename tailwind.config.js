@@ -43,7 +43,7 @@ module.exports = {
         "background": "#f8f9fa",
         "on-background": "#191c1d",
         "on-primary-container": "#77bcbd",
-        "primary": "#003334",
+        "primary": "var(--brand-800)",
         "on-error": "#ffffff",
         "surface-dim": "#d9dadb",
         "outline": "#707975",
@@ -55,7 +55,7 @@ module.exports = {
         "surface": "#f8f9fa",
         "on-tertiary-container": "#e89f8c",
         "error-container": "#ffdad6",
-        "primary-container": "#004c4d"
+        "primary-container": "var(--brand-950)"
       },
       fontFamily: {
         "headline": ["Manrope"],

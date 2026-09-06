@@ -3,17 +3,20 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1e3a8a',
+      light: '#25a7a3',
+      main: '#0b5d5e',
+      dark: '#073b3a',
+      contrastText: '#ffffff',
     },
     secondary: {
-      main: '#f59e0b',
+      main: '#b66b16',
     },
     background: {
-      default: '#f9fafb',
+      default: '#fbfcfb',
     },
   },
   typography: {
-    fontFamily: 'Inter, Roboto, sans-serif',
+    fontFamily: 'Inter, sans-serif',
   },
   shape: {
     borderRadius: 8,

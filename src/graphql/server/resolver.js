@@ -106,14 +106,29 @@ export const resolvers = {
     },
 
     updateProduct: async (_, { id, input }) => {
+      const columnMap = {
+        name: "name",
+        categoryId: "category_id",
+        quantity: "quantity",
+        unit: "unit",
+        price: "price",
+        status: "status",
+      };
       const fields = [];
       const values = [];
       let index = 1;
 
-      for (const key in input) {
-        fields.push(`${key} = $${index}`);
-        values.push(input[key]);
+      for (const [key, value] of Object.entries(input)) {
+        const column = columnMap[key];
+        if (!column || value === undefined) continue;
+
+        fields.push(`${column} = $${index}`);
+        values.push(value);
         index++;
+      }
+
+      if (fields.length === 0) {
+        throw new Error("At least one product field is required for update");
       }
 
       values.push(id);
