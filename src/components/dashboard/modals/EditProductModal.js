@@ -7,7 +7,7 @@ import {
   Button,
   Grid,
 } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useMutation } from '@apollo/client/react';
 import { UPDATE_PRODUCT, GET_PRODUCTS } from '@/graphql/client/queries';
 

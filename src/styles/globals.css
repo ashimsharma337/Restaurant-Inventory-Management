@@ -2,4 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+	--brand-950: #073b3a;
+	--brand-800: #0b5d5e;
+	--brand-700: #0f7674;
+	--brand-500: #25a7a3;
+	--brand-100: #d9f2f0;
+	--brand-50: #effaf9;
+	--brand-contrast: #ffffff;
+	--ink: #172322;
+	--muted-ink: #667573;
+	--surface: #fbfcfb;
+	--surface-muted: #f1f5f4;
+	--surface-raised: #ffffff;
+	--line: #dce6e3;
+	--danger: #b9382f;
+	--warning: #b66b16;
+	--success: #2b8062;
+}
+
 

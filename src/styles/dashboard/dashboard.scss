@@ -1,1 +1,19 @@
+.dashboard-shell {
+	min-height: 100vh;
+	color: var(--ink);
+	background: var(--surface);
+}
 
+.dashboard-main {
+	min-height: 100vh;
+	margin-left: 12rem;
+	background: var(--surface);
+}
+
+@media (max-width: 900px) {
+	.dashboard-main { margin-left: 4.75rem; }
+}
+
+@media (max-width: 640px) {
+	.dashboard-main { margin-left: 4.75rem; }
+}

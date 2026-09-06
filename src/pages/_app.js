@@ -1,4 +1,5 @@
 import '@/styles/globals.css';
+import '@/styles/dashboard/dashboard.scss';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from '@/theme/muiTheme';
