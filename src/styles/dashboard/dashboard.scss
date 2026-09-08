@@ -6,14 +6,14 @@
 
 .dashboard-main {
 	min-height: 100vh;
-	margin-left: 12rem;
+	margin-left: 13.5rem;
 	background: var(--surface);
 }
 
 @media (max-width: 900px) {
-	.dashboard-main { margin-left: 4.75rem; }
+	.dashboard-main { margin-left: 4.25rem; }
 }
 
 @media (max-width: 640px) {
-	.dashboard-main { margin-left: 4.75rem; }
+	.dashboard-main { margin-left: 4.25rem; }
 }
