@@ -153,7 +153,7 @@ These components define the public-facing shell:
   - main dashboard layout
   - includes sidebar, header, table, and floating action button
 
-- `src/components/dashboard/Sidebar.js`
+- `src/components/sidebar/Sidebar.js`
   - left navigation panel
 
 - `src/components/dashboard/Header.js`

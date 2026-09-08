@@ -1,4 +1,4 @@
-import Sidebar from './Sidebar';
+import Sidebar from '../sidebar/Sidebar';
 import Header from './Header';
 import InventoryTable from './InventoryTable';
 import FAB from './FAB';
