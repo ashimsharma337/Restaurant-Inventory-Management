@@ -1,0 +1,508 @@
+.page {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100dvh;
+  min-height: 100svh;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: var(--ink);
+  background: var(--surface);
+  font-family: Inter, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.loginCard {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: minmax(0, 1.02fr) minmax(25rem, 0.98fr);
+  overflow: hidden;
+  background: var(--surface-raised);
+}
+
+.brandPanel {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  padding: clamp(2rem, 4vw, 3.5rem);
+  color: var(--brand-contrast);
+  background: linear-gradient(135deg, var(--brand-950) 0%, var(--brand-800) 100%);
+}
+
+.decorativeTop,
+.decorativeBottom {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.decorativeTop {
+  top: -5rem;
+  right: -5rem;
+  width: 16rem;
+  height: 16rem;
+  background: var(--brand-500);
+  opacity: 0.16;
+}
+
+.decorativeBottom {
+  bottom: -2.5rem;
+  left: -2.5rem;
+  width: 12rem;
+  height: 12rem;
+  background: var(--brand-700);
+  opacity: 0.55;
+}
+
+.brandContent,
+.trustRow {
+  position: relative;
+  z-index: 1;
+}
+
+.logoRow {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-bottom: clamp(2rem, 6vh, 4rem);
+}
+
+.logoMark,
+.mobileLogoMark {
+  display: grid;
+  place-items: center;
+  border-radius: 0.65rem;
+  color: var(--brand-800);
+  background: var(--surface-raised);
+  box-shadow: 0 0.45rem 0.8rem rgba(0, 0, 0, 0.14);
+}
+
+.logoMark {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.logoMark span {
+  font-size: 1.2rem;
+}
+
+.logoName {
+  font-family: Manrope, sans-serif;
+  font-size: clamp(1.1rem, 1.8vw, 1.3rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.brandHeading {
+  margin: 0 0 1.15rem;
+  font-family: Manrope, sans-serif;
+  font-size: clamp(2rem, 3.4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.08;
+}
+
+.brandHeading span {
+  color: var(--brand-100);
+}
+
+.brandDescription {
+  max-width: 27rem;
+  margin: 0;
+  color: var(--brand-100);
+  font-size: clamp(0.88rem, 1.25vw, 0.98rem);
+  line-height: 1.55;
+  opacity: 0.9;
+}
+
+.trustRow {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.trustRow p {
+  margin: 0;
+  color: var(--brand-100);
+  font-size: 0.76rem;
+}
+
+.avatarGroup {
+  display: flex;
+  padding-left: 0.65rem;
+}
+
+.avatar {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin-left: -0.65rem;
+  place-items: center;
+  border: 2px solid var(--brand-800);
+  border-radius: 50%;
+  color: var(--brand-100);
+  background: var(--brand-700);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.formPanel {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(1.5rem, 4vw, 3.5rem);
+  background: var(--surface-raised);
+}
+
+.mobileLogo {
+  display: none;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.mobileLogoMark {
+  width: 2.75rem;
+  height: 2.75rem;
+  color: var(--brand-contrast);
+  background: var(--brand-800);
+}
+
+.formHeader {
+  margin-bottom: 1.75rem;
+}
+
+.formHeader h2 {
+  margin: 0 0 0.4rem;
+  font-family: Manrope, sans-serif;
+  font-size: clamp(1.5rem, 2.5vw, 1.85rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.formHeader p {
+  margin: 0;
+  color: var(--muted-ink);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.fieldGroup label,
+.labelRow label {
+  color: var(--muted-ink);
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.labelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.labelRow a {
+  color: var(--brand-700);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.labelRow a:hover,
+.salesPrompt a:hover {
+  text-decoration: underline;
+}
+
+.inputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputWrap > span {
+  position: absolute;
+  left: 0.85rem;
+  color: var(--muted-ink);
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+.inputWrap input {
+  width: 100%;
+  min-height: 3rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  color: var(--ink);
+  background: var(--surface-muted);
+  font: inherit;
+  font-size: 0.875rem;
+  padding: 0.7rem 2.75rem 0.7rem 2.65rem;
+  outline: none;
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.inputWrap input::placeholder {
+  color: var(--muted-ink);
+  opacity: 0.8;
+}
+
+.inputWrap input:hover {
+  border-color: var(--brand-100);
+}
+
+.inputWrap input:focus {
+  border-color: var(--brand-500);
+  background: var(--surface-raised);
+  box-shadow: inset 4px 0 0 var(--brand-500), 0 0 0 3px var(--brand-50);
+}
+
+.visibilityButton {
+  position: absolute;
+  right: 0.15rem;
+  display: grid;
+  width: 2.5rem;
+  height: calc(100% - 0.3rem);
+  place-items: center;
+  border: 0;
+  border-radius: 0.35rem;
+  color: var(--muted-ink);
+  background: transparent;
+  cursor: pointer;
+}
+
+.visibilityButton:hover {
+  color: var(--brand-700);
+  background: var(--brand-50);
+}
+
+.visibilityButton:focus-visible,
+.socialButton:focus-visible,
+.submitButton:focus-visible {
+  outline: 2px solid var(--brand-500);
+  outline-offset: 2px;
+}
+
+.rememberRow {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--muted-ink);
+  font-size: 0.76rem;
+  cursor: pointer;
+}
+
+.rememberRow input {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: var(--brand-800);
+}
+
+.submitButton {
+  display: flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 0;
+  border-radius: 0.5rem;
+  color: var(--brand-contrast);
+  background: linear-gradient(135deg, var(--brand-950), var(--brand-800));
+  box-shadow: 0 0.45rem 0.9rem rgba(5, 38, 38, 0.18);
+  cursor: pointer;
+  font: 700 0.85rem Manrope, sans-serif;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.submitButton:hover {
+  background: linear-gradient(135deg, var(--brand-800), var(--brand-700));
+  box-shadow: 0 0.65rem 1.1rem rgba(5, 38, 38, 0.24);
+  transform: translateY(-1px);
+}
+
+.submitButton span:last-child {
+  transition: transform 160ms ease;
+}
+
+.submitButton:hover span:last-child {
+  transform: translateX(0.2rem);
+}
+
+.socialSection {
+  margin-top: 1.75rem;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--muted-ink);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.divider span:first-child,
+.divider span:last-child {
+  height: 1px;
+  flex: 1;
+  background: var(--line);
+}
+
+.socialGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+}
+
+.socialButton {
+  display: flex;
+  min-height: 2.65rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  color: var(--muted-ink);
+  background: var(--surface-raised);
+  cursor: pointer;
+  font: 600 0.75rem Inter, sans-serif;
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.socialButton:hover {
+  border-color: var(--brand-100);
+  background: var(--brand-50);
+}
+
+.socialButton:active {
+  transform: translateY(1px);
+}
+
+.googleMark {
+  color: #4285f4;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.salesPrompt {
+  margin: 1.75rem 0 0;
+  color: var(--muted-ink);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.salesPrompt a {
+  color: var(--brand-700);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.securityBadges {
+  position: absolute;
+  right: 1rem;
+  bottom: 0.75rem;
+  left: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 3vw, 1.75rem);
+  color: var(--muted-ink);
+  opacity: 0.62;
+  pointer-events: none;
+}
+
+.securityBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+.securityBadge span:first-child {
+  font-size: 0.9rem;
+}
+
+.securityBadge span:last-child {
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 900px) {
+  .loginCard {
+    grid-template-columns: 1fr;
+  }
+
+  .brandPanel {
+    display: none;
+  }
+
+  .formPanel {
+    padding: 2rem clamp(1.5rem, 8vw, 3rem);
+  }
+
+  .mobileLogo {
+    display: flex;
+  }
+
+  .securityBadges {
+    bottom: 0.6rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .formPanel {
+    padding: 1.25rem;
+  }
+
+  .formHeader {
+    text-align: center;
+  }
+
+  .formHeader h2 {
+    font-size: 1.5rem;
+  }
+
+  .socialGrid {
+    gap: 0.5rem;
+  }
+
+  .securityBadges {
+    flex-wrap: wrap;
+    gap: 0.5rem 0.8rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inputWrap input,
+  .submitButton,
+  .submitButton span:last-child,
+  .socialButton {
+    transition: none;
+  }
+}
