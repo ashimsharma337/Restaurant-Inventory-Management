@@ -1,12 +1,5 @@
-import Layout from '@/components/layout/Layout';
-import HeroSection from '@/components/landing/HeroSection';
-import Features from '@/components/landing/Features';
+import LoginPage from '@/components/landing/login/LoginPage';
 
 export default function Home() {
-  return (
-    <Layout>
-      <HeroSection />
-      <Features />
-    </Layout>
-  );
+  return <LoginPage />;
 }
