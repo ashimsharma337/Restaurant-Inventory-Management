@@ -33,6 +33,11 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# Do not ignore the example file
+!.env.example
+!.env.aws.example
+!.env.localstack.example
+
 # vercel
 .vercel
 

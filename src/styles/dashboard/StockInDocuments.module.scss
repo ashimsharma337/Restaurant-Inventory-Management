@@ -1,0 +1,157 @@
+.page {
+  min-height: 100vh;
+  padding: 3rem clamp(1.25rem, 4vw, 4rem);
+  background: var(--surface);
+  color: var(--ink);
+}
+.header {
+  max-width: 48rem;
+  margin-bottom: 2rem;
+}
+.eyebrow {
+  margin: 0 0 0.5rem;
+  color: var(--brand-700);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.header h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.05;
+}
+.header p:last-child {
+  color: var(--muted-ink);
+}
+.panel {
+  max-width: 58rem;
+  margin-bottom: 1rem;
+  padding: 1.5rem;
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 12px 30px rgb(23 35 34 / 5%);
+}
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+.input {
+  width: 100%;
+  max-width: 24rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--ink);
+  font: inherit;
+}
+.uploadRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+.filePicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 2.75rem;
+  padding: 0 0.9rem;
+  border: 1px dashed var(--brand-500);
+  border-radius: 4px;
+  color: var(--brand-800);
+  font-weight: 700;
+  cursor: pointer;
+}
+.filePicker input {
+  display: none;
+}
+.button,
+.download {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.75rem;
+  padding: 0 0.9rem;
+  border: 0;
+  border-radius: 4px;
+  background: var(--brand-700);
+  color: white;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: none;
+}
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.hint,
+.empty {
+  color: var(--muted-ink);
+  font-size: 0.85rem;
+}
+.message {
+  color: var(--brand-700);
+  font-weight: 700;
+}
+.sectionHeading {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.sectionHeading h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+.sectionHeading span {
+  display: grid;
+  place-items: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--brand-50);
+  color: var(--brand-800);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+.list {
+  padding: 0;
+  margin: 1rem 0 0;
+  list-style: none;
+}
+.item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.9rem 0;
+  border-top: 1px solid var(--line);
+}
+.item > span {
+  color: var(--brand-700);
+}
+.item div {
+  display: grid;
+  flex: 1;
+  gap: 0.2rem;
+}
+.item small {
+  color: var(--muted-ink);
+}
+.download {
+  min-height: 2.25rem;
+  background: var(--surface-muted);
+  color: var(--brand-800);
+}
+@media (max-width: 560px) {
+  .page {
+    padding: 2rem 1rem;
+  }
+  .downloadText {
+    display: none;
+  }
+}
