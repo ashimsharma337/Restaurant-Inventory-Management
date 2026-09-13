@@ -144,6 +144,35 @@ Services are available at:
 
 The Compose setup uses a persistent `postgres_data` volume. The default pgAdmin credentials are `admin@admin.com` and `admin`; change them before using this setup outside local development.
 
+## Stock-in Documents
+
+The stock-in workflow supports private S3 attachments for supplier invoices and delivery receipts. Files upload directly to S3 with a short-lived presigned URL; PostgreSQL stores only the document metadata.
+
+Apply the document table migration to PostgreSQL:
+
+```bash
+psql "$DATABASE_URL" -f database/schema/stock_in_documents.sql
+```
+
+For local development, start LocalStack with Compose and create the bucket once:
+
+```bash
+docker compose up -d localstack
+aws --endpoint-url=http://localhost:4566 s3 mb s3://restaurant-inventory-documents
+```
+
+The S3 settings used locally are:
+
+```dotenv
+AWS_REGION=us-east-1
+AWS_ACCESS_KEY_ID=test
+AWS_SECRET_ACCESS_KEY=test
+S3_BUCKET_NAME=restaurant-inventory-documents
+S3_ENDPOINT=http://localhost:4566
+```
+
+In production, omit `S3_ENDPOINT`, use an IAM role instead of static credentials, and keep the bucket private. Add application authentication and authorization checks to the document API before exposing this workflow to multiple restaurant users.
+
 ## Data and Cache Scripts
 
 The local seed process fetches categories, meals, and meal details from TheMealDB and stores them in SQLite. The FTS5 setup must run after the seed process so search can query the generated indexes.

@@ -1,5 +1,5 @@
-import ComingSoon from '@/components/shared/ComingSoon';
+import StockInDocuments from '@/components/dashboard/StockInDocuments';
 
 export default function StockIn() {
-  return <ComingSoon title="Stock In" />;
+  return <StockInDocuments />;
 }

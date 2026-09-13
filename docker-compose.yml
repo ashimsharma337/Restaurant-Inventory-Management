@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   app:
     build: .
@@ -8,9 +6,27 @@ services:
       - "3000:3000"
     env_file:
       - .env
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      S3_ENDPOINT: http://localstack:4566
+      S3_PUBLIC_ENDPOINT: http://localhost:4566
     depends_on:
       postgres:
         condition: service_healthy # Only starts app once DB is actually ready
+
+  localstack:
+    image: localstack/localstack:4.3.0
+    container_name: localstack
+    ports:
+      - "4566:4566"
+    environment:
+      SERVICES: s3
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./localStack/init:/etc/localstack/init/ready.d"
 
   postgres:
     image: postgres:16-alpine
@@ -39,6 +55,9 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin
     depends_on:
       - postgres
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
 
 volumes:
   postgres_data:
+  pgadmin_data:
