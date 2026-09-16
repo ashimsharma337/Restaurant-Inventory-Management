@@ -18,7 +18,7 @@ If you are new to the codebase, please review these foundational setup steps fir
 2. Ensure you have the required environment variables configured in your `.env.local` file.
 3. Verify your local AWS credentials if you are testing the storage features locally.
 
-## ontribution Guidelines
+## Contribution Guidelines
 
 When adding a new feature or modifying an existing flow:
 
