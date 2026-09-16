@@ -1,28 +1,34 @@
 // src/components/dashboard/Header.js
 
-import Image from 'next/image';
-import SearchInput from '@/components/dashboard/SearchInput';
-import styles from '@/styles/header/Header.module.scss';
+import Image from "next/image";
+import SearchInput from "@/components/dashboard/SearchInput";
+import styles from "@/styles/header/Header.module.scss";
 
 const Header = () => {
   return (
     <header className={styles.header}>
       <div className={styles.headerContent}>
-        <span className={styles.brandName}>
-          Culinary Architect
-        </span>
+        <span className={styles.brandName}>Culinary Architect</span>
 
         {/* SearchInput handles its own state via useInventoryFilters hook */}
         <SearchInput />
       </div>
 
       <div className={styles.actions}>
-        <button className={styles.actionButton} type="button" aria-label="Notifications">
+        <button
+          className={styles.actionButton}
+          type="button"
+          aria-label="Notifications"
+        >
           <span className="material-symbols-outlined" data-icon="notifications">
             notifications
           </span>
         </button>
-        <button className={styles.actionButton} type="button" aria-label="Settings">
+        <button
+          className={styles.actionButton}
+          type="button"
+          aria-label="Settings"
+        >
           <span className="material-symbols-outlined" data-icon="settings">
             settings
           </span>

@@ -1,4 +1,5 @@
 # Kubernetes HPA — Horizontal Pod Autoscaler
+
 **Date:** April 25, 2026  
 **Stack:** Minikube · Next.js · metrics-server · autoscaling/v2
 
@@ -20,12 +21,12 @@ Traffic gone → CPU 0%  → HPA says "scale back down after 5 min"
 
 ### HPA vs Manual Scaling
 
-| | Manual (`kubectl scale`) | HPA |
-|---|---|---|
-| Who decides replica count | You | Kubernetes |
-| Reacts to traffic spikes | ❌ Only if you're watching | ✅ Automatically |
-| Scales back down | ❌ Manual | ✅ Automatically |
-| Requires metrics-server | ❌ | ✅ |
+|                           | Manual (`kubectl scale`)   | HPA              |
+| ------------------------- | -------------------------- | ---------------- |
+| Who decides replica count | You                        | Kubernetes       |
+| Reacts to traffic spikes  | ❌ Only if you're watching | ✅ Automatically |
+| Scales back down          | ❌ Manual                  | ✅ Automatically |
+| Requires metrics-server   | ❌                         | ✅               |
 
 ---
 
@@ -64,6 +65,7 @@ desiredReplicas = ceil(currentReplicas × (currentMetric ÷ targetMetric))
 ```
 
 **Example from our session:**
+
 - currentReplicas = 2
 - currentCPU = 159%
 - targetCPU = 60%
@@ -80,6 +82,7 @@ So HPA wanted 6 but we capped at 4 — it scaled to 4.
 ### What metrics-server Does
 
 metrics-server is a cluster-wide aggregator that:
+
 - Scrapes CPU and memory from every node's kubelet every 60 seconds
 - Stores them in memory (not on disk — not for long-term storage)
 - Exposes them via the Kubernetes Metrics API
@@ -119,6 +122,7 @@ kubectl top nodes
 **Why:** Confirms metrics-server is collecting data. If this returns actual numbers (not errors), HPA will work. If it says `metrics not available yet`, wait another 30 seconds.
 
 **Output we saw:**
+
 ```
 NAME                     CPU(cores)   MEMORY(bytes)
 app-5494ff6f6c-ck9xg     2m           52Mi
@@ -140,12 +144,14 @@ kubectl get hpa -n $NS
 ```
 
 **Output:**
+
 ```
 NAME           REFERENCE        TARGETS                        MINPODS  MAXPODS  REPLICAS  AGE
 node-app-hpa   Deployment/app   cpu: 2%/60%, memory: 41%/75%  2        4        2         109s
 ```
 
 **What each column means:**
+
 - `TARGETS` — `current/threshold` for each metric
 - `MINPODS` — never scale below this
 - `MAXPODS` — never scale above this
@@ -165,6 +171,7 @@ kubectl run load-generator -n $NS \
 **Why:** Simulates heavy traffic by sending an infinite stream of HTTP requests to the app service. This drives CPU usage up past the 60% threshold, triggering HPA to scale up.
 
 **Breaking down the command:**
+
 - `kubectl run` — creates a standalone pod (not a Deployment)
 - `--image=busybox:latest` — tiny Linux image with `wget` available
 - `--restart=Never` — plain pod, not managed by a ReplicaSet
@@ -177,11 +184,13 @@ kubectl run load-generator -n $NS \
 ### Step 6 — Watch HPA and pods in real time
 
 **On Linux/Mac with `watch` installed:**
+
 ```bash
 watch -n 5 kubectl get hpa,pods -n $NS
 ```
 
 **On Mac without `watch` (what we used):**
+
 ```bash
 while true; do kubectl get hpa,pods -n $NS; echo "---"; sleep 5; done
 ```
@@ -191,6 +200,7 @@ while true; do kubectl get hpa,pods -n $NS; echo "---"; sleep 5; done
 ### Step 7 — Observe scale-up
 
 **What we saw:**
+
 ```
 # t=0: load generator starts
 cpu: 2%/60%    REPLICAS: 2
@@ -219,6 +229,7 @@ kubectl delete pod load-generator -n $NS
 **Why:** Removes the traffic source. CPU drops back to near 0%, triggering the scale-down evaluation.
 
 **What we saw:**
+
 ```
 # Immediately after deleting load generator
 cpu: 0%/60%   REPLICAS: 4   ← HPA sees low CPU but waits...
@@ -254,6 +265,7 @@ Yes — `watch` is a standard Linux utility that comes pre-installed on most Lin
 ### How to install `watch` on Mac
 
 **Option 1 — Homebrew (recommended):**
+
 ```bash
 # Install Homebrew first if you don't have it
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -263,6 +275,7 @@ brew install watch
 ```
 
 **Option 2 — Verify installation:**
+
 ```bash
 which watch      # should print /opt/homebrew/bin/watch
 watch --version  # should print version info
@@ -277,6 +290,7 @@ while true; do kubectl get hpa,pods -n $NS; echo "---"; sleep 5; done
 ```
 
 **Breaking it down:**
+
 - `while true` — loop forever
 - `do ... done` — body of the loop
 - `kubectl get hpa,pods -n $NS` — the command to run (gets both HPA and pods in one call)
@@ -299,7 +313,6 @@ metadata:
   name: node-app-hpa
   namespace: inventory
 spec:
-
   # Which Deployment to control
   # name must exactly match metadata.name in deployment.yml
   scaleTargetRef:
@@ -308,7 +321,7 @@ spec:
     name: app
 
   # Hard boundaries — HPA never goes outside these
-  minReplicas: 2    # matches replicas: 2 in deployment.yml
+  minReplicas: 2 # matches replicas: 2 in deployment.yml
   maxReplicas: 4
 
   metrics:
@@ -334,15 +347,15 @@ spec:
   # behavior controls the SPEED of scaling, not the trigger
   # Without this, HPA uses aggressive defaults that can cause thrashing
   behavior:
-
     scaleUp:
       # Don't react to a spike until it's sustained for 60 seconds
       stabilizationWindowSeconds: 60
       policies:
         - type: Pods
-          value: 1          # add max 1 pod per period
-          periodSeconds: 60 # period = 1 minute
-                            # max scale-up rate = 1 pod/min → 2→3→4 over 2 min
+          value: 1 # add max 1 pod per period
+          periodSeconds:
+            60 # period = 1 minute
+            # max scale-up rate = 1 pod/min → 2→3→4 over 2 min
 
     scaleDown:
       # Don't scale down until load has been low for 5 full minutes
@@ -350,9 +363,10 @@ spec:
       stabilizationWindowSeconds: 300
       policies:
         - type: Pods
-          value: 1           # remove max 1 pod per period
-          periodSeconds: 120 # period = 2 minutes
-                             # max scale-down rate = 1 pod/2min → 4→3→2 over 4 min
+          value: 1 # remove max 1 pod per period
+          periodSeconds:
+            120 # period = 2 minutes
+            # max scale-down rate = 1 pod/2min → 4→3→2 over 4 min
 ```
 
 ### Bug that was in the original file
@@ -407,6 +421,7 @@ t=3:  CPU drops  → scale down to 2
 ```
 
 This is bad because:
+
 - Pods take time to start (your initContainer runs on every new pod)
 - Constant churn wastes resources
 - Users may hit pods that are still warming up
@@ -462,6 +477,7 @@ Pod added to Service — starts receiving traffic
 ```
 
 **What we saw in output:**
+
 ```
 app-5494ff6f6c-z7rqg   Init:0/1   ← initContainer running
 app-5494ff6f6c-z7rqg   1/2        ← initContainer done, one container up
@@ -612,24 +628,25 @@ This is why setting accurate `requests` in your Deployment matters — HPA's mat
 ### HPA and RollingUpdate work together
 
 Your Deployment has:
+
 ```yaml
 strategy:
   type: RollingUpdate
   rollingUpdate:
-    maxUnavailable: 0   # never remove a pod before replacement is ready
-    maxSurge: 1         # allow 1 extra pod during transitions
+    maxUnavailable: 0 # never remove a pod before replacement is ready
+    maxSurge: 1 # allow 1 extra pod during transitions
 ```
 
 When HPA adds a pod, it goes through the rolling update mechanism — ensuring the new pod is healthy (readinessProbe passes) before it enters the Service's endpoint pool.
 
 ### Scale-up is fast, scale-down is slow — by design
 
-| | Our config | Why |
-|---|---|---|
-| Scale-up stabilization | 60s | React to real load quickly |
-| Scale-down stabilization | 300s | Don't remove capacity too soon |
-| Scale-up rate | 1 pod/min | Gradual — avoid thundering herd |
-| Scale-down rate | 1 pod/2min | Very gradual — conservative |
+|                          | Our config | Why                             |
+| ------------------------ | ---------- | ------------------------------- |
+| Scale-up stabilization   | 60s        | React to real load quickly      |
+| Scale-down stabilization | 300s       | Don't remove capacity too soon  |
+| Scale-up rate            | 1 pod/min  | Gradual — avoid thundering herd |
+| Scale-down rate          | 1 pod/2min | Very gradual — conservative     |
 
 ---
 

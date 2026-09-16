@@ -21,6 +21,7 @@ The project is clearly in an active development stage, with the main structure a
 ## 2. Tech stack
 
 ### Frontend
+
 - Next.js 16 (Pages Router)
 - React 19
 - Material UI (MUI)
@@ -29,21 +30,25 @@ The project is clearly in an active development stage, with the main structure a
 - Sass + Tailwind CSS for styling
 
 ### Backend / API
+
 - Apollo Server
 - Apollo Client
 - GraphQL
 - Node.js server endpoints inside Next.js API routes
 
 ### Data layer
+
 - PostgreSQL for structured app data
 - SQLite for local cached search/indexing data
 - better-sqlite3 for SQLite access
 - pg for PostgreSQL access
 
 ### External data source
+
 - TheMealDB API
 
 ### Dev and deployment tools
+
 - Docker Compose
 - Kubernetes YAML manifests
 - ESLint
@@ -92,6 +97,7 @@ flowchart TD
 ## 4. Main application pages and routes
 
 ### Public landing page
+
 - Path: `/`
 - File: `src/pages/index.js`
 - Purpose: landing or home marketing page
@@ -101,26 +107,31 @@ flowchart TD
   - `Features`
 
 ### Dashboard home
+
 - Path: `/dashboard`
 - File: `src/pages/dashboard/index.js`
 - Purpose: overview dashboard entry page
 
 ### Product dashboard page
+
 - Path: `/dashboard/products`
 - File: `src/pages/dashboard/products.js`
 - Purpose: inventory table screen for product management
 
 ### GraphQL endpoint
+
 - Path: `/api/graphql`
 - File: `src/pages/api/graphql.js`
 - Purpose: exposes GraphQL schema and resolvers
 
 ### Health check
+
 - Path: `/api/health`
 - File: `src/pages/api/health.js`
 - Purpose: quick status endpoint
 
 ### Search API
+
 - Path: `/api/search`
 - File: `src/pages/api/search.js`
 - Purpose: autocomplete and full-text search against SQLite FTS5 data
@@ -130,6 +141,7 @@ flowchart TD
 ## 5. Core frontend components
 
 ### Layout and landing UI
+
 These components define the public-facing shell:
 
 - `src/components/layout/Layout.js`
@@ -149,6 +161,7 @@ These components define the public-facing shell:
   - marketing/feature blocks
 
 ### Dashboard shell
+
 - `src/components/dashboard/InventoryDashboard.js`
   - main dashboard layout
   - includes sidebar, header, table, and floating action button
@@ -163,6 +176,7 @@ These components define the public-facing shell:
   - floating action button for quick actions
 
 ### Search and filters
+
 - `src/components/dashboard/SearchInput.js`
   - searchable input with debouncing and suggestion dropdown
 
@@ -171,6 +185,7 @@ These components define the public-facing shell:
   - keeps search state bookmarkable
 
 ### Product table and forms
+
 - `src/components/dashboard/tables/ProductsTable.js`
   - main table displaying products using MUI DataGrid
   - supports edit and delete actions
@@ -189,6 +204,7 @@ These components define the public-facing shell:
 ## 6. Data and API flow
 
 ### GraphQL schema
+
 File: `src/graphql/server/schema.js`
 
 The schema defines the application model:
@@ -214,31 +230,37 @@ The schema defines the application model:
   - updatedAt
 
 Queries:
+
 - `products`
 - `product(id)`
 - `categories`
 
 Mutations:
+
 - `createProduct`
 - `updateProduct`
 - `deleteProduct`
 - `createCategory`
 
 ### GraphQL resolvers
+
 File: `src/graphql/server/resolver.js`
 
 These resolvers connect GraphQL operations to PostgreSQL queries using a shared DB helper.
 
 Flow:
+
 1. GraphQL request arrives at `/api/graphql`
 2. Resolver executes SQL against PostgreSQL
 3. Rows are transformed into GraphQL-friendly objects
 4. Response is sent back to the frontend React app
 
 ### Client-side GraphQL usage
+
 File: `src/graphql/client/queries.js`
 
 This file contains GraphQL documents for:
+
 - get all products
 - create product
 - update product
@@ -252,18 +274,22 @@ The frontend uses Apollo Client to fetch and mutate data.
 ## 7. Inventory hooks and state management
 
 ### `useInventory`
+
 File: `src/hooks/useInventory.js`
 
 Purpose:
+
 - reads product data using `useQuery`
 - exposes `products`, `loading`, `error`, `refetch`
 
 This is a lean hook for loading data into dashboard components.
 
 ### `useInventoryFilters`
+
 File: `src/hooks/useInventoryFilters.js`
 
 Purpose:
+
 - keeps search and filter state inside the URL
 - allows filters to be shareable and browser-friendly
 - supports query/category/status/zone/page params
@@ -277,6 +303,7 @@ This is a good pattern for dashboards, but it looks like a partial implementatio
 The search system is one of the more important features in this project.
 
 ### Files involved
+
 - `src/pages/api/search.js`
 - `src/lib/db.js`
 - `src/lib/searchUtils.js`
@@ -284,6 +311,7 @@ The search system is one of the more important features in this project.
 - `scripts/seed-local.js`
 
 ### Search architecture
+
 - SQLite is used as a local read-optimized cache.
 - SQLite FTS5 is used for full-text indexing.
 - Search results are generated from ingredient, meal, and category tables.
@@ -291,6 +319,7 @@ The search system is one of the more important features in this project.
 - Results are sorted by BM25 relevance score.
 
 ### Request flow
+
 1. User types in `SearchInput`.
 2. Debounce logic waits before making request.
 3. Frontend calls `/api/search?q=...&mode=autocomplete`.
@@ -300,6 +329,7 @@ The search system is one of the more important features in this project.
 7. Data is returned as JSON with `name`, `subtitle`, `type`, and score information.
 
 ### Search result types
+
 - ingredient
 - meal
 - category
@@ -309,12 +339,15 @@ The search system is one of the more important features in this project.
 ## 9. Database architecture
 
 ### PostgreSQL side
-The project has SQL schema files in `database/schema/`.
+
+The project has ordered PostgreSQL migrations in `database/migrations/` and seed files in `database/seeds/`.
 
 Main schema file:
-- `database/schema/create_table.sql`
+
+- `database/migrations/001-create-tables.sql`
 
 This includes:
+
 - `mealdb.categories`
 - `mealdb.meals`
 - `mealdb.ingredients`
@@ -322,7 +355,9 @@ This includes:
 This is connected to the TheMealDB cache concept, not necessarily the app-specific inventory table yet.
 
 ### Inventory data model
+
 The GraphQL schema expects inventory records like:
+
 - product name
 - category id
 - quantity
@@ -336,6 +371,7 @@ But the repository still shows a mix between a generic kitchen inventory app and
 - meal ingredient metadata search and sync
 
 ### SQLite cache
+
 The local SQLite database is stored in `data/inventory.db` and is expected to exist before the app runs.
 
 This database is meant to support fast search and cached reading, especially for ingredients and meals.
@@ -347,6 +383,7 @@ This database is meant to support fast search and cached reading, especially for
 The project includes scripts in the `scripts/` directory that pull data from TheMealDB and prepare cache resources.
 
 ### Important scripts
+
 - `scripts/seed-local.js`
   - fetches categories, meals, ingredients
   - populates SQLite database
@@ -364,6 +401,7 @@ The project includes scripts in the `scripts/` directory that pull data from The
   - helps inspect SQLite contents for debugging
 
 ### Why this matters
+
 This project is using TheMealDB as a source of menu/ingredient reference data, which is useful for a restaurant app but not a fully complete inventory system by itself. The data model and product inventory logic should eventually be aligned so the app stores real restaurant stock records instead of only cached recipe metadata.
 
 ---
@@ -371,11 +409,14 @@ This project is using TheMealDB as a source of menu/ingredient reference data, w
 ## 11. Deployment setup
 
 ### Docker Compose
+
 Files:
+
 - `docker-compose.yml`
 - `Dockerfile`
 
 This project has containers for:
+
 - app service
 - PostgreSQL database
 - pgAdmin
@@ -383,7 +424,9 @@ This project has containers for:
 This supports local development and team testing with a more realistic environment.
 
 ### Kubernetes
+
 Files in `k8s/` include:
+
 - namespace
 - config map
 - app deployment
@@ -418,45 +461,55 @@ The project already contains a strong foundation for a product inventory app:
 This is the most important part to understand before continuing development.
 
 ### 1. Product data model alignment
+
 The code combines a general inventory model with meal/ingredient metadata. These two ideas need to be clearly separated or integrated thoughtfully.
 
 Needed:
+
 - one final inventory schema for products, categories, suppliers, stock movement, reorder alarms
 - clean mapping between app entities and cached meal data
 
 ### 2. Missing production validation
+
 - no real automated test suite yet
 - no strong end-to-end validation of inventory workflows
 - no user authentication/authorization layer yet
 
 ### 3. Better forms and validation
+
 - product form is present but still basic
 - status and category updates may not be fully consistent across the app
 - validation for negative numbers, empty categories, and duplicate inventory items is not yet robust
 
 ### 4. Search integration completion
+
 Search works at the API layer, but the dashboard flow may still need deeper UI integration and more refined filter behavior.
 
 Needed:
+
 - product filter by category
 - stock status filters
 - inventory search tuning
 - stronger UI feedback for empty states and errors
 
 ### 5. Data synchronization improvement
+
 The project has a concept of syncing cache data to PostgreSQL, but the inventory app and mealdb cache may still need a clearer synchronization policy.
 
 Needed:
+
 - explicit source-of-truth decision
 - data freshness strategy
 - conflict handling for updates
 
 ### 6. Security and environment hardening
+
 - environment variables should be reviewed
 - production secrets must be separated from dev values
 - database access and deployment configs need final review
 
 ### 7. Deployment readiness
+
 Kubernetes and Docker files are present, but they should be checked against the actual production deployment target before use in a real environment.
 
 ---
@@ -464,22 +517,26 @@ Kubernetes and Docker files are present, but they should be checked against the 
 ## 14. Recommended implementation roadmap
 
 ### Phase 1: stabilize the core app
+
 - define final inventory schema
 - confirm which DB is source of truth
 - validate product CRUD flow end-to-end
 
 ### Phase 2: complete UI/UX
+
 - connect filters and search to real product data
 - improve product table actions
 - add stock alerts, status badges, and reports
 
 ### Phase 3: complete backend quality
+
 - add validation
 - add transaction handling
 - add error logging and monitoring
 - secure APIs
 
 ### Phase 4: production readiness
+
 - add tests
 - implement auth and roles
 - harden deployment environment

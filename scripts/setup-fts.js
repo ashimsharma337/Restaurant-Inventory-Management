@@ -7,16 +7,16 @@
 // Usage (run AFTER seed-local.js):
 //   node scripts/setup-fts.js
 
-const Database = require('better-sqlite3');
-const path     = require('path');
+const Database = require("better-sqlite3");
+const path = require("path");
 
-const DB_PATH = path.join(process.cwd(), 'data', 'inventory.db');
+const DB_PATH = path.join(process.cwd(), "data", "inventory.db");
 
 const db = new Database(DB_PATH, { fileMustExist: true });
-db.pragma('journal_mode = WAL');
-db.pragma('synchronous = NORMAL');
+db.pragma("journal_mode = WAL");
+db.pragma("synchronous = NORMAL");
 
-console.log('[fts] Setting up FTS5 on:', DB_PATH);
+console.log("[fts] Setting up FTS5 on:", DB_PATH);
 
 // ── Helper to log row counts ──────────────────────────────────────────────────
 function count(table) {
@@ -27,7 +27,7 @@ function count(table) {
 // 1. DROP existing FTS tables (safe re-run)
 //    Dropping a virtual table also drops its shadow tables automatically.
 // ─────────────────────────────────────────────────────────────────────────────
-console.log('[fts] Dropping old FTS tables if they exist...');
+console.log("[fts] Dropping old FTS tables if they exist...");
 db.exec(`
   DROP TABLE IF EXISTS ingredients_fts;
   DROP TABLE IF EXISTS meals_fts;
@@ -54,7 +54,7 @@ db.exec(`
 //       INTEGER, so we use the implicit rowid (SQLite assigns one even
 //       to TEXT-PK tables). We join on rowid in queries.
 // ─────────────────────────────────────────────────────────────────────────────
-console.log('[fts] Creating FTS5 virtual tables...');
+console.log("[fts] Creating FTS5 virtual tables...");
 db.exec(`
   -- Ingredients FTS
   -- Columns: name (weight 10x), meal_name (weight 2x), measure (weight 1x)
@@ -88,12 +88,12 @@ db.exec(`
     tokenize='unicode61'
   );
 `);
-console.log('[fts] ✓ Virtual tables created');
+console.log("[fts] ✓ Virtual tables created");
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 3. POPULATE FTS index from existing data (one-time bulk insert)
 // ─────────────────────────────────────────────────────────────────────────────
-console.log('[fts] Populating FTS index from existing data...');
+console.log("[fts] Populating FTS index from existing data...");
 db.exec(`
   -- ingredients: id is INTEGER PK so it's also the rowid
   INSERT INTO ingredients_fts (rowid, name, meal_name, measure)
@@ -108,16 +108,16 @@ db.exec(`
     SELECT rowid, name, description FROM categories;
 `);
 
-console.log(`[fts] ✓ Indexed ${count('ingredients_fts')} ingredients`);
-console.log(`[fts] ✓ Indexed ${count('meals_fts')} meals`);
-console.log(`[fts] ✓ Indexed ${count('categories_fts')} categories`);
+console.log(`[fts] ✓ Indexed ${count("ingredients_fts")} ingredients`);
+console.log(`[fts] ✓ Indexed ${count("meals_fts")} meals`);
+console.log(`[fts] ✓ Indexed ${count("categories_fts")} categories`);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 4. SYNC TRIGGERS
 //    Keep the FTS index up to date whenever the real tables change.
 //    Pattern: AI (after insert), AD (after delete), AU (after update).
 // ─────────────────────────────────────────────────────────────────────────────
-console.log('[fts] Creating sync triggers...');
+console.log("[fts] Creating sync triggers...");
 db.exec(`
   -- ── INGREDIENTS triggers ────────────────────────────────────────────────────
   DROP TRIGGER IF EXISTS ingredients_ai;
@@ -185,44 +185,56 @@ db.exec(`
     VALUES (new.rowid, new.name, new.description);
   END;
 `);
-console.log('[fts] ✓ Sync triggers created (9 total)');
+console.log("[fts] ✓ Sync triggers created (9 total)");
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 5. INTEGRITY CHECK — verifies index matches content tables
 // ─────────────────────────────────────────────────────────────────────────────
-console.log('[fts] Running integrity checks...');
+console.log("[fts] Running integrity checks...");
 try {
-  db.exec(`INSERT INTO ingredients_fts (ingredients_fts) VALUES ('integrity-check')`);
+  db.exec(
+    `INSERT INTO ingredients_fts (ingredients_fts) VALUES ('integrity-check')`,
+  );
   db.exec(`INSERT INTO meals_fts (meals_fts) VALUES ('integrity-check')`);
-  db.exec(`INSERT INTO categories_fts (categories_fts) VALUES ('integrity-check')`);
-  console.log('[fts] ✓ All integrity checks passed');
+  db.exec(
+    `INSERT INTO categories_fts (categories_fts) VALUES ('integrity-check')`,
+  );
+  console.log("[fts] ✓ All integrity checks passed");
 } catch (err) {
-  console.error('[fts] ✗ Integrity check failed:', err.message);
+  console.error("[fts] ✗ Integrity check failed:", err.message);
   process.exit(1);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 6. SMOKE TEST — run a quick MATCH query to confirm everything works
 // ─────────────────────────────────────────────────────────────────────────────
-console.log('[fts] Running smoke tests...');
+console.log("[fts] Running smoke tests...");
 
-const ingTest = db.prepare(`
+const ingTest = db
+  .prepare(
+    `
   SELECT i.name, i.meal_name, bm25(ingredients_fts, 10.0, 2.0, 1.0) AS score
   FROM ingredients_fts
   JOIN ingredients i ON i.id = ingredients_fts.rowid
   WHERE ingredients_fts MATCH 'chicken*'
   ORDER BY score
   LIMIT 3
-`).all();
+`,
+  )
+  .all();
 
-const mealTest = db.prepare(`
+const mealTest = db
+  .prepare(
+    `
   SELECT m.name, m.area, bm25(meals_fts, 10.0, 2.0, 2.0) AS score
   FROM meals_fts
   JOIN meals m ON m.rowid = meals_fts.rowid
   WHERE meals_fts MATCH 'chicken*'
   ORDER BY score
   LIMIT 3
-`).all();
+`,
+  )
+  .all();
 
 console.log('[fts] Ingredients matching "chicken":');
 ingTest.forEach((r) => console.log(`  → ${r.name} (in ${r.meal_name})`));
@@ -231,11 +243,11 @@ console.log('[fts] Meals matching "chicken":');
 mealTest.forEach((r) => console.log(`  → ${r.name} (${r.area})`));
 
 if (ingTest.length === 0 && mealTest.length === 0) {
-  console.warn('[fts] ⚠ No results for smoke test — data may be empty');
+  console.warn("[fts] ⚠ No results for smoke test — data may be empty");
 } else {
-  console.log('[fts] ✓ Smoke tests passed');
+  console.log("[fts] ✓ Smoke tests passed");
 }
 
 db.close();
-console.log('');
-console.log('[fts] ✓ FTS5 setup complete. You can now run: npm run dev');
+console.log("");
+console.log("[fts] ✓ FTS5 setup complete. You can now run: npm run dev");

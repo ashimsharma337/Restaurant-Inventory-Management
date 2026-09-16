@@ -10,15 +10,16 @@ Think of it as **a fake AWS running inside Docker on your Mac**.
 
 ## Why Use LocalStack?
 
-| Problem with Real AWS         | LocalStack Solution                        |
-|-------------------------------|--------------------------------------------|
-| Costs money per API call      | Completely free (community edition)        |
-| Requires internet connection  | Works fully offline                        |
-| Slow to provision resources   | Resources created in milliseconds          |
-| Risk of misconfiguring prod   | Isolated, throwaway local environment      |
-| Needs IAM roles/permissions   | No auth needed — any dummy key works       |
+| Problem with Real AWS        | LocalStack Solution                   |
+| ---------------------------- | ------------------------------------- |
+| Costs money per API call     | Completely free (community edition)   |
+| Requires internet connection | Works fully offline                   |
+| Slow to provision resources  | Resources created in milliseconds     |
+| Risk of misconfiguring prod  | Isolated, throwaway local environment |
+| Needs IAM roles/permissions  | No auth needed — any dummy key works  |
 
 **Common use cases:**
+
 - Testing S3 uploads/downloads locally
 - Developing SQS consumers without real queues
 - Testing DynamoDB queries before hitting production
@@ -29,14 +30,14 @@ Think of it as **a fake AWS running inside Docker on your Mac**.
 
 ## Community vs Pro
 
-| Feature                        | Community (Free) | Pro (Paid)       |
-|--------------------------------|------------------|------------------|
-| Core services (S3, SQS, etc.)  | ✅               | ✅               |
-| DynamoDB, Lambda, SNS          | ✅               | ✅               |
-| EKS, ECS, RDS, AppSync         | ❌               | ✅               |
-| Persistence across restarts    | ❌               | ✅               |
-| LocalStack Web Dashboard       | Limited          | Full             |
-| Account / Auth Token required  | ❌               | ✅               |
+| Feature                       | Community (Free) | Pro (Paid) |
+| ----------------------------- | ---------------- | ---------- |
+| Core services (S3, SQS, etc.) | ✅               | ✅         |
+| DynamoDB, Lambda, SNS         | ✅               | ✅         |
+| EKS, ECS, RDS, AppSync        | ❌               | ✅         |
+| Persistence across restarts   | ❌               | ✅         |
+| LocalStack Web Dashboard      | Limited          | Full       |
+| Account / Auth Token required | ❌               | ✅         |
 
 > **For local development, Community edition is sufficient.**
 
@@ -230,6 +231,7 @@ The **LocalStack Toolkit** VS Code extension requires a LocalStack account even 
 ## Gotchas & Tips
 
 ### Image tagging trap
+
 Running `localstack start` via the LocalStack CLI pulls `localstack/localstack-pro` and tags it as `localstack/localstack` locally. This causes license errors. Always use `docker run` or `docker compose` with a pinned community image tag.
 
 ```bash
@@ -241,12 +243,15 @@ localstack start
 ```
 
 ### Data does not persist
+
 Community edition stores everything in memory. When the container stops, all resources are gone. This is fine for development — just re-create resources on startup using a script or `docker compose` entrypoint.
 
 ### Account ID
+
 LocalStack uses `000000000000` as the dummy AWS account ID in all ARNs and queue URLs.
 
 ### Supported services (Community)
+
 `s3` · `sqs` · `sns` · `dynamodb` · `lambda` · `iam` · `cloudformation` · `secretsmanager` · `ssm` · `kinesis` · `ses` · `route53` · `logs` · `events`
 
 ---
@@ -264,4 +269,4 @@ LocalStack uses `000000000000` as the dummy AWS account ID in all ARNs and queue
 
 ---
 
-*LocalStack Community Edition — no account, no license, no cost.*
+_LocalStack Community Edition — no account, no license, no cost._

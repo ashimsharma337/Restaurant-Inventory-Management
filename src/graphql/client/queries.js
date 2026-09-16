@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const GET_PRODUCTS = gql`
   query GetProducts {
@@ -49,8 +49,8 @@ export const UPDATE_PRODUCT = gql`
 
 export const DELETE_PRODUCT = gql`
   mutation DeleteProduct($id: ID!) {
-   deleteProduct(id: $id)
-  } 
+    deleteProduct(id: $id)
+  }
 `;
 
 export const GET_CATEGORIES = gql`

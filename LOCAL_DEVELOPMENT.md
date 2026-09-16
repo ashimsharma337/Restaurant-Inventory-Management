@@ -12,24 +12,24 @@ This guide starts and verifies the restaurant inventory application, PostgreSQL,
 
 ## Project Services
 
-| Service | Purpose | Host address |
-| --- | --- | --- |
-| Next.js | Web application and API routes | `http://localhost:3000` |
-| PostgreSQL | Product and document metadata | `localhost:5433` |
-| LocalStack S3 | Local AWS S3 emulator | `http://localhost:4566` |
-| pgAdmin | Optional database UI | `http://localhost:5050` |
+| Service       | Purpose                        | Host address            |
+| ------------- | ------------------------------ | ----------------------- |
+| Next.js       | Web application and API routes | `http://localhost:3000` |
+| PostgreSQL    | Product and document metadata  | `localhost:5433`        |
+| LocalStack S3 | Local AWS S3 emulator          | `http://localhost:4566` |
+| pgAdmin       | Optional database UI           | `http://localhost:5050` |
 
 The document feature stores file contents in S3 and stores only metadata in PostgreSQL. The SQLite database in `src/lib/db.js` is a separate local search cache and is not used for document metadata.
 
 When connecting through pgAdmin, use the Compose service address rather than the host address:
 
-| pgAdmin field | Value |
-| --- | --- |
-| Host name/address | `postgres` |
-| Port | `5432` |
-| Maintenance database | `mydb` |
-| Username | `postgres` |
-| Password | `postgres` |
+| pgAdmin field        | Value      |
+| -------------------- | ---------- |
+| Host name/address    | `postgres` |
+| Port                 | `5432`     |
+| Maintenance database | `mydb`     |
+| Username             | `postgres` |
+| Password             | `postgres` |
 
 Use `localhost:5433` only for tools running directly on your Mac. Inside Docker, `localhost` refers to the current container.
 
@@ -109,13 +109,11 @@ aws --endpoint-url=http://localhost:4566 \
 s3 mb s3://restaurant-inventory-documents
 ```
 
-Apply the stock-in document table migration:
+Initialize the PostgreSQL schema and seed local inventory data:
 
 ```bash
-PGPASSWORD=postgres psql \
-  -h localhost -p 5433 \
-  -U postgres -d mydb \
-  -f database/schema/stock_in_documents.sql
+make db-init
+make db-seed
 ```
 
 Initialize the SQLite search cache if this is a new checkout:
@@ -297,7 +295,7 @@ The most common causes are:
 - PostgreSQL is stopped.
 - `.env.local` points to port `5432` instead of `5433`.
 - `.env.local` uses the wrong database or password.
-- `database/schema/stock_in_documents.sql` has not been applied.
+- `make db-init` has not been run.
 - The S3 object was not uploaded before `/api/documents/complete` ran.
 
 ### `psql "$DATABASE_URL"` connects to the wrong place
@@ -352,7 +350,8 @@ docker compose down -v
 
 - `docker-compose.yml`: PostgreSQL and LocalStack service definitions
 - `.env.local`: local environment overrides loaded by Next.js
-- `database/schema/stock_in_documents.sql`: document metadata migration
+- `database/migrations/`: ordered PostgreSQL schema migrations
+- `database/seeds/`: repeatable local seed data
 - `src/lib/s3.js`: S3 client configuration
 - `src/pages/api/documents/`: upload, completion, listing, and download APIs
 - `src/components/dashboard/StockInDocuments.js`: upload and download UI

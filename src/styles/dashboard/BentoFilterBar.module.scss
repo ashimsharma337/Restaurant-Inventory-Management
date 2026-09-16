@@ -20,7 +20,12 @@
   border-radius: 0.5rem;
 }
 
-.field { display: flex; min-width: 0; flex-direction: column; gap: 0.35rem; }
+.field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.35rem;
+}
 .field label,
 .eyebrow {
   color: var(--muted-ink);
@@ -43,7 +48,10 @@
   padding: 0.5rem 0.55rem;
 }
 
-.field select:focus { outline: 2px solid var(--brand-500); outline-offset: 1px; }
+.field select:focus {
+  outline: 2px solid var(--brand-500);
+  outline-offset: 1px;
+}
 
 .alerts {
   display: flex;
@@ -54,8 +62,15 @@
   padding: 0.9rem 1rem;
 }
 
-.eyebrow { margin: 0 0 0.25rem; }
-.alertCount { margin: 0; color: var(--warning); font-family: Georgia, 'Times New Roman', serif; font-size: 1.2rem; }
+.eyebrow {
+  margin: 0 0 0.25rem;
+}
+.alertCount {
+  margin: 0;
+  color: var(--warning);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.2rem;
+}
 .alertButton {
   display: grid;
   width: 2rem;
@@ -70,9 +85,14 @@
 }
 
 @media (max-width: 900px) {
-  .filterGrid { grid-template-columns: 1fr; }
+  .filterGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 640px) {
-  .filters { grid-template-columns: 1fr; gap: 0.7rem; }
+  .filters {
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+  }
 }

@@ -1,6 +1,6 @@
-import Sidebar from '@/components/sidebar/Sidebar';
-import Header from '@/components/dashboard/Header';
-import ProductsTable from '@/components/dashboard/tables/ProductsTable';
+import Sidebar from "@/components/sidebar/Sidebar";
+import Header from "@/components/dashboard/Header";
+import ProductsTable from "@/components/dashboard/tables/ProductsTable";
 
 export default function Products() {
   return (

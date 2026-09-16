@@ -1,4 +1,5 @@
 # TheMealDB free endpoints:
+
 ```text
 GET https://www.themealdb.com/api/json/v1/1/categories.php
   → returns meal categories (Beef, Chicken, Seafood, Vegetarian...)
@@ -11,14 +12,16 @@ GET https://www.themealdb.com/api/json/v1/1/lookup.php?i=52772
 ```
 
 # What we're storing (maps naturally to a restaurant inventory app):
+
 ```text
 categories  → your menu sections  (Seafood, Chicken, Dessert...)
 meals       → your menu items     (name, category, instructions, thumbnail)
 ingredients → your inventory      (extracted from meal details)
 ```
 
-# Flow: 
-```text 
+# Flow:
+
+```text
 init-cache.js
   1. fetch all categories from TheMealDB
   2. for each category → fetch all meals

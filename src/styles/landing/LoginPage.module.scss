@@ -31,7 +31,11 @@
   overflow: hidden;
   padding: clamp(2rem, 4vw, 3.5rem);
   color: var(--brand-contrast);
-  background: linear-gradient(135deg, var(--brand-950) 0%, var(--brand-800) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--brand-950) 0%,
+    var(--brand-800) 100%
+  );
 }
 
 .decorativeTop,
@@ -257,7 +261,10 @@
   font-size: 0.875rem;
   padding: 0.7rem 2.75rem 0.7rem 2.65rem;
   outline: none;
-  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .inputWrap input::placeholder {
@@ -272,7 +279,9 @@
 .inputWrap input:focus {
   border-color: var(--brand-500);
   background: var(--surface-raised);
-  box-shadow: inset 4px 0 0 var(--brand-500), 0 0 0 3px var(--brand-50);
+  box-shadow:
+    inset 4px 0 0 var(--brand-500),
+    0 0 0 3px var(--brand-50);
 }
 
 .visibilityButton {
@@ -329,8 +338,13 @@
   background: linear-gradient(135deg, var(--brand-950), var(--brand-800));
   box-shadow: 0 0.45rem 0.9rem rgba(5, 38, 38, 0.18);
   cursor: pointer;
-  font: 700 0.85rem Manrope, sans-serif;
-  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+  font:
+    700 0.85rem Manrope,
+    sans-serif;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
 }
 
 .submitButton:hover {
@@ -388,8 +402,13 @@
   color: var(--muted-ink);
   background: var(--surface-raised);
   cursor: pointer;
-  font: 600 0.75rem Inter, sans-serif;
-  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+  font:
+    600 0.75rem Inter,
+    sans-serif;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
 }
 
 .socialButton:hover {

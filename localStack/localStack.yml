@@ -4,7 +4,7 @@ services:
     ports:
       - "4566:4566"
     environment:
-      - SERVICES=s3,sqs,dynamodb  # add what you need
+      - SERVICES=s3,sqs,dynamodb # add what you need
       - DEBUG=0
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"

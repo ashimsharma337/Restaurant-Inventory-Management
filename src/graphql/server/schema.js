@@ -1,4 +1,4 @@
-import { gql } from 'graphql-tag';
+import { gql } from "graphql-tag";
 
 export const typeDefs = gql`
   """
@@ -68,5 +68,3 @@ export const typeDefs = gql`
     createCategory(name: String!, description: String): Category!
   }
 `;
-
-

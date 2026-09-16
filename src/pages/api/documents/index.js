@@ -1,10 +1,12 @@
-import { query } from '@/utility/db';
+import { query } from "@/utility/db";
 
 export default async function handler(req, res) {
-  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== "GET")
+    return res.status(405).json({ error: "Method not allowed" });
 
-  const reference = String(req.query.stockInReference || '').trim();
-  if (!reference) return res.status(400).json({ error: 'Stock-in reference is required' });
+  const reference = String(req.query.stockInReference || "").trim();
+  if (!reference)
+    return res.status(400).json({ error: "Stock-in reference is required" });
 
   try {
     const { rows } = await query(
@@ -16,7 +18,7 @@ export default async function handler(req, res) {
     );
     return res.status(200).json({ documents: rows });
   } catch (error) {
-    console.error('[/api/documents] error:', error);
-    return res.status(500).json({ error: 'Could not load documents' });
+    console.error("[/api/documents] error:", error);
+    return res.status(500).json({ error: "Could not load documents" });
   }
 }

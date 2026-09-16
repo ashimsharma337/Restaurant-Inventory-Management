@@ -11,26 +11,28 @@
 #   TheMealDB API → scripts/init-cache.js → meal_cache.db → EFS
 # ─────────────────────────────────────────────────────────────
 apiVersion: batch/v1
-kind: CronJob              # capital J — Kubernetes is case-sensitive
+kind: CronJob # capital J — Kubernetes is case-sensitive
 metadata:
   name: sqlite-cache-job
   namespace: inventory
 spec:
-  schedule: "*/10 * * * *"             # every 10 minutes
-  concurrencyPolicy: Forbid            # if previous job is still running, skip new trigger
-                                       # prevents overlapping writes to EFS
-  startingDeadlineSeconds: 300         # if cluster was down and schedule was missed by >5min, skip it
-  successfulJobsHistoryLimit: 3        # keep last 3 successful job pods for log inspection
-  failedJobsHistoryLimit: 3            # keep last 3 failed job pods for debugging
+  schedule: "*/10 * * * *" # every 10 minutes
+  concurrencyPolicy:
+    Forbid # if previous job is still running, skip new trigger
+    # prevents overlapping writes to EFS
+  startingDeadlineSeconds: 300 # if cluster was down and schedule was missed by >5min, skip it
+  successfulJobsHistoryLimit: 3 # keep last 3 successful job pods for log inspection
+  failedJobsHistoryLimit: 3 # keep last 3 failed job pods for debugging
 
   jobTemplate:
     spec:
-      backoffLimit: 3                  # retry up to 3 times on failure before marking job failed
-      activeDeadlineSeconds: 600       # kill job if it runs longer than 10 min (was 1hr — too long
-                                       # for a 10min schedule; would cause overlapping runs)
+      backoffLimit: 3 # retry up to 3 times on failure before marking job failed
+      activeDeadlineSeconds:
+        600 # kill job if it runs longer than 10 min (was 1hr — too long
+        # for a 10min schedule; would cause overlapping runs)
       template:
         spec:
-          restartPolicy: OnFailure     # required for CronJob pods — retry on failure up to backoffLimit
+          restartPolicy: OnFailure # required for CronJob pods — retry on failure up to backoffLimit
 
           containers:
             # ── sqlite-cache-fetcher ─────────────────────────
@@ -64,8 +66,8 @@ spec:
                     name: app-config
               volumeMounts:
                 # Mount EFS at /data so script writes directly to EFS
-                - name: efs-storage           # write SQLite DB directly to EFS
-                  mountPath: /data         # must match the path init-cache.js writes to
+                - name: efs-storage # write SQLite DB directly to EFS
+                  mountPath: /data # must match the path init-cache.js writes to
               resources:
                 requests:
                   cpu: "250m"
@@ -75,7 +77,7 @@ spec:
                   memory: "1Gi"
 
           volumes:
-              # EFS PVC — persistent shared storage across all pods
-            - name: efs-storage               # same PVC as the Deployment — shared EFS
+            # EFS PVC — persistent shared storage across all pods
+            - name: efs-storage # same PVC as the Deployment — shared EFS
               persistentVolumeClaim:
-                claimName: efs-pvc            # must match metadata.name in pv-pvc.yml
+                claimName: efs-pvc # must match metadata.name in pv-pvc.yml

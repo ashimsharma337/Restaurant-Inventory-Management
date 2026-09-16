@@ -9,7 +9,7 @@ import EditProductModal from "../modals/EditProductModal";
 
 const DataGrid = dynamic(
   () => import("@mui/x-data-grid").then((mod) => mod.DataGrid),
-  { ssr: false }
+  { ssr: false },
 );
 
 export default function ProductsTable() {
@@ -24,7 +24,7 @@ export default function ProductsTable() {
       renderCell: (params) => {
         const cat = params.row?.category;
         if (!cat) return "—";
-        return typeof cat === "string" ? cat : cat.name ?? "—";
+        return typeof cat === "string" ? cat : (cat.name ?? "—");
       },
     },
     { field: "quantity", headerName: "Quantity", type: "number", width: 120 },
@@ -65,7 +65,7 @@ export default function ProductsTable() {
     if (!id) return;
 
     const confirmed = window.confirm(
-      "Are you sure you want to delete this product?"
+      "Are you sure you want to delete this product?",
     );
 
     if (!confirmed) return;

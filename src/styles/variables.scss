@@ -1,30 +1,29 @@
-
 // =============================================================================
 // COLOR TOKENS - Culinary Architect
 // =============================================================================
 // This file emits the runtime tokens consumed by components through var(--token).
 
 :root {
-	--brand-950: #052626;
-	--brand-800: #073838;
-	--brand-700: #094a4a;
-	--brand-500: #0f6e6e;
-	--brand-100: #c0e6e6;
-	--brand-50: #e6f5f5;
-	--brand-contrast: #ffffff;
+  --brand-950: #052626;
+  --brand-800: #073838;
+  --brand-700: #094a4a;
+  --brand-500: #0f6e6e;
+  --brand-100: #c0e6e6;
+  --brand-50: #e6f5f5;
+  --brand-contrast: #ffffff;
 
-	--ink: #172322;
-	--muted-ink: #667573;
-	--surface: #fbfcfb;
-	--surface-muted: #f1f5f4;
-	--surface-raised: #ffffff;
-	--line: #dce6e3;
+  --ink: #172322;
+  --muted-ink: #667573;
+  --surface: #fbfcfb;
+  --surface-muted: #f1f5f4;
+  --surface-raised: #ffffff;
+  --line: #dce6e3;
 
-	// Status must always be paired with an icon and text label.
-	--success: #04724d;
-	--success-soft: #e3f5ee;
-	--warning: #8a5300;
-	--warning-soft: #fcf0da;
-	--danger: #b3271a;
-	--danger-soft: #fbe7e4;
+  // Status must always be paired with an icon and text label.
+  --success: #04724d;
+  --success-soft: #e3f5ee;
+  --warning: #8a5300;
+  --warning-soft: #fcf0da;
+  --danger: #b3271a;
+  --danger-soft: #fbe7e4;
 }

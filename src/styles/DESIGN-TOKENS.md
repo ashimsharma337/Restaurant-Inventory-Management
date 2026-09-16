@@ -8,17 +8,17 @@ colors were chosen, and how components should consume them.
 This is the same convention Tailwind CSS and Material Design use — a
 **tint/shade scale** built around one base color:
 
-| Step | What it is | Typical use |
-|------|-----------|--------------|
-| 50–100 | Very light tints (mostly white, a hint of color) | Page section backgrounds, subtle hover backgrounds |
-| 200–300 | Light tints | Borders, dividers, disabled states |
-| 400 | Slightly muted version of the base | Secondary icons, less prominent accents |
-| **500** | **The base color** — what you'd point to and call "the brand color" | Primary buttons, active nav items, links |
-| 600 | One step darker | Hover/pressed state for a 500 fill |
-| 700 | Darker still | **Text or icons on a white background** — 500 usually isn't dark enough to pass 4.5:1 contrast on its own, 700 is |
-| 800–900 | Darkest | Dark-mode surfaces, high-emphasis text, rarely used in a light-only UI |
+| Step    | What it is                                                          | Typical use                                                                                                       |
+| ------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| 50–100  | Very light tints (mostly white, a hint of color)                    | Page section backgrounds, subtle hover backgrounds                                                                |
+| 200–300 | Light tints                                                         | Borders, dividers, disabled states                                                                                |
+| 400     | Slightly muted version of the base                                  | Secondary icons, less prominent accents                                                                           |
+| **500** | **The base color** — what you'd point to and call "the brand color" | Primary buttons, active nav items, links                                                                          |
+| 600     | One step darker                                                     | Hover/pressed state for a 500 fill                                                                                |
+| 700     | Darker still                                                        | **Text or icons on a white background** — 500 usually isn't dark enough to pass 4.5:1 contrast on its own, 700 is |
+| 800–900 | Darkest                                                             | Dark-mode surfaces, high-emphasis text, rarely used in a light-only UI                                            |
 
-You don't need to memorize hex values — you pick the *step*, not the color.
+You don't need to memorize hex values — you pick the _step_, not the color.
 "I need brand text on white" -> `var(--brand-700)`. "I need a hover state for a
 brand button" -> `var(--brand-500)`. That's the whole system.
 
@@ -39,7 +39,7 @@ brand button" -> `var(--brand-500)`. That's the whole system.
 ## 3. The one rule that matters most: color is never the only signal
 
 Because all three status colors have to pass WCAG AA text contrast, they end
-up at nearly identical *darkness* (luminance ~0.11–0.13). That means:
+up at nearly identical _darkness_ (luminance ~0.11–0.13). That means:
 
 - In grayscale, or for a user with total color blindness, the three status
   colors look almost the same.
@@ -50,13 +50,13 @@ up at nearly identical *darkness* (luminance ~0.11–0.13). That means:
 ## 4. How to use the file
 
 1. Change values in `variables.scss`; it is imported by `globals.scss` and
-  emits the app-wide CSS custom properties.
+   emits the app-wide CSS custom properties.
 2. In components, use `var(--brand-700)`, `var(--surface-raised)`, and
-  `var(--success)` rather than raw hex values.
+   `var(--success)` rather than raw hex values.
 3. `globals.scss` is still needed because it is the global Next.js stylesheet
-  entry point and loads Tailwind's base, components, and utilities.
+   entry point and loads Tailwind's base, components, and utilities.
 4. MUI's theme keeps matching literal values because MUI validates and derives
-  palette colors during theme creation; it cannot use `var(...)` there.
+   palette colors during theme creation; it cannot use `var(...)` there.
 
 ## 5. Before shipping
 
@@ -97,11 +97,11 @@ WCAG contrast is based on **relative luminance**, which represents how bright a
 color appears to the human eye. The calculation has three main stages:
 
 1. Convert each sRGB red, green, and blue channel from its 0-255 value to a
-  normalized value between 0 and 1.
+   normalized value between 0 and 1.
 2. Linearize each channel, because sRGB values are gamma-encoded rather than
-  proportional to actual light intensity.
+   proportional to actual light intensity.
 3. Combine the linearized channels using their perceptual weights:
-  red `0.2126`, green `0.7152`, and blue `0.0722`.
+   red `0.2126`, green `0.7152`, and blue `0.0722`.
 
 For two colors, let `L1` be the higher relative luminance and `L2` be the
 lower. The contrast ratio is:
@@ -124,11 +124,11 @@ WCAG defines three conformance levels:
 
 For WCAG 2.1 and WCAG 2.2, the commonly used contrast targets are:
 
-| Content | AA | AAA |
-|---------|----|-----|
-| Normal text | At least `4.5:1` | At least `7:1` |
-| Large text | At least `3:1` | At least `4.5:1` |
-| User interface components and graphical objects needed to understand content | At least `3:1` | No separate AAA ratio |
+| Content                                                                      | AA               | AAA                   |
+| ---------------------------------------------------------------------------- | ---------------- | --------------------- |
+| Normal text                                                                  | At least `4.5:1` | At least `7:1`        |
+| Large text                                                                   | At least `3:1`   | At least `4.5:1`      |
+| User interface components and graphical objects needed to understand content | At least `3:1`   | No separate AAA ratio |
 
 Large text generally means at least 18 point regular text or 14 point bold
 text. Contrast is only one part of WCAG: passing a color ratio does not by
@@ -175,22 +175,22 @@ user experience.
 This project uses WCAG as a design and review target for its color tokens:
 
 1. `src/styles/variables.scss` defines the runtime brand, neutral, and status
-  CSS custom properties. Components consume them through `var(--token)` so a
-  palette change is centralized.
+   CSS custom properties. Components consume them through `var(--token)` so a
+   palette change is centralized.
 2. The status colors are dark enough to support readable text on light
-  backgrounds. Representative ratios against white are approximately:
-  `--success` `#04724D` at `5.97:1`, `--warning` `#8A5300` at `6.33:1`, and
-  `--danger` `#B3271A` at `6.52:1`. These pass the `4.5:1` AA target for
-  normal text.
+   backgrounds. Representative ratios against white are approximately:
+   `--success` `#04724D` at `5.97:1`, `--warning` `#8A5300` at `6.33:1`, and
+   `--danger` `#B3271A` at `6.52:1`. These pass the `4.5:1` AA target for
+   normal text.
 3. `src/styles/globals.scss` loads the token stylesheet and exposes the
-  variables globally. `src/pages/_app.js` loads that global stylesheet for
-  every page.
+   variables globally. `src/pages/_app.js` loads that global stylesheet for
+   every page.
 4. Status indicators must combine color with a text label and a distinct icon
-  shape. In this system, the intended shapes are a check circle for in-stock,
-  an alert triangle for low stock, and an X/octagon shape for expired or out
-  of stock.
+   shape. In this system, the intended shapes are a check circle for in-stock,
+   an alert triangle for low stock, and an X/octagon shape for expired or out
+   of stock.
 5. The color-blindness review recommended in section 5 checks that the status
-  meaning remains understandable when hue differences are reduced or removed.
+   meaning remains understandable when hue differences are reduced or removed.
 
 These checks improve the color accessibility of the inventory interface, but
 they do not claim that the entire application is WCAG-conformant. A complete
