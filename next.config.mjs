@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
 
   // Recommended for Docker / containers
-  output: 'standalone',
+  output: "standalone",
 
   eslint: {
     // Prevent build from failing on lint errors in CI
@@ -15,8 +15,8 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'lh3.googleusercontent.com',
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
       },
     ],
   },

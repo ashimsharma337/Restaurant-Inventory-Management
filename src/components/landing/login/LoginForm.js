@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import Link from 'next/link';
-import styles from '@/styles/landing/LoginPage.module.scss';
+import { useState } from "react";
+import Link from "next/link";
+import styles from "@/styles/landing/LoginPage.module.scss";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    window.location.assign('/dashboard');
+    window.location.assign("/dashboard");
   };
 
   return (
@@ -15,8 +15,17 @@ export default function LoginForm() {
       <div className={styles.fieldGroup}>
         <label htmlFor="email">Work Email</label>
         <div className={styles.inputWrap}>
-          <span className="material-symbols-outlined" aria-hidden="true">alternate_email</span>
-          <input id="email" name="email" placeholder="chef@grandbistro.com" type="email" autoComplete="email" required />
+          <span className="material-symbols-outlined" aria-hidden="true">
+            alternate_email
+          </span>
+          <input
+            id="email"
+            name="email"
+            placeholder="chef@grandbistro.com"
+            type="email"
+            autoComplete="email"
+            required
+          />
         </div>
       </div>
 
@@ -26,23 +35,25 @@ export default function LoginForm() {
           <Link href="/help">Forgot?</Link>
         </div>
         <div className={styles.inputWrap}>
-          <span className="material-symbols-outlined" aria-hidden="true">lock</span>
+          <span className="material-symbols-outlined" aria-hidden="true">
+            lock
+          </span>
           <input
             id="password"
             name="password"
             placeholder="Enter your password"
-            type={showPassword ? 'text' : 'password'}
+            type={showPassword ? "text" : "password"}
             autoComplete="current-password"
             required
           />
           <button
             className={styles.visibilityButton}
             type="button"
-            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            aria-label={showPassword ? "Hide password" : "Show password"}
             onClick={() => setShowPassword((visible) => !visible)}
           >
             <span className="material-symbols-outlined" aria-hidden="true">
-              {showPassword ? 'visibility_off' : 'visibility'}
+              {showPassword ? "visibility_off" : "visibility"}
             </span>
           </button>
         </div>
@@ -55,7 +66,9 @@ export default function LoginForm() {
 
       <button className={styles.submitButton} type="submit">
         <span>Access Dashboard</span>
-        <span className="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+        <span className="material-symbols-outlined" aria-hidden="true">
+          arrow_forward
+        </span>
       </button>
     </form>
   );

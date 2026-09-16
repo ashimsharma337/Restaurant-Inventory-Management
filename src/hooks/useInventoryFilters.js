@@ -11,27 +11,27 @@
 //   const { query, category, stockStatus, shelfZone, setFilter, clearAll } =
 //     useInventoryFilters();
 
-import { useRouter } from 'next/router';
-import { useCallback } from 'react';
+import { useRouter } from "next/router";
+import { useCallback } from "react";
 
 // The canonical param names used in the URL
 export const FILTER_KEYS = {
-  QUERY: 'q',
-  CATEGORY: 'category',
-  STOCK_STATUS: 'stock',
-  SHELF_ZONE: 'zone',
-  PAGE: 'page',
+  QUERY: "q",
+  CATEGORY: "category",
+  STOCK_STATUS: "stock",
+  SHELF_ZONE: "zone",
+  PAGE: "page",
 };
 
 export function useInventoryFilters() {
   const router = useRouter();
 
   // Read current values — fall back to empty string / null when not set
-  const query = router.query[FILTER_KEYS.QUERY] ?? '';
-  const category = router.query[FILTER_KEYS.CATEGORY] ?? '';
-  const stockStatus = router.query[FILTER_KEYS.STOCK_STATUS] ?? '';
-  const shelfZone = router.query[FILTER_KEYS.SHELF_ZONE] ?? '';
-  const page = parseInt(router.query[FILTER_KEYS.PAGE] ?? '1', 10);
+  const query = router.query[FILTER_KEYS.QUERY] ?? "";
+  const category = router.query[FILTER_KEYS.CATEGORY] ?? "";
+  const stockStatus = router.query[FILTER_KEYS.STOCK_STATUS] ?? "";
+  const shelfZone = router.query[FILTER_KEYS.SHELF_ZONE] ?? "";
+  const page = parseInt(router.query[FILTER_KEYS.PAGE] ?? "1", 10);
 
   // ── setFilter ───────────────────────────────────────────────────────────────
   // Updates one filter key in the URL without touching the others.
@@ -42,11 +42,14 @@ export function useInventoryFilters() {
       const current = new URLSearchParams(
         // router.query can have array values for multi-params — flatten to string
         Object.fromEntries(
-          Object.entries(router.query).map(([k, v]) => [k, Array.isArray(v) ? v[0] : v])
-        )
+          Object.entries(router.query).map(([k, v]) => [
+            k,
+            Array.isArray(v) ? v[0] : v,
+          ]),
+        ),
       );
 
-      if (value === null || value === '' || value === undefined) {
+      if (value === null || value === "" || value === undefined) {
         current.delete(key);
       } else {
         current.set(key, value);
@@ -60,28 +63,32 @@ export function useInventoryFilters() {
       router.push(
         { pathname: router.pathname, search: current.toString() },
         undefined,
-        { shallow: true } // don't re-run getServerSideProps / getStaticProps
+        { shallow: true }, // don't re-run getServerSideProps / getStaticProps
       );
     },
-    [router]
+    [router],
   );
 
   // ── setQuery ─────────────────────────────────────────────────────────────────
   // Convenience wrapper — used by SearchInput
   const setQuery = useCallback(
     (value) => setFilter(FILTER_KEYS.QUERY, value),
-    [setFilter]
+    [setFilter],
   );
 
   // ── clearAll ─────────────────────────────────────────────────────────────────
   // Resets all filters to an empty URL
   const clearAll = useCallback(() => {
-    router.push({ pathname: router.pathname, search: '' }, undefined, { shallow: true });
+    router.push({ pathname: router.pathname, search: "" }, undefined, {
+      shallow: true,
+    });
   }, [router]);
 
   // ── hasActiveFilters ──────────────────────────────────────────────────────────
   // Useful for showing a "Clear all" button only when something is active
-  const hasActiveFilters = Boolean(query || category || stockStatus || shelfZone);
+  const hasActiveFilters = Boolean(
+    query || category || stockStatus || shelfZone,
+  );
 
   return {
     // Current values

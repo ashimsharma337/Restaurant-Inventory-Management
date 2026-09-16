@@ -2,8 +2,8 @@
 // Debounced search input with autocomplete dropdown.
 // Reads/writes ?q= via useInventoryFilters hook (URL params).
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useInventoryFilters } from '@/hooks/useInventoryFilters';
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useInventoryFilters } from "@/hooks/useInventoryFilters";
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 
@@ -13,39 +13,39 @@ const MAX_RESULTS = 8;
 
 const TYPE_CONFIG = {
   ingredient: {
-    icon: 'nutrition',
-    label: 'Ingredient',
+    icon: "nutrition",
+    label: "Ingredient",
     colorClass:
-      'text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/40',
+      "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/40",
   },
   meal: {
-    icon: 'restaurant',
-    label: 'Meal',
+    icon: "restaurant",
+    label: "Meal",
     colorClass:
-      'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/40',
+      "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/40",
   },
   category: {
-    icon: 'category',
-    label: 'Category',
+    icon: "category",
+    label: "Category",
     colorClass:
-      'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/40',
+      "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/40",
   },
   supplier: {
-    icon: 'local_shipping',
-    label: 'Supplier',
+    icon: "local_shipping",
+    label: "Supplier",
     colorClass:
-      'text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/40',
+      "text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/40",
   },
 };
 
 // Chips shown in the empty-state dropdown (focused, no input yet)
 const SUGGESTIONS = [
-  { label: 'Dairy',         query: 'dairy',     icon: 'egg' },
-  { label: 'Chicken',       query: 'chicken',   icon: 'nutrition' },
-  { label: 'Italian meals', query: 'Italian',   icon: 'restaurant' },
-  { label: 'Seafood',       query: 'seafood',   icon: 'set_meal' },
-  { label: 'Fresh produce', query: 'produce',   icon: 'eco' },
-  { label: 'Beverages',     query: 'beverage',  icon: 'local_cafe' },
+  { label: "Dairy", query: "dairy", icon: "egg" },
+  { label: "Chicken", query: "chicken", icon: "nutrition" },
+  { label: "Italian meals", query: "Italian", icon: "restaurant" },
+  { label: "Seafood", query: "seafood", icon: "set_meal" },
+  { label: "Fresh produce", query: "produce", icon: "eco" },
+  { label: "Beverages", query: "beverage", icon: "local_cafe" },
 ];
 
 // ─── Custom debounce hook ─────────────────────────────────────────────────────
@@ -102,7 +102,7 @@ export default function SearchInput() {
 
     fetch(
       `/api/search?q=${encodeURIComponent(q)}&limit=${MAX_RESULTS}&mode=autocomplete`,
-      { signal: abortRef.current.signal }
+      { signal: abortRef.current.signal },
     )
       .then((res) => res.json())
       .then((data) => {
@@ -111,7 +111,7 @@ export default function SearchInput() {
         setActiveIndex(-1);
       })
       .catch((err) => {
-        if (err.name !== 'AbortError') {
+        if (err.name !== "AbortError") {
           setResults([]);
           setIsLoading(false);
         }
@@ -128,28 +128,26 @@ export default function SearchInput() {
       setQuery(q); // writes ?q= to URL via useInventoryFilters
       inputRef.current?.blur();
     },
-    [setQuery]
+    [setQuery],
   );
 
   // ── Keyboard navigation ────────────────────────────────────────────────────
   const handleKeyDown = useCallback(
     (e) => {
       switch (e.key) {
-        case 'ArrowDown':
+        case "ArrowDown":
           e.preventDefault();
           setActiveIndex((prev) =>
-            results.length === 0 ? -1 : (prev + 1) % results.length
+            results.length === 0 ? -1 : (prev + 1) % results.length,
           );
           break;
 
-        case 'ArrowUp':
+        case "ArrowUp":
           e.preventDefault();
-          setActiveIndex((prev) =>
-            prev <= 0 ? results.length - 1 : prev - 1
-          );
+          setActiveIndex((prev) => (prev <= 0 ? results.length - 1 : prev - 1));
           break;
 
-        case 'Enter':
+        case "Enter":
           e.preventDefault();
           if (activeIndex >= 0 && results[activeIndex]) {
             commitSearch(results[activeIndex].name);
@@ -158,7 +156,7 @@ export default function SearchInput() {
           }
           break;
 
-        case 'Escape':
+        case "Escape":
           setIsOpen(false);
           setActiveIndex(-1);
           inputRef.current?.blur();
@@ -168,7 +166,7 @@ export default function SearchInput() {
           break;
       }
     },
-    [results, activeIndex, inputValue, commitSearch]
+    [results, activeIndex, inputValue, commitSearch],
   );
 
   // ── Open dropdown on focus ─────────────────────────────────────────────────
@@ -187,8 +185,8 @@ export default function SearchInput() {
         setActiveIndex(-1);
       }
     };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
   }, []);
 
   // ── Scroll active item into view ───────────────────────────────────────────
@@ -196,16 +194,16 @@ export default function SearchInput() {
     if (activeIndex >= 0 && dropdownRef.current) {
       dropdownRef.current
         .querySelector(`[data-index="${activeIndex}"]`)
-        ?.scrollIntoView({ block: 'nearest' });
+        ?.scrollIntoView({ block: "nearest" });
     }
   }, [activeIndex]);
 
   // ── Clear ──────────────────────────────────────────────────────────────────
   const handleClear = () => {
-    setInputValue('');
+    setInputValue("");
     setResults([]);
     setActiveIndex(-1);
-    setQuery('');
+    setQuery("");
     inputRef.current?.focus();
   };
 
@@ -219,17 +217,16 @@ export default function SearchInput() {
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="relative w-96 max-w-md">
-
       {/* Input wrapper */}
       <div
         className={[
-          'flex items-center gap-2 w-full rounded-xl border px-3 py-2',
-          'bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm',
-          'transition-all duration-200',
+          "flex items-center gap-2 w-full rounded-xl border px-3 py-2",
+          "bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm",
+          "transition-all duration-200",
           isFocused
-            ? 'border-teal-400 dark:border-teal-500 shadow-[0_0_0_3px_rgba(45,212,191,0.12)]'
-            : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600',
-        ].join(' ')}
+            ? "border-teal-400 dark:border-teal-500 shadow-[0_0_0_3px_rgba(45,212,191,0.12)]"
+            : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600",
+        ].join(" ")}
       >
         {/* Search icon / spinner */}
         <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
@@ -238,11 +235,11 @@ export default function SearchInput() {
           ) : (
             <span
               className={[
-                'material-symbols-outlined text-[18px] leading-none transition-colors',
+                "material-symbols-outlined text-[18px] leading-none transition-colors",
                 isFocused
-                  ? 'text-teal-500 dark:text-teal-400'
-                  : 'text-slate-400 dark:text-slate-500',
-              ].join(' ')}
+                  ? "text-teal-500 dark:text-teal-400"
+                  : "text-slate-400 dark:text-slate-500",
+              ].join(" ")}
             >
               search
             </span>
@@ -272,10 +269,10 @@ export default function SearchInput() {
           autoComplete="off"
           spellCheck="false"
           className={[
-            'flex-1 bg-transparent border-none outline-none p-0 focus:ring-0',
-            'text-sm font-medium text-slate-800 dark:text-slate-100',
-            'placeholder:text-slate-400 dark:placeholder:text-slate-500',
-          ].join(' ')}
+            "flex-1 bg-transparent border-none outline-none p-0 focus:ring-0",
+            "text-sm font-medium text-slate-800 dark:text-slate-100",
+            "placeholder:text-slate-400 dark:placeholder:text-slate-500",
+          ].join(" ")}
         />
 
         {/* Clear button */}
@@ -285,11 +282,11 @@ export default function SearchInput() {
             onClick={handleClear}
             aria-label="Clear search"
             className={[
-              'flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full',
-              'text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300',
-              'hover:bg-slate-100 dark:hover:bg-slate-700',
-              'transition-all duration-150 active:scale-90',
-            ].join(' ')}
+              "flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full",
+              "text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300",
+              "hover:bg-slate-100 dark:hover:bg-slate-700",
+              "transition-all duration-150 active:scale-90",
+            ].join(" ")}
           >
             <span className="material-symbols-outlined text-[15px] leading-none">
               close
@@ -305,14 +302,13 @@ export default function SearchInput() {
           id="search-listbox"
           role="listbox"
           className={[
-            'absolute top-full left-0 right-0 mt-2 z-50',
-            'bg-white dark:bg-slate-900',
-            'border border-slate-200 dark:border-slate-700',
-            'rounded-2xl shadow-xl shadow-slate-200/60 dark:shadow-black/40',
-            'overflow-hidden',
-          ].join(' ')}
+            "absolute top-full left-0 right-0 mt-2 z-50",
+            "bg-white dark:bg-slate-900",
+            "border border-slate-200 dark:border-slate-700",
+            "rounded-2xl shadow-xl shadow-slate-200/60 dark:shadow-black/40",
+            "overflow-hidden",
+          ].join(" ")}
         >
-
           {/* ── Empty state: suggestion chips ─────────────────────────────── */}
           {showSuggestions && (
             <div className="p-3">
@@ -329,14 +325,14 @@ export default function SearchInput() {
                       commitSearch(s.query);
                     }}
                     className={[
-                      'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium',
-                      'text-slate-600 dark:text-slate-300',
-                      'bg-slate-50 dark:bg-slate-800',
-                      'border border-slate-200 dark:border-slate-700',
-                      'hover:border-teal-400 hover:text-teal-700 hover:bg-teal-50',
-                      'dark:hover:border-teal-500 dark:hover:text-teal-300 dark:hover:bg-teal-900/30',
-                      'transition-all duration-150 active:scale-95',
-                    ].join(' ')}
+                      "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium",
+                      "text-slate-600 dark:text-slate-300",
+                      "bg-slate-50 dark:bg-slate-800",
+                      "border border-slate-200 dark:border-slate-700",
+                      "hover:border-teal-400 hover:text-teal-700 hover:bg-teal-50",
+                      "dark:hover:border-teal-500 dark:hover:text-teal-300 dark:hover:bg-teal-900/30",
+                      "transition-all duration-150 active:scale-95",
+                    ].join(" ")}
                   >
                     <span className="material-symbols-outlined text-[13px] leading-none">
                       {s.icon}
@@ -395,19 +391,19 @@ export default function SearchInput() {
                           onClick={() => commitSearch(result.name)}
                           onMouseEnter={() => setActiveIndex(idx)}
                           className={[
-                            'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left',
-                            'transition-colors duration-100',
+                            "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left",
+                            "transition-colors duration-100",
                             isActive
-                              ? 'bg-teal-50 dark:bg-teal-900/30'
-                              : 'hover:bg-slate-50 dark:hover:bg-slate-800/60',
-                          ].join(' ')}
+                              ? "bg-teal-50 dark:bg-teal-900/30"
+                              : "hover:bg-slate-50 dark:hover:bg-slate-800/60",
+                          ].join(" ")}
                         >
                           {/* Type icon badge */}
                           <div
                             className={[
-                              'w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0',
+                              "w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0",
                               config.colorClass,
-                            ].join(' ')}
+                            ].join(" ")}
                           >
                             <span className="material-symbols-outlined text-[15px] leading-none">
                               {config.icon}
@@ -423,7 +419,9 @@ export default function SearchInput() {
                             */}
                             <p
                               className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate [&_mark]:bg-teal-100 [&_mark]:dark:bg-teal-900/60 [&_mark]:text-teal-800 [&_mark]:dark:text-teal-200 [&_mark]:rounded-sm [&_mark]:px-0.5 [&_mark]:font-semibold"
-                              dangerouslySetInnerHTML={{ __html: result.nameHl }}
+                              dangerouslySetInnerHTML={{
+                                __html: result.nameHl,
+                              }}
                             />
                             <p className="text-xs text-slate-400 dark:text-slate-500 truncate mt-0.5">
                               {result.subtitle}
@@ -433,9 +431,9 @@ export default function SearchInput() {
                           {/* Type label */}
                           <span
                             className={[
-                              'flex-shrink-0 text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full',
+                              "flex-shrink-0 text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full",
                               config.colorClass,
-                            ].join(' ')}
+                            ].join(" ")}
                           >
                             {config.label}
                           </span>
@@ -467,7 +465,7 @@ export default function SearchInput() {
                   <p className="text-[11px] text-slate-400 dark:text-slate-500">
                     {results.length === MAX_RESULTS
                       ? `Top ${MAX_RESULTS} results`
-                      : `${results.length} result${results.length !== 1 ? 's' : ''}`}
+                      : `${results.length} result${results.length !== 1 ? "s" : ""}`}
                   </p>
                   <div className="flex items-center gap-3 text-[11px] text-slate-400 dark:text-slate-500">
                     <span className="flex items-center gap-1">
@@ -492,7 +490,6 @@ export default function SearchInput() {
     </div>
   );
 }
-
 
 // old code ...
 // // src/components/dashboard/SearchInput.js

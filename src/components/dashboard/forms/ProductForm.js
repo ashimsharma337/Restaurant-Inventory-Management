@@ -1,26 +1,32 @@
-import { useState } from 'react';
-import { TextField, Button, Stack, MenuItem, ListSubheader } from '@mui/material';
-import { UNIT_GROUPS } from '@/utility/units';
-import { useQuery } from '@apollo/client/react';
-import { GET_CATEGORIES } from '@/graphql/client/queries';
+import { useState } from "react";
+import {
+  TextField,
+  Button,
+  Stack,
+  MenuItem,
+  ListSubheader,
+} from "@mui/material";
+import { UNIT_GROUPS } from "@/utility/units";
+import { useQuery } from "@apollo/client/react";
+import { GET_CATEGORIES } from "@/graphql/client/queries";
 
 const ProductForm = ({ onSubmit, loading }) => {
   const [form, setForm] = useState({
-    name: '',
-    categoryId: '',
-    quantity: '',
-    unit: '',
-    price: '',
+    name: "",
+    categoryId: "",
+    quantity: "",
+    unit: "",
+    price: "",
   });
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setForm({
       ...form,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit({
       ...form,
@@ -34,45 +40,65 @@ const ProductForm = ({ onSubmit, loading }) => {
   return (
     <form onSubmit={handleSubmit}>
       <Stack spacing={2}>
-        <TextField label="Product Name" name="name" required value={form.name} onChange={handleChange} />
-        <TextField 
+        <TextField
+          label="Product Name"
+          name="name"
+          required
+          value={form.name}
+          onChange={handleChange}
+        />
+        <TextField
           select
-          label="Category" 
-          name="categoryId" 
-          required value={form.categoryId} 
+          label="Category"
+          name="categoryId"
+          required
+          value={form.categoryId}
           onChange={handleChange}
         >
           <MenuItem value="">
             <em>Select Category</em>
           </MenuItem>
-          {data?.categories.map(cat => (
+          {data?.categories.map((cat) => (
             <MenuItem key={cat.id} value={cat.id}>
               {cat.name}
             </MenuItem>
           ))}
         </TextField>
-        <TextField label="Quantity" name="quantity" type="number" required value={form.quantity} onChange={handleChange} />
-        <TextField 
-          select label="Unit" 
-          name="unit" 
-          required 
-          value={form.unit} 
+        <TextField
+          label="Quantity"
+          name="quantity"
+          type="number"
+          required
+          value={form.quantity}
+          onChange={handleChange}
+        />
+        <TextField
+          select
+          label="Unit"
+          name="unit"
+          required
+          value={form.unit}
           onChange={handleChange}
         >
-          {UNIT_GROUPS.map(group => [
-              <ListSubheader key={group.label}>
-                {group.label}
-              </ListSubheader>,
-              group.options.map(unit => (
-                <MenuItem key={unit.value} value={unit.value}>
-                  {unit.label}
-                </MenuItem>
-              )),
+          {UNIT_GROUPS.map((group) => [
+            <ListSubheader key={group.label}>{group.label}</ListSubheader>,
+            group.options.map((unit) => (
+              <MenuItem key={unit.value} value={unit.value}>
+                {unit.label}
+              </MenuItem>
+            )),
           ])}
         </TextField>
-        <TextField label="Price" name="price" type="number" required value={form.price} onChange={handleChange} />
+        <TextField
+          label="Price"
+          name="price"
+          type="number"
+          required
+          value={form.price}
+          onChange={handleChange}
+        />
         <Button type="submit" variant="contained" disabled={loading}>
-          {loading ? 'Saving...' : 'Add Product'}
+          {loading ? "Saving..." : "Add Product"}
         </Button>
       </Stack>
     </form>

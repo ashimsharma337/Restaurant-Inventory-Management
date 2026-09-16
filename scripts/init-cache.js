@@ -1,14 +1,18 @@
-const Database = require('better-sqlite3');
-const { Pool }  = require('pg');
-const { fetchCategories, fetchMealsByCategory, fetchMealDetail } = require('./mealdb');
+const Database = require("better-sqlite3");
+const { Pool } = require("pg");
+const {
+  fetchCategories,
+  fetchMealsByCategory,
+  fetchMealDetail,
+} = require("./mealdb");
 
-const DB_PATH = '/data/inventory.db';
+const DB_PATH = "/data/inventory.db";
 
 const pool = new Pool({
-  host:     process.env.POSTGRES_HOST,
-  port:     parseInt(process.env.POSTGRES_PORT || '5432'),
+  host: process.env.POSTGRES_HOST,
+  port: parseInt(process.env.POSTGRES_PORT || "5432"),
   database: process.env.POSTGRES_DB,
-  user:     process.env.POSTGRES_USER,
+  user: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
 });
 
@@ -44,7 +48,7 @@ function openDb() {
     );
   `);
 
-  console.log('[init] SQLite schema ready');
+  console.log("[init] SQLite schema ready");
   return db;
 }
 
@@ -59,12 +63,15 @@ function sqliteUpsertCategories(db, categories) {
         description = excluded.description,
         thumbnail   = excluded.thumbnail
   `);
-  db.transaction((rows) => { for (const r of rows) stmt.run(r); })(categories);
+  db.transaction((rows) => {
+    for (const r of rows) stmt.run(r);
+  })(categories);
   console.log(`[init] SQLite: upserted ${categories.length} categories`);
 }
 
 function sqliteUpsertMeal(db, meal) {
-  db.prepare(`
+  db.prepare(
+    `
     INSERT INTO meals (id, name, category, area, instructions, thumbnail)
     VALUES (@id, @name, @category, @area, @instructions, @thumbnail)
     ON CONFLICT(id) DO UPDATE
@@ -73,7 +80,8 @@ function sqliteUpsertMeal(db, meal) {
         area         = excluded.area,
         instructions = excluded.instructions,
         thumbnail    = excluded.thumbnail
-  `).run(meal);
+  `,
+  ).run(meal);
 }
 
 function sqliteUpsertIngredients(db, mealId, mealName, ingredients) {
@@ -84,29 +92,35 @@ function sqliteUpsertIngredients(db, mealId, mealName, ingredients) {
     SET measure   = excluded.measure,
         meal_name = excluded.meal_name
   `);
-  db.transaction((rows) => { for (const r of rows) stmt.run(r); })(
-    ingredients.map((i) => ({ meal_id: mealId, meal_name: mealName, ...i }))
-  );
+  db.transaction((rows) => {
+    for (const r of rows) stmt.run(r);
+  })(ingredients.map((i) => ({ meal_id: mealId, meal_name: mealName, ...i })));
 }
 
 // ── Postgres upserts (mealdb schema) ───────────────────
 
 async function pgUpsertCategories(categories) {
   for (const c of categories) {
-    await pool.query(`
+    await pool.query(
+      `
       INSERT INTO mealdb.categories (id, name, description, thumbnail)
       VALUES ($1, $2, $3, $4)
       ON CONFLICT (id) DO UPDATE
       SET name        = EXCLUDED.name,
           description = EXCLUDED.description,
           thumbnail   = EXCLUDED.thumbnail
-    `, [c.id, c.name, c.description, c.thumbnail]);
+    `,
+      [c.id, c.name, c.description, c.thumbnail],
+    );
   }
-  console.log(`[init] Postgres: upserted ${categories.length} categories → mealdb.categories`);
+  console.log(
+    `[init] Postgres: upserted ${categories.length} categories → mealdb.categories`,
+  );
 }
 
 async function pgUpsertMeal(meal) {
-  await pool.query(`
+  await pool.query(
+    `
     INSERT INTO mealdb.meals (id, name, category, area, instructions, thumbnail)
     VALUES ($1, $2, $3, $4, $5, $6)
     ON CONFLICT (id) DO UPDATE
@@ -115,27 +129,39 @@ async function pgUpsertMeal(meal) {
         area         = EXCLUDED.area,
         instructions = EXCLUDED.instructions,
         thumbnail    = EXCLUDED.thumbnail
-  `, [meal.id, meal.name, meal.category, meal.area, meal.instructions, meal.thumbnail]);
+  `,
+    [
+      meal.id,
+      meal.name,
+      meal.category,
+      meal.area,
+      meal.instructions,
+      meal.thumbnail,
+    ],
+  );
 }
 
 async function pgUpsertIngredients(mealId, mealName, ingredients) {
   for (const ing of ingredients) {
-    await pool.query(`
+    await pool.query(
+      `
       INSERT INTO mealdb.ingredients (meal_id, meal_name, name, measure)
       VALUES ($1, $2, $3, $4)
       ON CONFLICT (meal_id, name) DO UPDATE
       SET measure   = EXCLUDED.measure,
           meal_name = EXCLUDED.meal_name
-    `, [mealId, mealName, ing.name, ing.measure]);
+    `,
+      [mealId, mealName, ing.name, ing.measure],
+    );
   }
 }
 
 // ── main ────────────────────────────────────────────────
 
 async function main() {
-  console.log('[init] Starting init-cache...');
+  console.log("[init] Starting init-cache...");
 
-  const db         = openDb();
+  const db = openDb();
   const categories = await fetchCategories();
 
   // Categories
@@ -143,7 +169,7 @@ async function main() {
   await pgUpsertCategories(categories);
 
   // Meals + ingredients per category
-  let totalMeals       = 0;
+  let totalMeals = 0;
   let totalIngredients = 0;
 
   for (const cat of categories) {
@@ -172,10 +198,10 @@ async function main() {
 
   db.close();
   await pool.end();
-  console.log('[init] Done. Exiting.');
+  console.log("[init] Done. Exiting.");
 }
 
 main().catch((err) => {
-  console.error('[init] Fatal:', err.message);
+  console.error("[init] Fatal:", err.message);
   process.exit(1);
 });

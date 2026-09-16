@@ -17,17 +17,17 @@ Restaurant Inventory Management is a work-in-progress web application for organi
 
 ## Technology
 
-| Area | Technology |
-| --- | --- |
-| Frontend | React 19, Next.js 16 Pages Router |
-| UI | Material UI, MUI X Data Grid, Emotion |
-| Styling | Sass, Tailwind CSS, PostCSS |
-| API | GraphQL, Apollo Server, Apollo Client |
-| Local data and search | SQLite, `better-sqlite3`, SQLite FTS5 |
-| Persistent relational data | PostgreSQL 16 |
-| External data source | TheMealDB API |
-| Tooling | ESLint 9, Next.js ESLint configuration |
-| Deployment | Docker Compose and Kubernetes manifests |
+| Area                       | Technology                              |
+| -------------------------- | --------------------------------------- |
+| Frontend                   | React 19, Next.js 16 Pages Router       |
+| UI                         | Material UI, MUI X Data Grid, Emotion   |
+| Styling                    | Sass, Tailwind CSS, PostCSS             |
+| API                        | GraphQL, Apollo Server, Apollo Client   |
+| Local data and search      | SQLite, `better-sqlite3`, SQLite FTS5   |
+| Persistent relational data | PostgreSQL 16                           |
+| External data source       | TheMealDB API                           |
+| Tooling                    | ESLint 9, Next.js ESLint configuration  |
+| Deployment                 | Docker Compose and Kubernetes manifests |
 
 ## Application Flow
 
@@ -109,14 +109,14 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000). The primary routes are:
 
-| Route | Purpose |
-| --- | --- |
-| `/` | Landing page |
-| `/dashboard` | Inventory dashboard overview |
-| `/dashboard/products` | Product inventory view |
-| `/api/graphql` | GraphQL API |
-| `/api/search?q=chicken` | Search and autocomplete API |
-| `/api/health` | Health check |
+| Route                   | Purpose                      |
+| ----------------------- | ---------------------------- |
+| `/`                     | Landing page                 |
+| `/dashboard`            | Inventory dashboard overview |
+| `/dashboard/products`   | Product inventory view       |
+| `/api/graphql`          | GraphQL API                  |
+| `/api/search?q=chicken` | Search and autocomplete API  |
+| `/api/health`           | Health check                 |
 
 ## Docker Compose
 
@@ -148,11 +148,14 @@ The Compose setup uses a persistent `postgres_data` volume. The default pgAdmin 
 
 The stock-in workflow supports private S3 attachments for supplier invoices and delivery receipts. Files upload directly to S3 with a short-lived presigned URL; PostgreSQL stores only the document metadata.
 
-Apply the document table migration to PostgreSQL:
+Initialize the PostgreSQL schema and seed local inventory data:
 
 ```bash
-psql "$DATABASE_URL" -f database/schema/stock_in_documents.sql
+make db-init
+make db-seed
 ```
+
+Use `make db-reset` when you intentionally want to drop and recreate the local database objects.
 
 For local development, start LocalStack with Compose and create the bucket once:
 
@@ -208,13 +211,13 @@ The API is implemented in [src/graphql/server/schema.js](src/graphql/server/sche
 
 ## Available Commands
 
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Start the Next.js development server |
-| `npm run build` | Create a production build |
-| `npm start` | Start the production server after building |
-| `npm run lint` | Run ESLint across the repository |
-| `npm test` | Placeholder command; automated tests are not implemented yet |
+| Command         | Description                                                  |
+| --------------- | ------------------------------------------------------------ |
+| `npm run dev`   | Start the Next.js development server                         |
+| `npm run build` | Create a production build                                    |
+| `npm start`     | Start the production server after building                   |
+| `npm run lint`  | Run ESLint across the repository                             |
+| `npm test`      | Placeholder command; automated tests are not implemented yet |
 
 ## Kubernetes
 

@@ -3,39 +3,44 @@ import { query } from "../../utility/db";
 export const resolvers = {
   Query: {
     products: async () => {
-     try {
-      const { rows } = await query(`
+      try {
+        const { rows } = await query(`
         SELECT p.*, c.id as category_id, c.name as category_name
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
         ORDER BY p.created_at DESC
       `);
-      return rows.map(row => ({
-        id: row.id,
-        name: row.name,
-        category_id: row.category_id,
-        quantity: row.quantity,
-        unit: row.unit,
-        price: row.price,
-        status: row.status,
-        created_at: row.created_at,
-        updated_at: row.updated_at,
-        category: row.category_id ? { id: row.category_id, name: row.category_name } : null,
-      }));
-    } catch (err) {
-      console.error("PRODUCTS RESOLVER ERROR:", err);
-      throw err;
+        return rows.map((row) => ({
+          id: row.id,
+          name: row.name,
+          category_id: row.category_id,
+          quantity: row.quantity,
+          unit: row.unit,
+          price: row.price,
+          status: row.status,
+          created_at: row.created_at,
+          updated_at: row.updated_at,
+          category: row.category_id
+            ? { id: row.category_id, name: row.category_name }
+            : null,
+        }));
+      } catch (err) {
+        console.error("PRODUCTS RESOLVER ERROR:", err);
+        throw err;
       }
     },
 
     product: async (_, { id }) => {
-      const { rows } = await query(`
+      const { rows } = await query(
+        `
         SELECT p.*, c.id as category_id, c.name as category_name
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
         WHERE p.id = $1
-      `, [id]);
-      
+      `,
+        [id],
+      );
+
       const row = rows[0];
       return {
         id: row.id,
@@ -47,7 +52,9 @@ export const resolvers = {
         status: row.status,
         created_at: row.created_at,
         updated_at: row.updated_at,
-        category: row.category_id ? { id: row.category_id, name: row.category_name } : null,
+        category: row.category_id
+          ? { id: row.category_id, name: row.category_name }
+          : null,
       };
     },
 
@@ -63,7 +70,7 @@ export const resolvers = {
     stockValue: (parent) => parent.price * parent.quantity,
     categoryId: (parent) => parent.category_id,
 
-    category: (parent) => parent.category
+    category: (parent) => parent.category,
   },
 
   Category: {
@@ -81,15 +88,16 @@ export const resolvers = {
         VALUES ($1, $2, $3, $4, $5, 'In Stock')
         RETURNING *
         `,
-        [name, categoryId, quantity, unit, price]
+        [name, categoryId, quantity, unit, price],
       );
 
       const row = rows[0];
       // Fetch category data
-      const categoryResult = row.category_id ? await query(
-        `SELECT id, name FROM categories WHERE id = $1`,
-        [row.category_id]
-      ) : null;
+      const categoryResult = row.category_id
+        ? await query(`SELECT id, name FROM categories WHERE id = $1`, [
+            row.category_id,
+          ])
+        : null;
 
       return {
         id: row.id,
@@ -101,7 +109,9 @@ export const resolvers = {
         status: row.status,
         created_at: row.created_at,
         updated_at: row.updated_at,
-        category: categoryResult?.rows?.[0] ? { id: categoryResult.rows[0].id, name: categoryResult.rows[0].name } : null,
+        category: categoryResult?.rows?.[0]
+          ? { id: categoryResult.rows[0].id, name: categoryResult.rows[0].name }
+          : null,
       };
     },
 
@@ -140,15 +150,16 @@ export const resolvers = {
         WHERE id = $${index}
         RETURNING *
         `,
-        values
+        values,
       );
 
       const row = rows[0];
       // Fetch category data
-      const categoryResult = row.category_id ? await query(
-        `SELECT id, name FROM categories WHERE id = $1`,
-        [row.category_id]
-      ) : null;
+      const categoryResult = row.category_id
+        ? await query(`SELECT id, name FROM categories WHERE id = $1`, [
+            row.category_id,
+          ])
+        : null;
 
       return {
         id: row.id,
@@ -160,7 +171,9 @@ export const resolvers = {
         status: row.status,
         created_at: row.created_at,
         updated_at: row.updated_at,
-        category: categoryResult?.rows?.[0] ? { id: categoryResult.rows[0].id, name: categoryResult.rows[0].name } : null,
+        category: categoryResult?.rows?.[0]
+          ? { id: categoryResult.rows[0].id, name: categoryResult.rows[0].name }
+          : null,
       };
     },
 
@@ -174,7 +187,7 @@ export const resolvers = {
         `INSERT INTO categories (name, description)
          VALUES ($1, $2)
          RETURNING *`,
-        [name, description]
+        [name, description],
       );
       return rows[0];
     },

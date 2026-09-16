@@ -1,24 +1,32 @@
-import BrandPanel from './BrandPanel';
-import LoginForm from './LoginForm';
-import SecurityBadges from './SecurityBadges';
-import SocialAuth from './SocialAuth';
-import styles from '@/styles/landing/LoginPage.module.scss';
-import Head from 'next/head';
+import BrandPanel from "./BrandPanel";
+import LoginForm from "./LoginForm";
+import SecurityBadges from "./SecurityBadges";
+import SocialAuth from "./SocialAuth";
+import styles from "@/styles/landing/LoginPage.module.scss";
+import Head from "next/head";
 
 export default function LoginPage() {
   return (
     <>
       <Head>
         <title>Login | Culinary Architect</title>
-        <meta name="description" content="Sign in to manage your Culinary Architect kitchen inventory." />
+        <meta
+          name="description"
+          content="Sign in to manage your Culinary Architect kitchen inventory."
+        />
       </Head>
       <main className={styles.page}>
         <div className={styles.loginCard}>
           <BrandPanel />
-          <section className={styles.formPanel} aria-labelledby="welcome-heading">
+          <section
+            className={styles.formPanel}
+            aria-labelledby="welcome-heading"
+          >
             <div className={styles.mobileLogo}>
               <div className={styles.mobileLogoMark}>
-                <span className="material-symbols-outlined" aria-hidden="true">restaurant_menu</span>
+                <span className="material-symbols-outlined" aria-hidden="true">
+                  restaurant_menu
+                </span>
               </div>
             </div>
             <div className={styles.formHeader}>
@@ -28,7 +36,10 @@ export default function LoginPage() {
             <LoginForm />
             <SocialAuth />
             <p className={styles.salesPrompt}>
-              New to Culinary Architect? <a href="mailto:sales@culinaryarchitect.example">Contact Sales for an Account</a>
+              New to Culinary Architect?{" "}
+              <a href="mailto:sales@culinaryarchitect.example">
+                Contact Sales for an Account
+              </a>
             </p>
           </section>
         </div>

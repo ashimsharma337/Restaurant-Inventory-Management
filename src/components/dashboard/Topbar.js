@@ -1,4 +1,4 @@
-import { AppBar, Toolbar, Typography, Box } from '@mui/material';
+import { AppBar, Toolbar, Typography, Box } from "@mui/material";
 
 const Topbar = () => {
   return (
@@ -6,9 +6,9 @@ const Topbar = () => {
       position="static"
       elevation={0}
       sx={{
-        backgroundColor: '#ffffff',
-        color: '#000000',
-        borderBottom: '1px solid #e0e0e0',
+        backgroundColor: "#ffffff",
+        color: "#000000",
+        borderBottom: "1px solid #e0e0e0",
       }}
     >
       <Toolbar>
@@ -18,9 +18,7 @@ const Topbar = () => {
 
         <Box sx={{ flexGrow: 1 }} />
 
-        <Typography variant="body2">
-          General Manager
-        </Typography>
+        <Typography variant="body2">General Manager</Typography>
       </Toolbar>
     </AppBar>
   );

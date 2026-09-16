@@ -1,19 +1,23 @@
 .dashboard-shell {
-	min-height: 100vh;
-	color: var(--ink);
-	background: var(--surface);
+  min-height: 100vh;
+  color: var(--ink);
+  background: var(--surface);
 }
 
 .dashboard-main {
-	min-height: 100vh;
-	margin-left: 13.5rem;
-	background: var(--surface);
+  min-height: 100vh;
+  margin-left: 13.5rem;
+  background: var(--surface);
 }
 
 @media (max-width: 900px) {
-	.dashboard-main { margin-left: 4.25rem; }
+  .dashboard-main {
+    margin-left: 4.25rem;
+  }
 }
 
 @media (max-width: 640px) {
-	.dashboard-main { margin-left: 4.25rem; }
+  .dashboard-main {
+    margin-left: 4.25rem;
+  }
 }

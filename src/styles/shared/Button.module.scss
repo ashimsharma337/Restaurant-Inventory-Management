@@ -13,13 +13,26 @@
   line-height: 1;
   padding: 0.6rem 0.8rem;
   text-decoration: none;
-  transition: color 160ms ease, background 160ms ease, border-color 160ms ease, transform 160ms ease;
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
 }
 
-.button:hover { transform: translateY(-1px); }
-.button:active { transform: translateY(0); }
-.button:focus-visible { outline: 2px solid var(--brand-500); outline-offset: 2px; }
-.button span:first-child { font-size: 1.05rem; }
+.button:hover {
+  transform: translateY(-1px);
+}
+.button:active {
+  transform: translateY(0);
+}
+.button:focus-visible {
+  outline: 2px solid var(--brand-500);
+  outline-offset: 2px;
+}
+.button span:first-child {
+  font-size: 1.05rem;
+}
 
 .primary {
   border-color: var(--brand-800);
@@ -28,7 +41,10 @@
   box-shadow: 0 4px 10px rgba(7, 59, 58, 0.12);
 }
 
-.primary:hover { border-color: var(--brand-950); background: var(--brand-950); }
+.primary:hover {
+  border-color: var(--brand-950);
+  background: var(--brand-950);
+}
 
 .secondary {
   border-color: var(--brand-100);
@@ -36,4 +52,7 @@
   background: var(--brand-50);
 }
 
-.secondary:hover { border-color: var(--brand-500); background: var(--brand-100); }
+.secondary:hover {
+  border-color: var(--brand-500);
+  background: var(--brand-100);
+}

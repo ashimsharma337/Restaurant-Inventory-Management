@@ -1,4 +1,5 @@
 # Kubernetes Session — Restaurant Inventory Management
+
 **Date:** April 25, 2026  
 **Stack:** Minikube · Next.js · PostgreSQL · SQLite · EFS (hostPath) · CronJob · Sidecar Pattern
 
@@ -46,11 +47,11 @@
 
 ### Volume Flow
 
-| Volume | Type | Mount in Pod | Purpose |
-|---|---|---|---|
-| `efs-storage` | PVC (hostPath) | `/efs-data` | Persistent shared DB across pods |
-| `shared-data` | emptyDir | `/data` | Fast local reads for the app |
-| `temp-storage` | emptyDir | `/tmp` | Next.js scratch space |
+| Volume         | Type           | Mount in Pod | Purpose                          |
+| -------------- | -------------- | ------------ | -------------------------------- |
+| `efs-storage`  | PVC (hostPath) | `/efs-data`  | Persistent shared DB across pods |
+| `shared-data`  | emptyDir       | `/data`      | Fast local reads for the app     |
+| `temp-storage` | emptyDir       | `/tmp`       | Next.js scratch space            |
 
 ### Why Two Volumes?
 
@@ -79,7 +80,7 @@ spec:
   capacity:
     storage: 5Gi
   accessModes:
-    - ReadWriteMany             # multiple pods can mount simultaneously
+    - ReadWriteMany # multiple pods can mount simultaneously
   persistentVolumeReclaimPolicy: Retain
   storageClassName: manual
   hostPath:
@@ -113,17 +114,17 @@ metadata:
   namespace: inventory
 spec:
   schedule: "*/10 * * * *"
-  concurrencyPolicy: Forbid         # skip if previous run still going
+  concurrencyPolicy: Forbid # skip if previous run still going
   startingDeadlineSeconds: 300
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
       backoffLimit: 3
-      activeDeadlineSeconds: 600    # kill if running > 10 min
+      activeDeadlineSeconds: 600 # kill if running > 10 min
       template:
         spec:
-          restartPolicy: OnFailure  # REQUIRED for CronJob pods
+          restartPolicy: OnFailure # REQUIRED for CronJob pods
           containers:
             - name: sqlite-cache-fetcher
               image: ashimsharma/restaurant-inventory:latest
@@ -139,7 +140,7 @@ spec:
                     name: app-config
               volumeMounts:
                 - name: efs-storage
-                  mountPath: /data             # script writes to /data/inventory.db
+                  mountPath: /data # script writes to /data/inventory.db
               resources:
                 requests:
                   cpu: "250m"
@@ -207,7 +208,7 @@ containers:
     image: ashimsharma/restaurant-inventory:latest
     volumeMounts:
       - name: shared-data
-        mountPath: /data          # reads /data/inventory.db
+        mountPath: /data # reads /data/inventory.db
       - name: temp-storage
         mountPath: /tmp
 
@@ -228,25 +229,25 @@ volumes:
 
 ### deployment.yml bugs
 
-| Bug | Problem | Fix |
-|---|---|---|
-| `cache-sidecar` in `initContainers` | Infinite loop blocks main app from starting — initContainers must exit | Moved to `containers` |
-| Volume name typo | `shared-date` vs `shared-data` | Fixed to `shared-data` |
-| Invalid mountPath | `mountPath: /efs-storage` (volume name used as path) | Fixed to `mountPath: /efs-data` |
-| Broken checksum logic | Never compared old vs new checksum — copied every poll | Added `!= LAST_CHECKSUM` check |
-| Filename typo | `meald_cache.db` | Fixed to `meal_cache.db` |
-| Missing volume in main app | `sqlite-cache` volume referenced but never defined | Replaced with `shared-data` |
+| Bug                                 | Problem                                                                | Fix                             |
+| ----------------------------------- | ---------------------------------------------------------------------- | ------------------------------- |
+| `cache-sidecar` in `initContainers` | Infinite loop blocks main app from starting — initContainers must exit | Moved to `containers`           |
+| Volume name typo                    | `shared-date` vs `shared-data`                                         | Fixed to `shared-data`          |
+| Invalid mountPath                   | `mountPath: /efs-storage` (volume name used as path)                   | Fixed to `mountPath: /efs-data` |
+| Broken checksum logic               | Never compared old vs new checksum — copied every poll                 | Added `!= LAST_CHECKSUM` check  |
+| Filename typo                       | `meald_cache.db`                                                       | Fixed to `meal_cache.db`        |
+| Missing volume in main app          | `sqlite-cache` volume referenced but never defined                     | Replaced with `shared-data`     |
 
 ### cronjob.yml bugs
 
-| Bug | Problem | Fix |
-|---|---|---|
-| `kind: Cronjob` | Kubernetes is case-sensitive — must be `CronJob` | Fixed capitalisation |
-| `resources` nested inside `volumeMounts` | Wrong indentation — treated as child of mounts | Fixed to sibling of `volumeMounts` |
-| Volume name mismatch | Defined as `efs` but referenced as `efs-storage` | Made consistent: `efs-storage` |
-| Missing `restartPolicy` | Required for CronJob pod templates | Added `restartPolicy: OnFailure` |
-| Mount path wrong | EFS mounted at `/app/data` but script writes to `/data` | Fixed to `/data` |
-| Missing `mkdir -p` | Script fails if `/data` directory doesn't exist on EFS | Added `mkdir -p /data` before script |
+| Bug                                      | Problem                                                 | Fix                                  |
+| ---------------------------------------- | ------------------------------------------------------- | ------------------------------------ |
+| `kind: Cronjob`                          | Kubernetes is case-sensitive — must be `CronJob`        | Fixed capitalisation                 |
+| `resources` nested inside `volumeMounts` | Wrong indentation — treated as child of mounts          | Fixed to sibling of `volumeMounts`   |
+| Volume name mismatch                     | Defined as `efs` but referenced as `efs-storage`        | Made consistent: `efs-storage`       |
+| Missing `restartPolicy`                  | Required for CronJob pod templates                      | Added `restartPolicy: OnFailure`     |
+| Mount path wrong                         | EFS mounted at `/app/data` but script writes to `/data` | Fixed to `/data`                     |
+| Missing `mkdir -p`                       | Script fails if `/data` directory doesn't exist on EFS  | Added `mkdir -p /data` before script |
 
 ---
 
@@ -302,7 +303,7 @@ kubectl logs debug-job -n $NS
 ```bash
 kubectl logs debug-job-3 -n $NS
 # → [init] SQLite schema ready
-# → [init] SQLite: upserted 14 categories  
+# → [init] SQLite: upserted 14 categories
 # → [init] Fatal:                            ← empty message = connection error
 ```
 
@@ -477,24 +478,25 @@ minikube addons enable metrics-server # needed for HPA
 
 ### initContainers vs containers (sidecars)
 
-| | initContainers | containers |
-|---|---|---|
-| Run order | Sequential, one at a time | All start in parallel |
-| Must exit? | Yes — must exit 0 before next starts | No — run for pod lifetime |
-| Use for | Setup tasks, copying files | Long-running processes |
-| Sidecar loops | ❌ Never — blocks main app | ✅ Fine here |
+|               | initContainers                       | containers                |
+| ------------- | ------------------------------------ | ------------------------- |
+| Run order     | Sequential, one at a time            | All start in parallel     |
+| Must exit?    | Yes — must exit 0 before next starts | No — run for pod lifetime |
+| Use for       | Setup tasks, copying files           | Long-running processes    |
+| Sidecar loops | ❌ Never — blocks main app           | ✅ Fine here              |
 
 **Rule:** If a container has a `while true` loop, it must be in `containers`, not `initContainers`.
 
 ### CronJob vs Job vs Pod
 
-| Resource | Lifecycle | Use for |
-|---|---|---|
-| `Pod` | Lives until deleted manually | Ad-hoc debugging |
-| `Job` | Runs until completion or backoffLimit | One-off tasks |
-| `CronJob` | Spawns Jobs on a schedule | Recurring tasks |
+| Resource  | Lifecycle                             | Use for          |
+| --------- | ------------------------------------- | ---------------- |
+| `Pod`     | Lives until deleted manually          | Ad-hoc debugging |
+| `Job`     | Runs until completion or backoffLimit | One-off tasks    |
+| `CronJob` | Spawns Jobs on a schedule             | Recurring tasks  |
 
 **Key CronJob fields:**
+
 - `concurrencyPolicy: Forbid` — don't start a new job if the last one is still running
 - `restartPolicy: OnFailure` — required on pod template inside a CronJob
 - `backoffLimit: 3` — retry up to 3 times before marking failed
@@ -509,13 +511,13 @@ minikube addons enable metrics-server # needed for HPA
 
 ### hostPath vs EFS
 
-| | hostPath (minikube) | EFS (production) |
-|---|---|---|
-| Backed by | Minikube node filesystem | AWS managed NFS |
-| Access modes | ReadWriteMany ✅ | ReadWriteMany ✅ |
-| Survives pod restart | ✅ | ✅ |
-| Survives node restart | ✅ (minikube) | ✅ |
-| Migration effort | Change PV only — PVC stays same | ✅ |
+|                       | hostPath (minikube)             | EFS (production) |
+| --------------------- | ------------------------------- | ---------------- |
+| Backed by             | Minikube node filesystem        | AWS managed NFS  |
+| Access modes          | ReadWriteMany ✅                | ReadWriteMany ✅ |
+| Survives pod restart  | ✅                              | ✅               |
+| Survives node restart | ✅ (minikube)                   | ✅               |
+| Migration effort      | Change PV only — PVC stays same | ✅               |
 
 ### emptyDir
 
@@ -612,29 +614,36 @@ kubectl top nodes
 ```
 
 HPA will:
+
 - Watch CPU usage of the `app` deployment
 - Scale up when CPU > 70% (up to 5 replicas)
 - Scale down when CPU < 70% (down to minimum 2 replicas)
-- Work with `RollingUpdate` strategy already configured in deployment 
-
+- Work with `RollingUpdate` strategy already configured in deployment
 
 # Kubernetes Refresher — Restaurant Inventory Management
+
 Let's get you re-oriented with your cluster before touching anything. Here's a structured sequence to go from "what's running?" to "ready to make changes".
 
 ## Phase 1 — Cluster Health Check
+
 Start here to confirm minikube and your cluster are healthy.
 bash# Is minikube running?
 minikube status
 
 ### What's the cluster info?
+
 ```sh
 kubectl cluster-info
 ```
+
 # Check nodes (should see 1 minikube node)
+
 ```sh
 kubectl get nodes -o wide
 ```
+
 ## Phase 2 — Namespace Orientation
+
 Your app likely lives in a dedicated namespace. Find it first.
 
 ```bash
@@ -647,7 +656,9 @@ export NS=<your-namespace>
 # Or check all resources across all namespaces at once
 kubectl get all --all-namespaces
 ```
+
 ## Phase 3 — Pods (your main focus today)
+
 ```bash
 # All pods in your namespace
 kubectl get pods -n $NS -o wide
@@ -666,7 +677,9 @@ kubectl logs <pod-name> -n $NS -c <main-app-name>          # main app logs
 # Previous logs (if a container crashed/restarted)
 kubectl logs <pod-name> -n $NS -c <container-name> --previous
 ```
+
 ## Phase 4 — Deployments & ReplicaSets
+
 ```bash
 # See your deployment (this is what HPA will target)
 kubectl get deployments -n $NS
@@ -685,9 +698,11 @@ kubectl get pvc -n $NS
 # Inspect a specific PVC
 kubectl describe pvc <pvc-name> -n $NS
 ```
+
 Since you switched to emptyDir for the sidecar/initContainer shared volume, you may not see PVCs for that — but you might still have one for PostgreSQL data.
 
 ## Pase 6 — Services & Networking
+
 ```bash
 # All services in namespace
 kubectl get svc -n $NS
@@ -698,7 +713,9 @@ minikube service <service-name> -n $NS --url
 # Ingress (if configured)
 kubectl get ingress -n $NS
 ```
+
 ## Phase 7 — CronJobs
+
 ```bash
 # List CronJobs
 kubectl get cronjob -n $NS
@@ -709,7 +726,9 @@ kubectl describe cronjob <cronjob-name> -n $NS
 # See Jobs spawned by the CronJob
 kubectl get jobs -n $NS
 ```
+
 ## Phase 8 — ConfigMaps & Secrets
+
 ```bash
 # ConfigMaps (your env vars, command overrides live here)
 kubectl get configmap -n $NS
@@ -718,7 +737,9 @@ kubectl describe configmap <name> -n $NS
 # Secrets
 kubectl get secrets -n $NS
 ```
+
 ## Phase 9 — HPA (Horizontal Pod Autoscaler) — what we'll implement
+
 ```bash
 # Check if metrics-server is running (required for HPA)
 kubectl get pods -n kube-system | grep metrics-server
@@ -734,7 +755,9 @@ kubectl describe hpa <hpa-name> -n $NS
 kubectl top pods -n $NS
 kubectl top nodes
 ```
+
 Suggested Order of Attack Today
+
 1. minikube status → cluster-info → get nodes
 2. get namespaces → set $NS
 3. get pods → describe your main pod (check initContainer + sidecar state)

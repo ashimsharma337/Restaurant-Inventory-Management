@@ -1,100 +1,114 @@
-Kubernetes is an open-source platform for managing containerized applications through a `declarative model` and `automation`. The core concepts can be broadly categorized into the `cluster architecture and the objects used to define application workloads and their desired state`. 
+Kubernetes is an open-source platform for managing containerized applications through a `declarative model` and `automation`. The core concepts can be broadly categorized into the `cluster architecture and the objects used to define application workloads and their desired state`.
 
 # Cluster Architecture
-A Kubernetes cluster is a set of machines, called nodes, that work together as a single unit. 
+
+A Kubernetes cluster is a set of machines, called nodes, that work together as a single unit.
 
 # What Is a Node?
+
 A `Node` is simply a machine in the cluster.
 It can be:
-- A VM 
-- A physical server 
-- A cloud instance 
-In Minikube: 
-- You usually have `1 node` 
-- It's basically a VM running inside your laptop 
-Check your nodes: 
+
+- A VM
+- A physical server
+- A cloud instance
+  In Minikube:
+- You usually have `1 node`
+- It's basically a VM running inside your laptop
+  Check your nodes:
+
 ```bash
-kubectl get nodes -o wide 
+kubectl get nodes -o wide
 ```
+
 Each node has:
-- CPU 
-- Memory 
-- Lables 
-- Taints 
-- Pods running on it 
+
+- CPU
+- Memory
+- Lables
+- Taints
+- Pods running on it
 
 - `Control Plane (Master Node)`: The "brain" that manages the cluster's overall state and makes global decisions, such as scheduling applications and responding to events.
 
 - `Worker Nodes`: The machines that run the containerized applications (workloads). Each node contains a kubelet agent to communicate with the control plane and a container runtime (e.g., containerd) to execute containers.
 
-- `etcd`: A distributed, highly-available key-value store that serves as the cluster's single source of truth for all configuration and state data. 
+- `etcd`: A distributed, highly-available key-value store that serves as the cluster's single source of truth for all configuration and state data.
 
 # Core Kubernetes Objects
-Users interact with the cluster by creating API objects that represent the desired state of their applications. The control plane then works continuously to match the actual state to this desired state. 
+
+Users interact with the cluster by creating API objects that represent the desired state of their applications. The control plane then works continuously to match the actual state to this desired state.
 
 - `Pods`: The smallest deployable unit in Kubernetes. A Pod is a logical group that wraps one or more containers (which share the same IP address, network, and storage) and provides a shared environment for them to run. Pods are ephemeral, meaning they are created and destroyed frequently.
-      A pod:
-        - Runs one or more container 
-        - Is scheduled onto a node 
-        - Shares network + storage within itself 
-Think:
+  A pod: - Runs one or more container - Is scheduled onto a node - Shares network + storage within itself
+  Think:
+
 ```cs
 Node (machine)
-  |- Pod A 
+  |- Pod A
   |- Pod B
   |- Pod C
 ```
+
 Pods consume resources from the node.
-## What are Resources? 
+
+## What are Resources?
+
 Each node has Limited:
+
 - CPU
-- Memory 
-- Ephemeral storage 
-Example node capacity: 
+- Memory
+- Ephemeral storage
+  Example node capacity:
+
 ```makefile
-CPU: 4 cores 
+CPU: 4 cores
 Memory: 8Gi
 ```
+
 Pods must declare how much they need.
-Example: 
+Example:
+
 ```yaml
 resources:
-  request: 
+  request:
     cpu: "200m"
     memory: "256Mi"
-  limits: 
+  limits:
     cpu: "500m"
     memory: "512Mi"
 ```
-To decide about the resources that will be needed 
-In real production: 
-- Monitor with Prometheus
-- Collect metrics for 1-2 weeks 
-- Calculate: 
-    - P95 CPU
-    - P95 memory 
-- Set:
-    - requests = average 
-    - limits = P95 0r P99
 
+To decide about the resources that will be needed
+In real production:
+
+- Monitor with Prometheus
+- Collect metrics for 1-2 weeks
+- Calculate:
+  - P95 CPU
+  - P95 memory
+- Set:
+  - requests = average
+  - limits = P95 0r P99
 
 Most Kubernetes clusters use:
-- `Prometheus` to scrape metrics 
+
+- `Prometheus` to scrape metrics
 - `Grafana` to visualize
 - `kube-state-metrics` for object metics
 - `metrics-server` for lightweight
-NOTE: The real data comes from `Prometheus (or another metrics backend)`, and `Grafana` `visualizes metrics`, Grafana helps us to see P50, P95 etc
+  NOTE: The real data comes from `Prometheus (or another metrics backend)`, and `Grafana` `visualizes metrics`, Grafana helps us to see P50, P95 etc
 
 Mental Model
 Think of Kubernetes like a hotel:
+
 - Node = Hotel building
-- CPU/Memory = Rooms 
-- Pod = Guest 
+- CPU/Memory = Rooms
+- Pod = Guest
 - Requests = Mninimum rooms reserved
 - Limits = Max rooms allowed
 - Taints = VIP-only floors
 - Tolerations = VIP pass
-
 
 - `Deployments`: A higher-level abstraction that manages a set of identical Pods. You use a Deployment to declare how many replicas of an application you want to run and how to update them (e.g., rolling updates) without downtime. It handles self-healing by automatically replacing failed Pods.
 
@@ -104,109 +118,117 @@ Think of Kubernetes like a hotel:
 
 `Volumes`: Represents a directory that can hold data, accessible to the containers within a Pod. Volumes outlive the containers in a Pod, and Persistent Volumes (PVs) provide storage that persists beyond the life of the Pod itself, ensuring data is not lost if a Pod is restarted or moved.
 
-`ConfigMaps and Secrets`: Objects used to store configuration data and sensitive information (like passwords or API tokens), respectively. They help decouple configuration from the application code or container image, making applications more portable and secure. 
+`ConfigMaps and Secrets`: Objects used to store configuration data and sensitive information (like passwords or API tokens), respectively. They help decouple configuration from the application code or container image, making applications more portable and secure.
 
+Kubernetes networking relies on a flat networking model where every Pod receives a unique IP address, enabling direct communication without NAT.
 
-Kubernetes networking relies on a flat networking model where every Pod receives a unique IP address, enabling direct communication without NAT. 
-
-What is Network Address Translation? 
+What is Network Address Translation?
 `Network Address Translation` (NAT) is a process that enables one, unique IP address to represent an entire group of computers. In network address translation, a network device, often a router or NAT firewall, assigns a computer or computers inside a private network a public address.
 
-Essential concepts include `CNI plugins for network configuration, Services (ClusterIP, NodePort, LoadBalancer) for stable service discovery/load balancing, Ingress controllers for external HTTP/S traffic, and Network Policies for security segmentation`. 
+Essential concepts include `CNI plugins for network configuration, Services (ClusterIP, NodePort, LoadBalancer) for stable service discovery/load balancing, Ingress controllers for external HTTP/S traffic, and Network Policies for security segmentation`.
 
 # Key Networking Concepts & Components
+
 - `Container Network Interface (CNI)`: The plugin standard (e.g., Calico, Flannel, Cilium) that assigns IP addresses to Pods and manages network interfaces.
-Pod-to-Pod Communication: The fundamental requirement that all pods can communicate across nodes without NAT.
+  Pod-to-Pod Communication: The fundamental requirement that all pods can communicate across nodes without NAT.
 
 - `Service Discovery & Load Balancing`: Services provide a stable IP address and DNS name to connect to dynamic, ephemeral Pods.
-Network Policies: Firewall-like rules that control traffic flow (ingress/egress) between pods and namespaces.
+  Network Policies: Firewall-like rules that control traffic flow (ingress/egress) between pods and namespaces.
 
 - `Ingress/Egress`: Ingress manages external access to services (HTTP/HTTPS), while Egress controls outbound traffic.
 
 - `Overlay Networks`: Encapsulation techniques (e.g., VXLAN) commonly used to create a virtual network layer for pods across physical nodes.
 
-`Linux Networking Fundamentals`: Knowledge of namespaces, virtual ethernet pairs (veth), bridge devices, and routing tables is critical for debugging. 
+`Linux Networking Fundamentals`: Knowledge of namespaces, virtual ethernet pairs (veth), bridge devices, and routing tables is critical for debugging.
 
 ## Communication Models
+
 - `Container-to-Container`: Uses localhost within the same Pod.
 - `Pod-to-Pod`: Within the same node or across nodes.
 - `Pod-to-Service`: Accessing services via ClusterIP.
-- `External-to-Service`: Using Ingress or NodePort to expose apps. 
+- `External-to-Service`: Using Ingress or NodePort to expose apps.
 
-
-
-- Wherever applicable, `kubectl get all` returns a list of `pods, services, daemon sets, deployments, replica sets, jobs, cronjobs, and stateful sets`. 
+- Wherever applicable, `kubectl get all` returns a list of `pods, services, daemon sets, deployments, replica sets, jobs, cronjobs, and stateful sets`.
 
 # What are Namespaces in Kubernetes?
+
 In Kubernetes, `namespaces` are a way to logically divide a cluster into multiple virtual clusters. They help organize, isolate, and manage resources within the same physical cluster.
 
-Think of namespaces as folders inside a cluster -- resources like Pods, Services, Deployments, and ConfigMaps live inside a namespace. 
+Think of namespaces as folders inside a cluster -- resources like Pods, Services, Deployments, and ConfigMaps live inside a namespace.
 
-## Why Namespaces are Useful 
+## Why Namespaces are Useful
+
 - Seperate environments (dev, staging, prod)
-- Multi-team isolation 
+- Multi-team isolation
 - Resources control (CPU/memory quotas)
 - Access control (RBAC per namespace)
 - Avoid naming conflicts (same resources name allowed in different namespaces)
 
-## Default Namespaces in a Cluster 
+## Default Namespaces in a Cluster
+
 When you create a cluster (including with Minikube), you'll usually see:
+
 - `default`- for user workloads (if no namespace specified)
 - `kube-system` - system components (DNS, controller manager, etc.)
-- `kube-public` - publicly readable resources 
-- `kube-node-lease` - node heartbeat info 
+- `kube-public` - publicly readable resources
+- `kube-node-lease` - node heartbeat info
 
-## Important Concepts Related to Namespaces 
-Here are the key concepts you should understand 
+## Important Concepts Related to Namespaces
 
-### 1. Namespace-Scoped vs Cluster-Scoped Resources 
+Here are the key concepts you should understand
+
+### 1. Namespace-Scoped vs Cluster-Scoped Resources
+
 Namepace-scoped (live inside a namespace):
-- Pods
-- Deployements 
-- Services 
-- ConfigMaps 
-- Secrets 
-- Ingress 
-- Jobs 
-Cluster-scoped (not inside a name namespace):
-- Nodes 
-- PersistentVolumes 
-- StorageClasses 
-- Namespaces themselves 
 
-### 2. Resource Quotas 
+- Pods
+- Deployements
+- Services
+- ConfigMaps
+- Secrets
+- Ingress
+- Jobs
+  Cluster-scoped (not inside a name namespace):
+- Nodes
+- PersistentVolumes
+- StorageClasses
+- Namespaces themselves
+
+### 2. Resource Quotas
+
 You can limit how many resources a namespace can use
 Example:
-- Max CPU 
-- Max memory 
-- Max number of Pods 
-This prevents one team from consuming the entire cluster 
-Other, concepts RBAC, Network Policies, Namespace Isolation, creating and using namespace
-Example:
-A company might structure namespaces like:
-- dev 
-- staging 
+
+- Max CPU
+- Max memory
+- Max number of Pods
+  This prevents one team from consuming the entire cluster
+  Other, concepts RBAC, Network Policies, Namespace Isolation, creating and using namespace
+  Example:
+  A company might structure namespaces like:
+- dev
+- staging
 - production
-- monitoring 
+- monitoring
 - logging
 
 NOTE: In real-world clusters, teams commonly use `Grafana dashboards to monitor memory/CPU usage per namespace and then adjust resource requests/limits or quotas accordingly.
 This is typically done using:
+
 - Grafana (visualization)
 - Prometheus (metrics collection)
 - Kubernetes metrics (via kube-state-metrics + cAdvisor)
-What do we monitor?
-- Memory usage per namespace 
-- CPU usage per namespace 
-- Memory requests vs actual usage 
-- Memory limits vs actual usage 
-- 00M kills 
-- Pod restarts 
+  What do we monitor?
+- Memory usage per namespace
+- CPU usage per namespace
+- Memory requests vs actual usage
+- Memory limits vs actual usage
+- 00M kills
+- Pod restarts
 
+- To display all namespaces within the cluster, use the kubectl get command:
 
-
-- To display all namespaces within the cluster, use the kubectl get command: 
-```bash 
+```bash
 kubectl get namespaces
 # or the short version
 kubectl get ns
@@ -222,14 +244,15 @@ kubectl config view | grep namespace # gives the current name space
 ```
 
 # Big Picture (Docker → Kubernetes mapping)
-|Docker Compose	              | Kubernetes.              |
-|-----------------------------|--------------------------|
-| service	                  |     Deployment.          |
-| ports	                      |     Service              |
-| env_file	                  |     ConfigMap / Secret   |
-| depends_on	              |     Readiness probes     |
-| volume	                  |     PV + PVC             |
-| container_name	          |     Pod name (auto)      |
+
+| Docker Compose | Kubernetes.        |
+| -------------- | ------------------ |
+| service        | Deployment.        |
+| ports          | Service            |
+| env_file       | ConfigMap / Secret |
+| depends_on     | Readiness probes   |
+| volume         | PV + PVC           |
+| container_name | Pod name (auto)    |
 
 # Target Architecture (Minikube)
 
@@ -242,12 +265,13 @@ You will run:
 - pgAdmin → Deployment + Service
 
 - Volumes
-    - PersistentVolume + PVC → Postgres data
-    - emptyDir → optional cache / temp usage
+  - PersistentVolume + PVC → Postgres data
+  - emptyDir → optional cache / temp usage
 
 # Suggested Folder Structure
 
 Create this in your repo:
+
 ```cpp
 k8s/
 ├── app/
@@ -266,6 +290,7 @@ k8s/
 ```
 
 # 1. Namespace (optional but professional)
+
 ```yaml
 apiVersion: v1
 kind: Namespace
@@ -274,11 +299,12 @@ metadata:
 ```
 
 Apply:
+
 ```bash
 kubectl apply -f k8s/namespace.yaml
 ```
 
-```bash 
+```bash
 kubectl get namespaces
 # or the short version
 kubectl get ns
@@ -291,10 +317,10 @@ kube-public       Active   14d
 kube-system       Active   14d
 ```
 
-
 # 2. ConfigMap (env vars)
 
 This replaces .env
+
 ```yaml
 apiVersion: v1
 kind: ConfigMap
@@ -311,13 +337,16 @@ data:
 ```
 
 Apply:
+
 ```bash
 kubectl apply -f k8s/configmap.yaml
 ```
+
 Then we can check, our configmap with these command
+
 ```bash
 kubectl get configmaps  # Gives current namespace
-kubectl get configmaps -A # Congifmaps across all namespace 
+kubectl get configmaps -A # Congifmaps across all namespace
 # Target a specific namespace
 kubectl get configmaps -n <namespace-name>
 ```
@@ -325,6 +354,7 @@ kubectl get configmaps -n <namespace-name>
 # 3. Postgres Persistent Volume (PV)
 
 Minikube supports hostPath (perfect for learning).
+
 ```yaml
 apiVersion: v1
 kind: PersistentVolume
@@ -338,14 +368,17 @@ spec:
   hostPath:
     path: /data/postgres
 ```
+
 Then apply
+
 ```bash
-kubectl apply -f k8s/postgres/pv.yaml  # apply  
-kubectl get pv                         # List all PVs 
-kubectl describe pv <pv-name>          # Get detailed information for a specific PV 
+kubectl apply -f k8s/postgres/pv.yaml  # apply
+kubectl get pv                         # List all PVs
+kubectl describe pv <pv-name>          # Get detailed information for a specific PV
 ```
 
 # 4. Postgres Persistent Volume Claim (PVC)
+
 ```yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -359,6 +392,7 @@ spec:
     requests:
       storage: 1Gi
 ```
+
 ```bash
 kubectl apply -f postgres/pvc.yaml               # apply
 kubectl get pvc                                  # List all PVCs in the current namespace
@@ -366,6 +400,7 @@ kubectl get pvc -A                               # List all PVCs across all name
 ```
 
 # 5. Postgres Deployment (with PVC)
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -398,35 +433,40 @@ spec:
           persistentVolumeClaim:
             claimName: postgres-pvc
 ```
+
 NOTE: Added below code to avoid noisy neighbour issue
+
 ```yaml
 resources: # <--- Add this block to avoid "Noisy Neighbor issue"
-            requests:
-              memory: "256Mi"
-              cpu: "250m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
+  requests:
+    memory: "256Mi"
+    cpu: "250m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
 ```
+
 NOTE: `The Noisy Neighbor issue occurs when one application (the "noise") consumes an unfair share of shared resources—like CPU, RAM, or Disk I/O—causing other applications on the same hardware to slow down or crash.`
 Solution: To prevent this, you use Resource Quotas:
+
 1. `Requests`: Acts like a "reservation." It ensures the container always has a minimum amount of resources available.
 2. `Limits`: Acts like a "fence." it prevents the container from ever taking more than its allowed share, no matter how much it "screams."
 
 **The Problem: Missing Resource Limits**: The error isn't actually a "hard" error from Kubernetes that prevents the pod from running; it is likely a linting warning or a policy violation (from a tool like kube-linter, checkov, or a Kubernetes Admission Controller).
 
 ```bash
-kubectl get deployments.            # all deployments in the current namespace 
+kubectl get deployments.            # all deployments in the current namespace
 kubectl get deployments -n <namespace-name> # List all deployments in a specific namespace
-# Example 
+# Example
 kubectl get deployments -n inventory
 # Output
-ashim@mac postgres % kubectl get deployments -n inventory                          
+ashim@mac postgres % kubectl get deployments -n inventory
 NAME       READY   UP-TO-DATE   AVAILABLE   AGE
 postgres   1/1     1            1           19h
 ```
 
 # 6. Postgres Service
+
 ```yaml
 apiVersion: v1
 kind: Service
@@ -440,27 +480,29 @@ spec:
     - port: 5432
       targetPort: 5432
 ```
-```bash 
+
+```bash
 kubectl apply -f service.yaml         # create the Service in your cluster
-kubectl get svc                       # listn all services in current namespace 
+kubectl get svc                       # listn all services in current namespace
 kubectl get services --all-namespaces # view Services across all namespaces
 ```
 
-
 ## K8s Service Refresher
+
 **Definition**: A stable, permanent entry point (IP/DNS) for a set of Pods.
 
 **Purpose**: Pods are ephemeral (they die and change IPs). Services stay the same so other apps can find them reliably.
 
 **Service Types**
+
 - ClusterIP (Default): Internal-only. Use for backend communication (e.g., App → DB).
 
 - NodePort: Exposes a port on every Node's IP. Used for simple external access.
 
 - LoadBalancer: Provisions a cloud provider balancer. The standard way to expose apps to the internet.
 
-
 # 7. Node App Deployment
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -492,12 +534,15 @@ spec:
         - name: temp-storage
           emptyDir: {}
 ```
+
 ## Why emptyDir?
+
 An emptyDir is a local, temporary volume that shares a lifecycle with its Pod. It starts empty, persists through container crashes, but is permanently wiped if the Pod is deleted or moved.
 
 ### The Two Power Patterns
 
 #### 1. With Init Containers (The "Prepper")
+
 - `Workflow`: Init Container ➔ Writes Data ➔ Terminates ➔ Main Container ➔ Reads Data.
 
 - `Use Case`: Downloading a Git repo, pulling a database snapshot, or generating a config file before the app starts.
@@ -505,6 +550,7 @@ An emptyDir is a local, temporary volume that shares a lifecycle with its Pod. I
 - `Access`: The Main Container accesses the final files at its defined mountPath.
 
 #### 2. With Sidecars (The "Helper")
+
 - `Workflow`: Main Container ➔ Writes Data ➔ Sidecar Container ➔ Processes/Reads Data (simultaneously).
 
 - `Use Case`: Log shipping (App writes logs, Sidecar sends them to ELK) or a local cache proxy.
@@ -520,31 +566,36 @@ volumes:
 - name: shared-storage
   emptyDir: {}  # Use { medium: Memory } for RAM-speed
 ```
+
 - `Accessing via CLI`: Since the Init container is gone, always exec into the Main Container to see the contents:
 
 ```Bash
 kubectl exec -it <pod-name> -c <main-container-name> -- ls -la /mount/path
 ```
+
 - `Troubleshooting`: If data is missing, run kubectl describe pod to ensure both containers have identical volumeMounts.name entries.
 
 - Lives as long as the Pod
 - Perfect for:
-    - temp files
-    - cache
-    - uploads
+  - temp files
+  - cache
+  - uploads
 - Deleted when pod restarts
-After, applying deployment, we need to apply service as well for the app.
+  After, applying deployment, we need to apply service as well for the app.
 
-```bash 
+```bash
 kubectl get deployments
 kubectl get pods                           # List pods in the currently active namespace:
 kubectl apply -f my-service.yaml
 kubectl get pods -n <namespace-name>.      # List pods in a specific namespace
 ```
-## Extra Info: 
-A Deployment manages Pods, but the Pods' IPs can change. To provide a stable endpoint, create a Kubernetes Service to route traffic to the Pods. 
+
+## Extra Info:
+
+A Deployment manages Pods, but the Pods' IPs can change. To provide a stable endpoint, create a Kubernetes Service to route traffic to the Pods.
 Create a service file, e.g., `my-service.yaml`
-```yaml 
+
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -560,6 +611,7 @@ spec:
 ```
 
 # 8. Node App Service
+
 ```yaml
 apiVersion: v1
 kind: Service
@@ -575,15 +627,17 @@ spec:
       targetPort: 3000
       nodePort: 30007
 ```
-```bash 
-kubectl get pods -n inventory        # See the running pods 
-kubectl apply -f service.yaml        # expose application 
+
+```bash
+kubectl get pods -n inventory        # See the running pods
+kubectl apply -f service.yaml        # expose application
 minikube service app -n inventory    # Access in Minikube
 # Go to http://localhost:3000
 # Access your application
 ```
 
 # 9. pgAdmin Deployment
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -611,6 +665,7 @@ spec:
             - name: PGADMIN_DEFAULT_PASSWORD
               value: admin
 ```
+
 ```yaml
 pgAdmin Service
 apiVersion: v1
@@ -627,18 +682,22 @@ spec:
       targetPort: 80
       nodePort: 30005
 ```
+
 Deploy Everything
+
 ```bash
 kubectl apply -f k8s/
 ```
 
 Access in Minikube
+
 ```bash
 minikube service app -n inventory
 minikube service pgadmin -n inventory
 ```
 
-Debug Commands 
+Debug Commands
+
 ```bash
 kubectl get pods -n inventory
 kubectl logs pod-name -n inventory
@@ -647,9 +706,10 @@ kubectl describe pod pod-name -n inventory
 kubectl get pvc -n inventory
 kubectl get pv
 ```
-# Extra Notes: 
 
-The `kubectl describe` command `provides a detailed, human-readable overview of a specific Kubernetes resource or group of resources`. It aggregates information from various API sources to offer a comprehensive snapshot of a resource's configuration, status, and related events, making it an essential tool for troubleshooting. 
+# Extra Notes:
+
+The `kubectl describe` command `provides a detailed, human-readable overview of a specific Kubernetes resource or group of resources`. It aggregates information from various API sources to offer a comprehensive snapshot of a resource's configuration, status, and related events, making it an essential tool for troubleshooting.
 
 ## Key Functions and Use Cases:
 
@@ -661,7 +721,7 @@ The `kubectl describe` command `provides a detailed, human-readable overview of 
 
 ## Common kubectl describe Commands
 
-You can use `kubectl describe` with most Kubernetes resource types. The basic syntax is `kubectl describe [resource_type] [resource_name]`. 
+You can use `kubectl describe` with most Kubernetes resource types. The basic syntax is `kubectl describe [resource_type] [resource_name]`.
 
 `kubectl describe pod <pod-name>`: Provides detailed information about a specific pod, including container status, assigned node, IP address, conditions, and all related events.
 
@@ -669,7 +729,7 @@ You can use `kubectl describe` with most Kubernetes resource types. The basic sy
 
 `kubectl describe deployment <deployment-name>`: Displays the configuration and status of a deployment, including the number of replicas, strategy, selector, and events related to its rollout and scaling.
 
-`kubectl describe node <node-name>`: Shows information about a specific node, including its capacity (CPU, memory), taints, conditions, and the pods running on it. 
+`kubectl describe node <node-name>`: Shows information about a specific node, including its capacity (CPU, memory), taints, conditions, and the pods running on it.
 
 Example:
 
@@ -714,15 +774,15 @@ Containers:
       /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-m5bdk (ro)
 Conditions:
   Type                        Status
-  PodReadyToStartContainers   True 
-  Initialized                 True 
-  Ready                       True 
-  ContainersReady             True 
-  PodScheduled                True 
+  PodReadyToStartContainers   True
+  Initialized                 True
+  Ready                       True
+  ContainersReady             True
+  PodScheduled                True
 Volumes:
   temp-storage:
     Type:       EmptyDir # (a temporary directory that shares a pod's lifetime)
-    Medium:     
+    Medium:
     SizeLimit:  <unset>
   kube-api-access-m5bdk:
     Type:                    Projected (a volume that contains injected data from multiple sources)
@@ -740,49 +800,63 @@ Events:                      <none>
 # Advanced Debug (Very Useful Skill)
 
 Enter pgAdmin pod:
+
 ```bash
 kubectl exec -it <pgadmin-pod-name> -n inventory -- sh
 # Then test:
 ping postgres
 ```
 
-You saw 
-```bash 
+You saw
+
+```bash
 PING postgres (10.100.200.204): 56 data bytes
 ```
+
 ## What happened?
+
 - Kubernetes has built-in DNS.
 - When a Service is created like:
+
 ```yaml
 kind: Service
 metadata:
   name: postgres
 ```
+
 Kubernetes automatically creates a DNS record:
+
 ```bash
 postgres → 10.100.200.204 (ClusterIP)
 ```
+
 So inside the cluster:
+
 ```bash
 pgadmin → DNS lookup → postgres → 10.100.200.204 → forwarded to postgres pod
 ```
+
 That IP you saw:
+
 ```bash
 10.100.200.204
 ```
+
 - is the ClusterIP of the Postgres service.
 - It is not the pod IP.
 - It is a stable virtual IP managed by Kubernetes.
 - just validated:
-    ✔ DNS works
-    ✔ Service exists
-    ✔ Network works
-    ✔ Pods can talk internally
+  ✔ DNS works
+  ✔ Service exists
+  ✔ Network works
+  ✔ Pods can talk internally
 
- ## The "K8s Triage" Master Checklist
- This is your 60-second "Inside-Out" workflow to solve Networking, Resources, or Volume issues.
- 
- ### Phase 1: The "Inside" (Pod & App)
+## The "K8s Triage" Master Checklist
+
+This is your 60-second "Inside-Out" workflow to solve Networking, Resources, or Volume issues.
+
+### Phase 1: The "Inside" (Pod & App)
+
 - `Check Status`: kubectl get pods (Look for Pending, OOMKilled, or CrashLoop).
 
 - `Read Events`: kubectl describe pod (The "Events" section is the #1 source of truth for Mount errors or Scheduling failures).
@@ -792,37 +866,39 @@ That IP you saw:
 ### Phase 2: The "Path" (Connectivity & Storage)
 
 - `Networking`: Run a netshoot pod.
-    - Test IP (curl <pod-ip>) → Tests CNI/Routing.
-    - Test DNS (nslookup <svc>) → Tests CoreDNS.
+  - Test IP (curl <pod-ip>) → Tests CNI/Routing.
+  - Test DNS (nslookup <svc>) → Tests CoreDNS.
 - `Volumes`: * Check `PVC Status`: `kubectl get pvc` (Must be `Bound`).
 - Check `Access Mode`: Ensure you aren't trying to attach a ReadWriteOnce disk to two different nodes.
 
 ### Phase 3: The "Outside" (Cluster & Node)
+
 1. `Check Capacity`: kubectl top node (Is the node maxed out on CPU/RAM?).
 2. `Node Health`: kubectl describe node (Look for MemoryPressure or DiskPressure).3. `System Logs`: If the above look fine, check the CNI or Storage Driver logs in the `kube-system` namespace.
 
 ### The "Big Three" Commands
 
-| Problem Area         |           Critical Command       |
-|----------------------|----------------------------------|
-|`Networking`           | `kubectl run debug --rm -it --image=nicolaka/netshoot -- bash`
-| `Resources`            | `kubectl top pod --all-namespaces --sort-by=memory` | 
-| `Volumes` | `kubectl describe pvc <pvc-name>` |
-
+| Problem Area | Critical Command                                               |
+| ------------ | -------------------------------------------------------------- |
+| `Networking` | `kubectl run debug --rm -it --image=nicolaka/netshoot -- bash` |
+| `Resources`  | `kubectl top pod --all-namespaces --sort-by=memory`            |
+| `Volumes`    | `kubectl describe pvc <pvc-name>`                              |
 
 # TO DO restartPolicy when to use what (NEVER and OnFailure)
 
-# this is extra notes that I realized after deployment of my sqlite-cache-sidecar and post gres 
-Yes, the `PersistentVolumeClaim (PVC)` object lives inside the Kubernetes cluster, while the `Amazon EFS file system itself lives` outside, in AWS. The PVC serves as a Kubernetes-native request for storage, and the EFS CSI driver binds this PVC to the external AWS EFS volume, creating a persistent mount. 
+# this is extra notes that I realized after deployment of my sqlite-cache-sidecar and post gres
+
+Yes, the `PersistentVolumeClaim (PVC)` object lives inside the Kubernetes cluster, while the `Amazon EFS file system itself lives` outside, in AWS. The PVC serves as a Kubernetes-native request for storage, and the EFS CSI driver binds this PVC to the external AWS EFS volume, creating a persistent mount.
 
 ### Key Details on EFS and PVCs in Kubernetes:
-  - `Internal vs. External`: The PVC is a Kubernetes API object (internal). The actual EFS volume exists independently in AWS, allowing data to persist even if the pod or cluster is deleted.
 
-  - `Role of CSI Driver`: The `efs.csi.aws.com` driver connects the PVC in Kubernetes to the actual EFS volume through NFS, enabling shared access across pods.
-  - `Dynamic Provisioning`: Using the EFS CSI driver, you can dynamically create PVs and assign subdirectories on an EFS file system for each PVC, handling up to 120 PVs per file system.
+- `Internal vs. External`: The PVC is a Kubernetes API object (internal). The actual EFS volume exists independently in AWS, allowing data to persist even if the pod or cluster is deleted.
 
-  - `Access Requirements`: Kubernetes nodes must have security group access to the EFS volume to mount the storage. 
-  
-  In short, the metadata (PVC/PV) lives inside K8s, while the storage lives outside on AWS, bridged by the EFS CSI driver.
+- `Role of CSI Driver`: The `efs.csi.aws.com` driver connects the PVC in Kubernetes to the actual EFS volume through NFS, enabling shared access across pods.
+- `Dynamic Provisioning`: Using the EFS CSI driver, you can dynamically create PVs and assign subdirectories on an EFS file system for each PVC, handling up to 120 PVs per file system.
 
-  The `Container Storage Interface` (CSI) in Kubernetes is a standardized interface that allows Kubernetes to interact with external block and file storage systems
+- `Access Requirements`: Kubernetes nodes must have security group access to the EFS volume to mount the storage.
+
+In short, the metadata (PVC/PV) lives inside K8s, while the storage lives outside on AWS, bridged by the EFS CSI driver.
+
+The `Container Storage Interface` (CSI) in Kubernetes is a standardized interface that allows Kubernetes to interact with external block and file storage systems

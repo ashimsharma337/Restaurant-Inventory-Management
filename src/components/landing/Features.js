@@ -1,14 +1,14 @@
-import { Grid, Box, Typography, Container } from '@mui/material';
+import { Grid, Box, Typography, Container } from "@mui/material";
 
 const features = [
-  { title: 'Real-Time Tracking', desc: 'Monitor inventory instantly' },
-  { title: 'Analytics', desc: 'Make data-driven decisions' },
-  { title: 'Multi-Location', desc: 'Manage all branches in one place' },
+  { title: "Real-Time Tracking", desc: "Monitor inventory instantly" },
+  { title: "Analytics", desc: "Make data-driven decisions" },
+  { title: "Multi-Location", desc: "Manage all branches in one place" },
 ];
 
 export default function Features() {
   return (
-    <Box sx={{ py: 8, bgcolor: 'background.default' }}>
+    <Box sx={{ py: 8, bgcolor: "background.default" }}>
       <Container>
         <Grid container spacing={4}>
           {features.map((f) => (

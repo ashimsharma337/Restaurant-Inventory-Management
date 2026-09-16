@@ -2,15 +2,15 @@
 // Run this first to see your exact table columns:
 //   node scripts/inspect-db.js
 
-const Database = require('better-sqlite3');
-const path = require('path');
+const Database = require("better-sqlite3");
+const path = require("path");
 
-const db = new Database(path.join(process.cwd(), 'data', 'inventory.db'), {
+const db = new Database(path.join(process.cwd(), "data", "inventory.db"), {
   readonly: true,
   fileMustExist: true,
 });
 
-const tables = ['categories', 'ingredients', 'meals'];
+const tables = ["categories", "ingredients", "meals"];
 
 tables.forEach((table) => {
   try {

@@ -1,4 +1,5 @@
-# kubectl exec — Shelling into Containers 
+# kubectl exec — Shelling into Containers
+
 ```bash
 # All pods in your namespace
 kubectl get pods -n $NS -o wide
@@ -17,6 +18,7 @@ kubectl logs <pod-name> -n $NS -c <main-app-name>          # main app logs
 # Previous logs (if a container crashed/restarted)
 kubectl logs <pod-name> -n $NS -c <container-name> --previous
 ```
+
 ---
 
 ## Command Syntax
@@ -63,13 +65,13 @@ kubectl exec -it <pod> -n $NS -c cache-sidecar -- sh
 
 ## Which Shell to Use per Image
 
-| Base Image | Available Shell | Command |
-|---|---|---|
-| `busybox` | `sh` only | `-- sh` |
-| `alpine` | `sh` only | `-- sh` |
+| Base Image          | Available Shell | Command              |
+| ------------------- | --------------- | -------------------- |
+| `busybox`           | `sh` only       | `-- sh`              |
+| `alpine`            | `sh` only       | `-- sh`              |
 | `ubuntu` / `debian` | `bash` and `sh` | `-- bash` or `-- sh` |
-| `node` | `bash` and `sh` | `-- bash` or `-- sh` |
-| `distroless` | neither | ❌ cannot exec in |
+| `node`              | `bash` and `sh` | `-- bash` or `-- sh` |
+| `distroless`        | neither         | ❌ cannot exec in    |
 
 **Rule of thumb:** When in doubt, try `sh` first — it exists in almost every image. `bash` is only guaranteed on Debian/Ubuntu based images.
 
@@ -137,10 +139,10 @@ exit      # or Ctrl+D
 
 ## Key Flags Summary
 
-| Flag | Meaning | When to use |
-|---|---|---|
-| `-i` | Interactive — keeps stdin open | Always for interactive shells |
-| `-t` | TTY — proper terminal experience | Always for interactive shells |
-| `-n` | Namespace | Always (unless default namespace) |
-| `-c` | Container name | Always on multi-container pods |
-| `--` | Separator | Always — separates kubectl args from container command |
+| Flag | Meaning                          | When to use                                            |
+| ---- | -------------------------------- | ------------------------------------------------------ |
+| `-i` | Interactive — keeps stdin open   | Always for interactive shells                          |
+| `-t` | TTY — proper terminal experience | Always for interactive shells                          |
+| `-n` | Namespace                        | Always (unless default namespace)                      |
+| `-c` | Container name                   | Always on multi-container pods                         |
+| `--` | Separator                        | Always — separates kubectl args from container command |

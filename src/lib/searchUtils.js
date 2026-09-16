@@ -7,27 +7,27 @@
 // mode=autocomplete  →  prefix on every token:  "chick* brea*"
 // mode=full          →  phrase + AND fallback + last-token prefix
 
-export function buildFtsQuery(raw, mode = 'autocomplete') {
+export function buildFtsQuery(raw, mode = "autocomplete") {
   const cleaned = raw
-    .replace(/['"^()\-]/g, ' ')
-    .replace(/\s+/g, ' ')
+    .replace(/['"^()\-]/g, " ")
+    .replace(/\s+/g, " ")
     .trim();
 
   if (!cleaned) return null;
 
-  const tokens = cleaned.split(' ').filter(Boolean);
+  const tokens = cleaned.split(" ").filter(Boolean);
   if (tokens.length === 0) return null;
 
-  if (mode === 'autocomplete') {
-    return tokens.map((t) => `${t}*`).join(' ');
+  if (mode === "autocomplete") {
+    return tokens.map((t) => `${t}*`).join(" ");
   }
 
   if (tokens.length === 1) {
     return `${tokens[0]} OR ${tokens[0]}*`;
   }
 
-  const phrase     = `"${tokens.join(' ')}"`;
-  const andClause  = tokens.join(' AND ');
+  const phrase = `"${tokens.join(" ")}"`;
+  const andClause = tokens.join(" AND ");
   const prefixLast = `${tokens[tokens.length - 1]}*`;
   return `${phrase} OR (${andClause}) OR ${prefixLast}`;
 }
@@ -53,12 +53,14 @@ export function searchIngredients(db, ftsQuery, limit) {
   `);
 
   return stmt.all(ftsQuery, limit).map((r) => ({
-    id:       r.id,
-    name:     r.name,
-    type:     'ingredient',
-    subtitle: r.meal_name ? `used in ${r.meal_name}` : (r.measure || 'Ingredient'),
-    score:    r.score,
-    nameHl:   r.name_hl,
+    id: r.id,
+    name: r.name,
+    type: "ingredient",
+    subtitle: r.meal_name
+      ? `used in ${r.meal_name}`
+      : r.measure || "Ingredient",
+    score: r.score,
+    nameHl: r.name_hl,
   }));
 }
 
@@ -84,12 +86,12 @@ export function searchMeals(db, ftsQuery, limit) {
   `);
 
   return stmt.all(ftsQuery, limit).map((r) => ({
-    id:       r.id,
-    name:     r.name,
-    type:     'meal',
-    subtitle: [r.area, r.category].filter(Boolean).join(' · ') || 'Meal',
-    score:    r.score,
-    nameHl:   r.name_hl,
+    id: r.id,
+    name: r.name,
+    type: "meal",
+    subtitle: [r.area, r.category].filter(Boolean).join(" · ") || "Meal",
+    score: r.score,
+    nameHl: r.name_hl,
   }));
 }
 
@@ -114,18 +116,16 @@ export function searchCategories(db, ftsQuery, limit) {
   `);
 
   return stmt.all(ftsQuery, limit).map((r) => ({
-    id:       r.id,
-    name:     r.name,
-    type:     'category',
+    id: r.id,
+    name: r.name,
+    type: "category",
     subtitle: r.description
-      ? r.description.slice(0, 60) + (r.description.length > 60 ? '...' : '')
-      : 'Category',
-    score:    r.score,
-    nameHl:   r.name_hl,
+      ? r.description.slice(0, 60) + (r.description.length > 60 ? "..." : "")
+      : "Category",
+    score: r.score,
+    nameHl: r.name_hl,
   }));
 }
-
-
 
 // old code ...
 // src/lib/searchUtils.js

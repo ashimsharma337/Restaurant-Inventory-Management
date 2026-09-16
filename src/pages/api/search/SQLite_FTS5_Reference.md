@@ -1,9 +1,11 @@
 # SQLite FTS5 — Full-Text Search Reference
+
 > Restaurant Inventory Management Application
 
 ---
 
 ## Table of Contents
+
 1. [What Is FTS5?](#1-what-is-fts5)
 2. [Why Do We Need It?](#2-why-do-we-need-it)
 3. [How FTS5 Works Internally](#3-how-fts5-works-internally)
@@ -29,13 +31,13 @@ FTS5 works by maintaining a special **virtual table** backed by an **inverted in
 
 Think of it like the index at the back of a textbook. Instead of reading every page to find where "tomato" appears, you jump directly to the index entry and get the list of page numbers.
 
-| Concept | Description |
-|---|---|
-| **Token** | A single word or sub-word unit extracted from text (e.g. `tomato`, `sauce`) |
-| **Inverted Index** | Maps token → list of `(rowid, column, position)` tuples |
-| **Posting list** | The list of document locations for a given token |
-| **Tokenizer** | The component that splits text into tokens (`unicode61` by default) |
-| **Segment** | A sorted, on-disk chunk of the inverted index (merged over time) |
+| Concept            | Description                                                                 |
+| ------------------ | --------------------------------------------------------------------------- |
+| **Token**          | A single word or sub-word unit extracted from text (e.g. `tomato`, `sauce`) |
+| **Inverted Index** | Maps token → list of `(rowid, column, position)` tuples                     |
+| **Posting list**   | The list of document locations for a given token                            |
+| **Tokenizer**      | The component that splits text into tokens (`unicode61` by default)         |
+| **Segment**        | A sorted, on-disk chunk of the inverted index (merged over time)            |
 
 ### 1.2 FTS5 Is a Virtual Table
 
@@ -68,29 +70,29 @@ The most common naive approach to text search in SQLite is `WHERE name LIKE '%ch
 
 ### 2.2 FTS5 Solves All of These
 
-| Capability | LIKE | FTS5 |
-|---|---|---|
-| Index-backed lookup | ✗ Full scan | ✓ Inverted index |
-| Relevance ranking | ✗ No ranking | ✓ BM25 built-in |
-| Phrase matching | ✗ Manual & slow | ✓ `"chicken breast"` |
-| Prefix matching | Only suffix-free | ✓ `chick*` works |
-| Boolean operators | ✗ None | ✓ AND, OR, NOT |
-| Column filtering | ✗ Per-column LIKE | ✓ `name:chicken` |
-| Snippet / highlight | ✗ Manual | ✓ Built-in functions |
-| Stemming / tokenizer | ✗ None | ✓ Pluggable |
+| Capability           | LIKE              | FTS5                 |
+| -------------------- | ----------------- | -------------------- |
+| Index-backed lookup  | ✗ Full scan       | ✓ Inverted index     |
+| Relevance ranking    | ✗ No ranking      | ✓ BM25 built-in      |
+| Phrase matching      | ✗ Manual & slow   | ✓ `"chicken breast"` |
+| Prefix matching      | Only suffix-free  | ✓ `chick*` works     |
+| Boolean operators    | ✗ None            | ✓ AND, OR, NOT       |
+| Column filtering     | ✗ Per-column LIKE | ✓ `name:chicken`     |
+| Snippet / highlight  | ✗ Manual          | ✓ Built-in functions |
+| Stemming / tokenizer | ✗ None            | ✓ Pluggable          |
 
 ### 2.3 FTS5 vs PostgreSQL Full-Text Search
 
 Since your stack also includes PostgreSQL, it is worth knowing when to use each. Your app uses **SQLite as an embedded read cache** (via the initContainer pattern), so FTS5 is your search engine for the data loaded there.
 
-| Dimension | SQLite FTS5 | PostgreSQL FTS |
-|---|---|---|
-| Deployment | Embedded — zero config | Requires pg server |
-| Setup | One `CREATE VIRTUAL TABLE` | `tsvector` + GIN index + triggers |
-| Ranking | BM25 via `bm25()` function | `ts_rank()`, `ts_rank_cd()` |
-| Language support | Tokenizer-based | Dictionaries, unaccent |
-| Best for | App-side cache, offline, mobile | Server-side authoritative data |
-| Your use case | TheMealDB + inventory cache | Source of truth queries |
+| Dimension        | SQLite FTS5                     | PostgreSQL FTS                    |
+| ---------------- | ------------------------------- | --------------------------------- |
+| Deployment       | Embedded — zero config          | Requires pg server                |
+| Setup            | One `CREATE VIRTUAL TABLE`      | `tsvector` + GIN index + triggers |
+| Ranking          | BM25 via `bm25()` function      | `ts_rank()`, `ts_rank_cd()`       |
+| Language support | Tokenizer-based                 | Dictionaries, unaccent            |
+| Best for         | App-side cache, offline, mobile | Server-side authoritative data    |
+| Your use case    | TheMealDB + inventory cache     | Source of truth queries           |
 
 ---
 
@@ -110,12 +112,12 @@ Tokens:   fresh, chicken, breast, boneless
 
 #### Available Tokenizers
 
-| Tokenizer | Description |
-|---|---|
-| `unicode61` *(default)* | Unicode-aware word splitting. Lowercases. Best general-purpose choice. |
-| `ascii` | ASCII-only splitting on whitespace/punctuation. Faster but no Unicode support. |
-| `porter` | Porter stemmer — reduces words to root form: `running` → `run`. Stacks on `unicode61`. |
-| `trigram` | Splits into 3-character n-grams. Enables LIKE-style substring search. SQLite ≥ 3.38. |
+| Tokenizer               | Description                                                                            |
+| ----------------------- | -------------------------------------------------------------------------------------- |
+| `unicode61` _(default)_ | Unicode-aware word splitting. Lowercases. Best general-purpose choice.                 |
+| `ascii`                 | ASCII-only splitting on whitespace/punctuation. Faster but no Unicode support.         |
+| `porter`                | Porter stemmer — reduces words to root form: `running` → `run`. Stacks on `unicode61`. |
+| `trigram`               | Splits into 3-character n-grams. Enables LIKE-style substring search. SQLite ≥ 3.38.   |
 
 ### 3.2 The Inverted Index (Shadow Tables)
 
@@ -137,6 +139,7 @@ ingredients_fts_config   -- configuration key-value pairs
 BM25 (Best Match 25) is the industry-standard relevance ranking algorithm, also used by Elasticsearch and Lucene. FTS5 exposes it via the `bm25()` auxiliary function.
 
 The BM25 score for a document increases when:
+
 - The query term appears more frequently in the document (term frequency — TF)
 - The query term is rare across all documents (inverse document frequency — IDF)
 - The document is short relative to the average document length
@@ -210,11 +213,11 @@ WHERE ingredients_fts MATCH '"chicken breast"';
 
 ### 5.1 Three FTS5 Storage Modes
 
-| Mode | How It Works | Trade-off |
-|---|---|---|
-| **Standard** *(default)* | FTS5 stores a copy of content in shadow tables | Doubles storage, but fully self-contained |
+| Mode                           | How It Works                                                            | Trade-off                                             |
+| ------------------------------ | ----------------------------------------------------------------------- | ----------------------------------------------------- |
+| **Standard** _(default)_       | FTS5 stores a copy of content in shadow tables                          | Doubles storage, but fully self-contained             |
 | **Content Table** (`content=`) | FTS5 stores only the index; reads content from your table at query time | No data duplication, but requires your table to exist |
-| **Contentless** (`content=''`) | Only the inverted index — no content stored | Smallest; can only retrieve rowid, not text |
+| **Contentless** (`content=''`) | Only the inverted index — no content stored                             | Smallest; can only retrieve rowid, not text           |
 
 > **Recommendation for your app:** Use **content table mode** (`content='ingredients'`). You already have the data in your SQLite tables from the TheMealDB initContainer sync. FTS5 just maintains the index — no duplication.
 
@@ -273,12 +276,12 @@ END;
 
 ### 6.1 What to Index
 
-| Table | Columns to Index | Rationale |
-|---|---|---|
-| `ingredients` | `name, description, category` | Core search target — find items by name or type |
-| `meals` / `recipes` | `name, area, category, tags` | "Show me Italian chicken dishes" |
-| `suppliers` | `name, contact_info, notes` | Find supplier by name or specialty |
-| `menu_items` | `name, description` | Customer-facing search if applicable |
+| Table               | Columns to Index              | Rationale                                       |
+| ------------------- | ----------------------------- | ----------------------------------------------- |
+| `ingredients`       | `name, description, category` | Core search target — find items by name or type |
+| `meals` / `recipes` | `name, area, category, tags`  | "Show me Italian chicken dishes"                |
+| `suppliers`         | `name, contact_info, notes`   | Find supplier by name or specialty              |
+| `menu_items`        | `name, description`           | Customer-facing search if applicable            |
 
 ### 6.2 Full Schema — All FTS5 Tables
 
@@ -485,18 +488,18 @@ LIMIT 8;
 
 ```javascript
 // lib/search/inventory-search.js
-import Database from 'better-sqlite3';
-import path from 'path';
+import Database from "better-sqlite3";
+import path from "path";
 
 let db;
 
 function getDb() {
-    if (!db) {
-        db = new Database(path.join(process.cwd(), 'data/inventory.db'), {
-            readonly: true,
-        });
-    }
-    return db;
+  if (!db) {
+    db = new Database(path.join(process.cwd(), "data/inventory.db"), {
+      readonly: true,
+    });
+  }
+  return db;
 }
 
 /**
@@ -504,9 +507,9 @@ function getDb() {
  * Strips special FTS chars, preserves * for prefix search.
  */
 function escapeQuery(raw) {
-    const cleaned = raw.replace(/["'^()]/g, ' ').trim();
-    if (!cleaned) return null;
-    return cleaned;
+  const cleaned = raw.replace(/["'^()]/g, " ").trim();
+  if (!cleaned) return null;
+  return cleaned;
 }
 
 /**
@@ -515,16 +518,16 @@ function escapeQuery(raw) {
  * @param {object} opts   - { limit, offset, lowStockOnly }
  */
 export function searchIngredients(query, opts = {}) {
-    const { limit = 20, offset = 0, lowStockOnly = false } = opts;
-    const escaped = escapeQuery(query);
-    if (!escaped) return [];
+  const { limit = 20, offset = 0, lowStockOnly = false } = opts;
+  const escaped = escapeQuery(query);
+  if (!escaped) return [];
 
-    const db = getDb();
-    const lowStockClause = lowStockOnly
-        ? 'AND i.stock_quantity < i.reorder_threshold'
-        : '';
+  const db = getDb();
+  const lowStockClause = lowStockOnly
+    ? "AND i.stock_quantity < i.reorder_threshold"
+    : "";
 
-    const stmt = db.prepare(`
+  const stmt = db.prepare(`
         SELECT
             i.id,
             i.name,
@@ -542,16 +545,16 @@ export function searchIngredients(query, opts = {}) {
         LIMIT ? OFFSET ?
     `);
 
-    return stmt.all(escaped, limit, offset);
+  return stmt.all(escaped, limit, offset);
 }
 
 /**
  * Autocomplete suggestions for ingredient name.
  */
 export function autocompleteIngredient(partial) {
-    if (!partial || partial.length < 2) return [];
-    const db = getDb();
-    const stmt = db.prepare(`
+  if (!partial || partial.length < 2) return [];
+  const db = getDb();
+  const stmt = db.prepare(`
         SELECT DISTINCT i.name
         FROM ingredients_fts
         JOIN ingredients i ON i.id = ingredients_fts.rowid
@@ -559,7 +562,7 @@ export function autocompleteIngredient(partial) {
         ORDER BY bm25(ingredients_fts)
         LIMIT 8
     `);
-    return stmt.all(partial.trim() + '*').map(r => r.name);
+  return stmt.all(partial.trim() + "*").map((r) => r.name);
 }
 ```
 
@@ -619,40 +622,40 @@ SELECT * FROM ingredients_fts_trgm WHERE ingredients_fts_trgm MATCH 'hicke';
 
 ### DDL
 
-| Operation | SQL |
-|---|---|
+| Operation        | SQL                                                                          |
+| ---------------- | ---------------------------------------------------------------------------- |
 | Create FTS table | `CREATE VIRTUAL TABLE t USING fts5(col, content='src', content_rowid='id');` |
-| Bulk populate | `INSERT INTO t_fts(rowid, col) SELECT id, col FROM src;` |
-| Rebuild index | `INSERT INTO t_fts(t_fts) VALUES ('rebuild');` |
-| Optimize index | `INSERT INTO t_fts(t_fts) VALUES ('optimize');` |
-| Integrity check | `INSERT INTO t_fts(t_fts) VALUES ('integrity-check');` |
-| Delete entry | `INSERT INTO t_fts(t_fts, rowid, col) VALUES ('delete', id, val);` |
-| Drop FTS table | `DROP TABLE t_fts;` *(also drops shadow tables)* |
+| Bulk populate    | `INSERT INTO t_fts(rowid, col) SELECT id, col FROM src;`                     |
+| Rebuild index    | `INSERT INTO t_fts(t_fts) VALUES ('rebuild');`                               |
+| Optimize index   | `INSERT INTO t_fts(t_fts) VALUES ('optimize');`                              |
+| Integrity check  | `INSERT INTO t_fts(t_fts) VALUES ('integrity-check');`                       |
+| Delete entry     | `INSERT INTO t_fts(t_fts, rowid, col) VALUES ('delete', id, val);`           |
+| Drop FTS table   | `DROP TABLE t_fts;` _(also drops shadow tables)_                             |
 
 ### Query Syntax
 
-| Pattern | Example |
-|---|---|
-| Simple token | `MATCH 'chicken'` |
-| Phrase | `MATCH '"chicken breast"'` |
-| Prefix | `MATCH 'chick*'` |
-| Boolean AND (implicit) | `MATCH 'chicken sauce'` |
-| Boolean OR | `MATCH 'chicken OR beef'` |
-| Boolean NOT | `MATCH 'chicken NOT frozen'` |
-| Column filter | `MATCH 'name:chicken'` |
-| BM25 ranked | `ORDER BY bm25(t_fts)` |
-| Weighted BM25 | `bm25(t_fts, 10.0, 1.0)` — 10x weight on col 0 |
-| Highlight | `highlight(t_fts, 0, '<b>', '</b>')` |
-| Snippet | `snippet(t_fts, 0, '[', ']', '...', 8)` |
+| Pattern                | Example                                        |
+| ---------------------- | ---------------------------------------------- |
+| Simple token           | `MATCH 'chicken'`                              |
+| Phrase                 | `MATCH '"chicken breast"'`                     |
+| Prefix                 | `MATCH 'chick*'`                               |
+| Boolean AND (implicit) | `MATCH 'chicken sauce'`                        |
+| Boolean OR             | `MATCH 'chicken OR beef'`                      |
+| Boolean NOT            | `MATCH 'chicken NOT frozen'`                   |
+| Column filter          | `MATCH 'name:chicken'`                         |
+| BM25 ranked            | `ORDER BY bm25(t_fts)`                         |
+| Weighted BM25          | `bm25(t_fts, 10.0, 1.0)` — 10x weight on col 0 |
+| Highlight              | `highlight(t_fts, 0, '<b>', '</b>')`           |
+| Snippet                | `snippet(t_fts, 0, '[', ']', '...', 8)`        |
 
 ### Tokenizer Summary
 
-| Tokenizer | Best For | Declare As |
-|---|---|---|
-| `unicode61` *(default)* | General word-level search | `tokenize='unicode61'` |
-| `porter` | Stemmed search (run/running/runs) | `tokenize='porter unicode61'` |
-| `ascii` | Pure ASCII, faster | `tokenize='ascii'` |
-| `trigram` | Substring / LIKE-style search | `tokenize='trigram'` |
+| Tokenizer               | Best For                          | Declare As                    |
+| ----------------------- | --------------------------------- | ----------------------------- |
+| `unicode61` _(default)_ | General word-level search         | `tokenize='unicode61'`        |
+| `porter`                | Stemmed search (run/running/runs) | `tokenize='porter unicode61'` |
+| `ascii`                 | Pure ASCII, faster                | `tokenize='ascii'`            |
+| `trigram`               | Substring / LIKE-style search     | `tokenize='trigram'`          |
 
 ---
 

@@ -1,4 +1,4 @@
-import { Pool } from 'pg';
+import { Pool } from "pg";
 
 const pool = new Pool({
   host: process.env.POSTGRES_HOST,
@@ -8,10 +8,7 @@ const pool = new Pool({
   password: process.env.POSTGRES_PASSWORD,
 
   // Important for local dev + production stability
-  ssl:
-    process.env.DB_SSL === 'true'
-      ? { rejectUnauthorized: false }
-      : false,
+  ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : false,
 });
 
 /**

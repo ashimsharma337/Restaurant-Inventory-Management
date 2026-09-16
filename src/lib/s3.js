@@ -1,13 +1,13 @@
-import { S3Client } from '@aws-sdk/client-s3';
+import { S3Client } from "@aws-sdk/client-s3";
 
-const useLocalStack = process.env.NODE_ENV === 'development';
+const useLocalStack = process.env.NODE_ENV === "development";
 const internalEndpoint = useLocalStack ? process.env.S3_ENDPOINT : undefined;
 const publicEndpoint = useLocalStack
   ? process.env.S3_PUBLIC_ENDPOINT || internalEndpoint
   : undefined;
 
 const clientOptions = (endpoint) => ({
-  region: process.env.AWS_REGION || 'us-east-1',
+  region: process.env.AWS_REGION || "us-east-1",
   ...(endpoint ? { endpoint, forcePathStyle: true } : {}),
 });
 

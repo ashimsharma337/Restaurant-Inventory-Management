@@ -4,13 +4,13 @@
 // mode=autocomplete  → dropdown, prefix search, default limit 8
 // mode=full          → full results, phrase+fallback, default limit 50
 
-import getDb from '@/lib/db';
+import getDb from "@/lib/db";
 import {
   buildFtsQuery,
   searchIngredients,
   searchMeals,
   searchCategories,
-} from '@/lib/searchUtils';
+} from "@/lib/searchUtils";
 
 const DEFAULT_LIMITS = { autocomplete: 8, full: 50 };
 
@@ -19,20 +19,20 @@ const DEFAULT_LIMITS = { autocomplete: 8, full: 50 };
 function distributeLimits(total) {
   return {
     ingredients: Math.ceil(total * 0.45),
-    meals:       Math.ceil(total * 0.40),
-    categories:  Math.ceil(total * 0.15),
+    meals: Math.ceil(total * 0.4),
+    categories: Math.ceil(total * 0.15),
   };
 }
 
 export default function handler(req, res) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== "GET") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const rawQuery = (req.query.q ?? '').trim();
-  const mode     = req.query.mode === 'full' ? 'full' : 'autocomplete';
-  const maxLimit = mode === 'full' ? 100 : 20;
-  const limit    = Math.min(
+  const rawQuery = (req.query.q ?? "").trim();
+  const mode = req.query.mode === "full" ? "full" : "autocomplete";
+  const maxLimit = mode === "full" ? 100 : 20;
+  const limit = Math.min(
     parseInt(req.query.limit ?? String(DEFAULT_LIMITS[mode]), 10),
     maxLimit,
   );
@@ -48,43 +48,44 @@ export default function handler(req, res) {
   }
 
   try {
-    const db     = getDb();
+    const db = getDb();
     const limits = distributeLimits(limit);
 
     const ingredients = searchIngredients(db, ftsQuery, limits.ingredients);
-    const meals       = searchMeals(db, ftsQuery, limits.meals);
-    const categories  = searchCategories(db, ftsQuery, limits.categories);
+    const meals = searchMeals(db, ftsQuery, limits.meals);
+    const categories = searchCategories(db, ftsQuery, limits.categories);
 
     // Merge and re-sort by BM25 score (ascending = more relevant)
     const merged = [...ingredients, ...meals, ...categories]
       .sort((a, b) => a.score - b.score)
       .slice(0, limit);
 
-    res.setHeader('Cache-Control', 'private, max-age=30, stale-while-revalidate=60');
+    res.setHeader(
+      "Cache-Control",
+      "private, max-age=30, stale-while-revalidate=60",
+    );
 
     return res.status(200).json({
       results: merged,
-      query:   rawQuery,
-      total:   merged.length,
+      query: rawQuery,
+      total: merged.length,
     });
-
   } catch (err) {
-    console.error('[/api/search] error:', err);
-    const msg       = err instanceof Error ? err.message : String(err);
-    const isFtsBug  = msg.toLowerCase().includes('fts5') || msg.toLowerCase().includes('match');
+    console.error("[/api/search] error:", err);
+    const msg = err instanceof Error ? err.message : String(err);
+    const isFtsBug =
+      msg.toLowerCase().includes("fts5") || msg.toLowerCase().includes("match");
 
     return res.status(isFtsBug ? 400 : 500).json({
       results: [],
-      query:   rawQuery,
-      total:   0,
-      error:   isFtsBug
-        ? 'Invalid search query — try different keywords'
-        : 'Search temporarily unavailable',
+      query: rawQuery,
+      total: 0,
+      error: isFtsBug
+        ? "Invalid search query — try different keywords"
+        : "Search temporarily unavailable",
     });
   }
 }
-
-
 
 // old code ...
 // // src/pages/api/search.js
