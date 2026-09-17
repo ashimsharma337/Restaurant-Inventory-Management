@@ -1,0 +1,15 @@
+{
+  "Records": [
+    {
+      "eventName": "ObjectCreated:Put",
+      "s3": {
+        "bucket": {
+          "name": "restaurant-inventory-local"
+        },
+        "object": {
+          "key": "invoices/INV-58231.pdf"
+        }
+      }
+    }
+  ]
+}
