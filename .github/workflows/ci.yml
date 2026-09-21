@@ -3,8 +3,13 @@ name: CI
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'lambda-service/**' # Skips workflow if changes are only inside lambda-service
   pull_request:
     branches: [main]
+    paths-ignore:
+      - 'lambda-service/**' # Skips workflow if changes are only inside lambda-service
+
 
 jobs:
   build:

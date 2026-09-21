@@ -1,0 +1,53 @@
+name: Lambda Service CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'lambda-service/**'
+      - '.github/workflows/lambda-service-cd.yml'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy with SAM
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lambda-service
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install AWS SAM CLI
+        uses: aws-actions/setup-sam@v2
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-session-name: GitHubActions-LambdaService
+
+      - name: SAM Build
+        run: sam build --use-container
+
+      - name: SAM Deploy
+        run: |
+          sam deploy \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset \
+            --stack-name lambda-service \
+            --capabilities CAPABILITY_IAM \
+            --resolve-s3 \
+            --parameter-overrides Stage=prod

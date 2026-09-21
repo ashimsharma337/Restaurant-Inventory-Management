@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda Service
+
+Globals:
+  Function:
+    Timeout: 30
+    Runtime: python3.12
+    Architectures:
+      - x86_64
+    MemorySize: 256
+
+Resources:
+  LambdaServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: lambda-service
+      CodeUri: src/
+      Handler: app.lambda_handler
+      Description: Main Lambda function for lambda-service
+      Environment:
+        Variables:
+          STAGE: !Ref Stage
+
+Parameters:
+  Stage:
+    Type: String
+    Default: prod
+
+Outputs:
+  LambdaFunctionName:
+    Description: Name of the Lambda function
+    Value: !Ref LambdaServiceFunction
+  LambdaFunctionArn:
+    Description: ARN of the Lambda function
+    Value: !GetAtt LambdaServiceFunction.Arn
