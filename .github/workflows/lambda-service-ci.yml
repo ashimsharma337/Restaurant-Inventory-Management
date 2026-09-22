@@ -14,26 +14,27 @@ jobs:
   test:
     name: Run Pytest
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: lambda-service
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-          cache: 'pip'
-          cache-dependency-path: lambda-service/requirements.txt
 
       - name: Install dependencies
+        working-directory: lambda-service/invoice-processor
         run: |
           python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          pip install pytest pytest-cov
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+          pip install pytest
 
       - name: Run tests
-        run: pytest -v --tb=short
+        working-directory: lambda-service/invoice-processor
+        run: |
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+          pytest -v --tb=short
