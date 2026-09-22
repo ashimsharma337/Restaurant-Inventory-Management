@@ -1,0 +1,7 @@
+# No production dependencies yet
+# Runtime dependencies (add real ones later)
+# Example:
+# boto3
+
+# Testing dependencies
+pytest
