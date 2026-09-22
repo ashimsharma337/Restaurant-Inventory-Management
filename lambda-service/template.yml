@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Lambda Service
+Description: Lambda Service - Invoice Processor
 
 Globals:
   Function:
@@ -15,9 +15,9 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: lambda-service
-      CodeUri: src/
+      CodeUri: invoice-processor/
       Handler: app.lambda_handler
-      Description: Main Lambda function for lambda-service
+      Description: Processes S3 upload events
       Environment:
         Variables:
           STAGE: !Ref Stage
