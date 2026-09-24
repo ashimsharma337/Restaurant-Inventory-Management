@@ -52,3 +52,6 @@ next-env.d.ts
 
 # DB file
 data
+
+# local docs
+localdocs
