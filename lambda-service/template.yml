@@ -1,26 +1,64 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Lambda Service - Invoice Processor
+Description: Invoice Processor - S3 → Textract → DynamoDB
 
 Globals:
   Function:
-    Timeout: 30
+    Timeout: 60
     Runtime: python3.12
     Architectures:
       - x86_64
-    MemorySize: 256
+    MemorySize: 512
+    Environment:
+      Variables:
+        DOCUMENTS_TABLE: !Ref DocumentsTable
+        STAGE: !Ref Stage
 
 Resources:
+
+  # DynamoDB Table
+  DocumentsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: stock-in-documents
+      BillingMode: PAY_PER_REQUEST          # On-demand = cheapest for personal use
+      AttributeDefinitions:
+        - AttributeName: object_key
+          AttributeType: S
+      KeySchema:
+        - AttributeName: object_key
+          KeyType: HASH
+
+  # Lambda Function
   LambdaServiceFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: lambda-service
       CodeUri: invoice-processor/
       Handler: app.lambda_handler
-      Description: Processes S3 upload events
-      Environment:
-        Variables:
-          STAGE: !Ref Stage
+      Description: Processes invoice images from S3 using Textract
+      Policies:
+        - S3ReadPolicy:
+            BucketName: restaurant-inventory-production-12345
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DocumentsTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - textract:DetectDocumentText
+                - textract:AnalyzeDocument
+              Resource: "*"
+      Events:
+        S3Upload:
+          Type: S3
+          Properties:
+            Bucket: restaurant-inventory-production-12345
+            Events: s3:ObjectCreated:*
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: prefix
+                    Value: stock-in/
 
 Parameters:
   Stage:
@@ -28,9 +66,9 @@ Parameters:
     Default: prod
 
 Outputs:
-  LambdaFunctionName:
-    Description: Name of the Lambda function
-    Value: !Ref LambdaServiceFunction
+  DocumentsTableName:
+    Description: DynamoDB table name
+    Value: !Ref DocumentsTable
   LambdaFunctionArn:
-    Description: ARN of the Lambda function
+    Description: Lambda ARN
     Value: !GetAtt LambdaServiceFunction.Arn

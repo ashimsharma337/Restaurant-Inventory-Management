@@ -5,3 +5,4 @@
 
 # Testing dependencies
 pytest
+boto3
