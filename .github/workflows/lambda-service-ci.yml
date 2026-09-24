@@ -28,10 +28,7 @@ jobs:
         working-directory: lambda-service/invoice-processor
         run: |
           python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then
-            pip install -r requirements.txt
-          fi
-          pip install pytest
+          pip install -r requirements.txt
 
       - name: Run tests
         working-directory: lambda-service/invoice-processor
