@@ -32,6 +32,8 @@ jobs:
 
       - name: Run tests
         working-directory: lambda-service/invoice-processor
+        env:
+          AWS_DEFAULT_REGION: us-east-1
         run: |
           export PYTHONPATH=$PYTHONPATH:$(pwd)
           pytest -v --tb=short
