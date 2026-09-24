@@ -16,12 +16,11 @@ Globals:
 
 Resources:
 
-  # DynamoDB Table
   DocumentsTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: stock-in-documents
-      BillingMode: PAY_PER_REQUEST          # On-demand = cheapest for personal use
+      BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
         - AttributeName: object_key
           AttributeType: S
@@ -29,7 +28,6 @@ Resources:
         - AttributeName: object_key
           KeyType: HASH
 
-  # Lambda Function
   LambdaServiceFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -48,17 +46,6 @@ Resources:
                 - textract:DetectDocumentText
                 - textract:AnalyzeDocument
               Resource: "*"
-      Events:
-        S3Upload:
-          Type: S3
-          Properties:
-            Bucket: restaurant-inventory-production-12345
-            Events: s3:ObjectCreated:*
-            Filter:
-              S3Key:
-                Rules:
-                  - Name: prefix
-                    Value: stock-in/
 
 Parameters:
   Stage:
