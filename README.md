@@ -62,12 +62,12 @@ architecture-beta
 	service next(server)[Next.js API and dashboard] in app
 	service postgres(database)[PostgreSQL metadata] in app
 
-	group aws(logos:aws)[AWS account]
-	service s3(logos:aws-s3)[Amazon S3]
-	service lambda(logos:aws-lambda)[AWS Lambda]
-	service textract(logos:aws)[Amazon Textract]
-	service dynamo(logos:aws-dynamodb)[Amazon DynamoDB]
-	service cloudwatch(logos:aws-cloudwatch)[CloudWatch Logs]
+	group aws(cloud)[AWS account]
+	service s3(disk)[Amazon S3]
+	service lambda(server)[AWS Lambda]
+	service textract(cloud)[Amazon Textract]
+	service dynamo(database)[Amazon DynamoDB]
+	service cloudwatch(server)[CloudWatch Logs]
 
 	browser:R --> L:next
 	next:B --> T:postgres
@@ -79,7 +79,7 @@ architecture-beta
 	lambda:B --> T:cloudwatch
 ```
 
-The diagram uses Mermaid's `architecture-beta` syntax and the Iconify `logos` icon pack for AWS service marks. Textract is labeled with the AWS mark because the Logos pack does not currently include a dedicated Textract icon; the service interaction is Amazon Textract `DetectDocumentText`. The browser uploads and downloads S3 objects directly using presigned URLs, and the S3 `ObjectCreated` notification triggers Lambda for objects under `stock-in/`.
+The diagram uses Mermaid's built-in architecture icons so it renders in GitHub without an external Iconify pack. The AWS services are represented by their built-in storage, compute, cloud, and database symbols and are labeled by service name. The browser uploads and downloads S3 objects directly using presigned URLs, and the S3 `ObjectCreated` notification triggers Lambda for objects under `stock-in/`.
 
 ## Project Structure
 
