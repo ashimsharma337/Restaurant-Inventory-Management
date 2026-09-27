@@ -2,7 +2,7 @@
 
 Restaurant Inventory Management is a work-in-progress web application for organizing restaurant products, tracking stock, and making ingredient and meal data searchable. The project combines a Next.js dashboard with a GraphQL product API and a local SQLite search cache populated from [TheMealDB](https://www.themealdb.com/).
 
-> **Development status:** This project is actively being built. The core dashboard, product CRUD flow, GraphQL API, search endpoint, local data seed, Docker setup, and Kubernetes manifests are present, but automated tests and some production workflows are still to be completed.
+> **Development status:** This project is actively being built. The stock-in document workflow now supports direct S3 uploads, Lambda/Textract invoice extraction, DynamoDB OCR results, and an invoice register in the dashboard. AWS event wiring and account-specific deployment configuration remain environment prerequisites.
 
 ## What It Does
 
@@ -14,6 +14,8 @@ Restaurant Inventory Management is a work-in-progress web application for organi
 - Can synchronize the cached meal and ingredient data to PostgreSQL.
 - Includes Docker Compose services for the app, PostgreSQL, and pgAdmin.
 - Includes Kubernetes manifests for an app deployment, PostgreSQL, pgAdmin, persistent storage, autoscaling, and scheduled cache refreshes.
+- Uploads private stock-in documents to Amazon S3 and processes them with AWS Lambda and Amazon Textract.
+- Displays extracted invoice number, PO reference, total due, and processing status from Amazon DynamoDB.
 
 ## Technology
 
@@ -25,6 +27,10 @@ Restaurant Inventory Management is a work-in-progress web application for organi
 | API                        | GraphQL, Apollo Server, Apollo Client   |
 | Local data and search      | SQLite, `better-sqlite3`, SQLite FTS5   |
 | Persistent relational data | PostgreSQL 16                           |
+| Document storage           | Amazon S3                               |
+| Invoice processing         | AWS Lambda and Amazon Textract          |
+| OCR result storage         | Amazon DynamoDB                         |
+| AWS operations             | IAM, CloudWatch Logs, AWS SAM           |
 | External data source       | TheMealDB API                           |
 | Tooling                    | ESLint 9, Next.js ESLint configuration  |
 | Deployment                 | Docker Compose and Kubernetes manifests |
@@ -114,6 +120,7 @@ Open [http://localhost:3000](http://localhost:3000). The primary routes are:
 | `/`                     | Landing page                 |
 | `/dashboard`            | Inventory dashboard overview |
 | `/dashboard/products`   | Product inventory view       |
+| `/dashboard/stock-in`   | Upload documents and review extracted invoice data |
 | `/api/graphql`          | GraphQL API                  |
 | `/api/search?q=chicken` | Search and autocomplete API  |
 | `/api/health`           | Health check                 |
@@ -146,7 +153,90 @@ The Compose setup uses a persistent `postgres_data` volume. The default pgAdmin 
 
 ## Stock-in Documents
 
-The stock-in workflow supports private S3 attachments for supplier invoices and delivery receipts. Files upload directly to S3 with a short-lived presigned URL; PostgreSQL stores only the document metadata.
+The Stock In page at `/dashboard/stock-in` uploads supplier invoices and delivery receipts to a private S3 bucket. PostgreSQL stores the attachment metadata, while the AWS invoice processor extracts invoice fields and stores the OCR result in DynamoDB. The invoice register combines both records by their shared S3 object key and polls the OCR API while processing is pending.
+
+### Architecture
+
+```mermaid
+flowchart LR
+	browser([User browser])
+
+	subgraph app[Restaurant Inventory application]
+		ui[Stock In page and invoice register]
+		api[Next.js document API routes]
+		postgres[(PostgreSQL<br/>stock_in_documents)]
+	end
+
+	subgraph aws[AWS account]
+		s3[(Amazon S3<br/>private documents)]
+		event[S3 ObjectCreated notification<br/>stock-in prefix]
+		lambda[AWS Lambda<br/>invoice processor]
+		textract[Amazon Textract<br/>DetectDocumentText]
+		dynamo[(Amazon DynamoDB<br/>stock-in-documents)]
+		logs[Amazon CloudWatch Logs]
+		role[IAM execution role]
+	end
+
+	browser -->|1. Request upload URL| api
+	api -->|2. Return presigned URL| browser
+	browser -->|3. Upload file directly| s3
+	browser -->|4. Confirm uploaded object| api
+	api -->|5. Save attachment metadata| postgres
+	s3 -->|6. Object created| event
+	event --> lambda
+	lambda -->|7. Submit S3 object reference| textract
+	s3 -.->|Textract reads document| textract
+	textract -->|8. OCR text| lambda
+	lambda -->|9. Parsed fields and OCR text| dynamo
+	lambda -.->|Runtime logs| logs
+	role -.->|Scoped service permissions| lambda
+	ui -->|Load all attachment rows| api
+	api -->|Read attachment metadata| postgres
+	ui -->|Poll OCR result by object key| api
+	api -->|GetItem by object_key| dynamo
+	api -->|Return OCR fields and status| ui
+	ui --> browser
+	browser -->|Request download| api
+	api -->|Return short-lived download URL| browser
+	browser -->|Download file| s3
+
+	classDef app fill:#e8f3f2,stroke:#236b68,color:#173b39,stroke-width:1.5px
+	classDef aws fill:#fff2dc,stroke:#bd7200,color:#49320c,stroke-width:1.5px
+	classDef data fill:#edf1f5,stroke:#586b7c,color:#263746,stroke-width:1.5px
+	classDef ops fill:#eaf3ec,stroke:#438050,color:#1e4629,stroke-width:1.5px
+	class ui,api app
+	class browser app
+	class postgres data
+	class s3,dynamo data
+	class event,lambda,textract aws
+	class logs,role ops
+```
+
+### Processing Steps
+
+1. The browser requests a short-lived S3 upload URL from `/api/documents/presign`, uploads the file directly to S3, then calls `/api/documents/complete`.
+2. The completion route verifies the S3 object and records its key, filename, stock-in reference, content type, size, and upload time in PostgreSQL.
+3. An S3 `ObjectCreated` notification for the `stock-in/` prefix invokes the Lambda processor.
+4. Lambda calls Textract `DetectDocumentText`, extracts invoice number, PO reference, and total due from the recognized lines, and writes the fields, extracted text, status, and processing time to DynamoDB.
+5. The invoice register loads attachment metadata from PostgreSQL and reads OCR results from DynamoDB through `/api/documents/ocr/<object-key>`. Pending results are polled until processing finishes.
+6. Downloads use a short-lived S3 URL returned by the document download API.
+
+The S3 notification is configured on the bucket separately; it is not declared by the current SAM template. The template defines the Lambda function and DynamoDB table. The Next.js API routes are not fronted by API Gateway in this design.
+
+### AWS Services
+
+| Service | Role in the workflow |
+| ------- | -------------------- |
+| Amazon S3 | Private document storage and presigned upload/download targets |
+| Amazon S3 Event Notifications | Invokes the processor for newly created objects under `stock-in/` |
+| AWS Lambda | Coordinates OCR, extracts fields, and persists processing results |
+| Amazon Textract | Runs `DetectDocumentText` on the S3 document |
+| Amazon DynamoDB | Stores OCR text, extracted fields, status, and processing time, keyed by `object_key` |
+| AWS IAM | Grants the Lambda role access to S3, Textract, DynamoDB, and logging |
+| Amazon CloudWatch Logs | Captures Lambda runtime logs |
+| AWS SAM / CloudFormation | Deploys the Lambda and DynamoDB resources defined in `lambda-service/template.yml` |
+
+### Configure the Application
 
 Initialize the PostgreSQL schema and seed local inventory data:
 
@@ -157,11 +247,10 @@ make db-seed
 
 Use `make db-reset` when you intentionally want to drop and recreate the local database objects.
 
-For local development, start LocalStack with Compose and create the bucket once:
+For local development, start LocalStack with Compose. The startup script initializes the configured bucket:
 
 ```bash
 docker compose up -d localstack
-aws --endpoint-url=http://localhost:4566 s3 mb s3://restaurant-inventory-documents
 ```
 
 The S3 settings used locally are:
@@ -172,9 +261,11 @@ AWS_ACCESS_KEY_ID=test
 AWS_SECRET_ACCESS_KEY=test
 S3_BUCKET_NAME=restaurant-inventory-documents
 S3_ENDPOINT=http://localhost:4566
+S3_PUBLIC_ENDPOINT=http://localhost:4566
+DOCUMENTS_TABLE=stock-in-documents
 ```
 
-In production, omit `S3_ENDPOINT`, use an IAM role instead of static credentials, and keep the bucket private. Add application authentication and authorization checks to the document API before exposing this workflow to multiple restaurant users.
+The active Compose configuration emulates S3 and runs PostgreSQL; it does not run the Lambda/Textract/DynamoDB OCR pipeline. OCR processing and lookup require the AWS resources and permissions described above. For AWS, use `.env.aws.example`, omit S3 endpoint overrides, use the SDK credential chain or an IAM role instead of LocalStack test credentials, and keep the bucket private. Add application authentication and authorization checks to the document API before exposing this workflow to multiple restaurant users.
 
 ## Data and Cache Scripts
 
