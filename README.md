@@ -51,6 +51,36 @@ flowchart LR
 	Seed --> PostgreSQL[(PostgreSQL mealdb schema)]
 ```
 
+## AWS Architecture
+
+The application coordinates document uploads and metadata while AWS services store, process, and return invoice data. Documents upload directly from the browser to Amazon S3; an S3 event invokes Lambda, which uses Textract and saves extracted invoice data to DynamoDB. The Next.js application reads that result for the Stock In invoice register.
+
+```mermaid
+architecture-beta
+	group app(cloud)[Restaurant Inventory application]
+	service browser(internet)[User browser]
+	service next(server)[Next.js API and dashboard] in app
+	service postgres(database)[PostgreSQL metadata] in app
+
+	group aws(logos:aws)[AWS account]
+	service s3(logos:aws-s3)[Amazon S3]
+	service lambda(logos:aws-lambda)[AWS Lambda]
+	service textract(logos:aws)[Amazon Textract]
+	service dynamo(logos:aws-dynamodb)[Amazon DynamoDB]
+	service cloudwatch(logos:aws-cloudwatch)[CloudWatch Logs]
+
+	browser:R --> L:next
+	next:B --> T:postgres
+	browser:R --> L:s3
+	s3:R --> L:lambda
+	lambda:R --> L:textract
+	lambda:B --> T:dynamo
+	next:R --> L:dynamo
+	lambda:B --> T:cloudwatch
+```
+
+The diagram uses Mermaid's `architecture-beta` syntax and the Iconify `logos` icon pack for AWS service marks. Textract is labeled with the AWS mark because the Logos pack does not currently include a dedicated Textract icon; the service interaction is Amazon Textract `DetectDocumentText`. The browser uploads and downloads S3 objects directly using presigned URLs, and the S3 `ObjectCreated` notification triggers Lambda for objects under `stock-in/`.
+
 ## Project Structure
 
 ```text
