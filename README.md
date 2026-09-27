@@ -79,7 +79,17 @@ architecture-beta
 	lambda:B --> T:cloudwatch
 ```
 
-The diagram uses Mermaid's built-in architecture icons so it renders in GitHub without an external Iconify pack. The AWS services are represented by their built-in storage, compute, cloud, and database symbols and are labeled by service name. The browser uploads and downloads S3 objects directly using presigned URLs, and the S3 `ObjectCreated` notification triggers Lambda for objects under `stock-in/`.
+GitHub does not load external Iconify packs inside Mermaid, so the flow diagram uses supported built-in symbols. The official AWS Architecture Icons below provide the branded service marks alongside the flow. The browser uploads and downloads S3 objects directly using presigned URLs, and the S3 `ObjectCreated` notification triggers Lambda for objects under `stock-in/`.
+
+| AWS service | Official icon | Role in this flow |
+| --- | --- | --- |
+| Amazon S3 | <img src="https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v23.1/dist/Storage/SimpleStorageService.png" width="56" alt="Amazon S3 icon"> | Stores uploaded documents and triggers processing on object creation |
+| AWS Lambda | <img src="https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v23.1/dist/Compute/Lambda.png" width="56" alt="AWS Lambda icon"> | Coordinates OCR extraction and stores the result |
+| Amazon Textract | <img src="https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v23.1/dist/ArtificialIntelligence/Textract.png" width="56" alt="Amazon Textract icon"> | Extracts text from invoice documents |
+| Amazon DynamoDB | <img src="https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v23.1/dist/Database/DynamoDB.png" width="56" alt="Amazon DynamoDB icon"> | Stores extracted fields and processing status |
+| Amazon CloudWatch Logs | <img src="https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v23.1/dist/ManagementGovernance/CloudWatchLogs.png" width="56" alt="Amazon CloudWatch Logs icon"> | Captures Lambda execution logs |
+
+Icons are from the AWS Architecture Icons collection, via the versioned [AWS Labs icon assets](https://github.com/awslabs/aws-icons-for-plantuml/tree/v23.1/dist).
 
 ## Project Structure
 
