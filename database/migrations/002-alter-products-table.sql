@@ -31,3 +31,7 @@ BEGIN
 END $$;
 
 ALTER TABLE products ALTER COLUMN category_id SET NOT NULL;
+
+ALTER TABLE products
+    ALTER COLUMN quantity TYPE NUMERIC(12, 3)
+    USING quantity::NUMERIC(12, 3);

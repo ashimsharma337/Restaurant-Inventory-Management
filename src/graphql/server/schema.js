@@ -9,7 +9,7 @@ export const typeDefs = gql`
     name: String!
     categoryId: ID!
     category: Category
-    quantity: Int!
+    quantity: Float!
     unit: String!
     price: Float!
     status: String!
@@ -24,7 +24,7 @@ export const typeDefs = gql`
   input CreateProductInput {
     name: String!
     categoryId: ID!
-    quantity: Int!
+    quantity: Float!
     unit: String!
     price: Float!
   }
@@ -35,7 +35,7 @@ export const typeDefs = gql`
   input UpdateProductInput {
     name: String
     categoryId: ID
-    quantity: Int
+    quantity: Float
     unit: String
     price: Float
     status: String
@@ -60,11 +60,33 @@ export const typeDefs = gql`
     updatedAt: String
   }
 
+  type UsageReportRow {
+    productId: ID!
+    name: String!
+    category: String!
+    quantityUsed: Float!
+    unit: String!
+  }
+
+  type UsageEntry {
+    id: ID!
+    productId: ID!
+    quantityUsed: Float!
+    usedAt: String!
+  }
+
+  input RecordUsageInput {
+    productId: ID!
+    quantityUsed: Float!
+  }
+
   extend type Query {
     categories: [Category!]!
+    usageReport(startDate: String!, endDate: String!): [UsageReportRow!]!
   }
 
   extend type Mutation {
     createCategory(name: String!, description: String): Category!
+    recordUsage(input: RecordUsageInput!): UsageEntry!
   }
 `;

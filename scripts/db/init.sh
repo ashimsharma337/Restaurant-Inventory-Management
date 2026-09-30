@@ -35,6 +35,7 @@ if [[ "${1:-}" == "--force" ]]; then
     "${PSQL[@]}" --quiet --no-psqlrc --set ON_ERROR_STOP=1 <<'SQL'
 DROP SCHEMA IF EXISTS mealdb CASCADE;
 DROP TABLE IF EXISTS schema_migrations CASCADE;
+DROP TABLE IF EXISTS stock_usage CASCADE;
 DROP TABLE IF EXISTS stock_in_documents CASCADE;
 DROP TABLE IF EXISTS products CASCADE;
 DROP TABLE IF EXISTS categories CASCADE;

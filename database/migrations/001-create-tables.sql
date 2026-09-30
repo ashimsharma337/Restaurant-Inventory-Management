@@ -54,3 +54,11 @@ CREATE TABLE IF NOT EXISTS mealdb.ingredients (
     measure TEXT,
     UNIQUE(meal_id, name)
 );
+
+CREATE TABLE IF NOT EXISTS stock_usage (
+    id BIGSERIAL PRIMARY KEY,
+    product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+    quantity_used NUMERIC(12, 3) NOT NULL CHECK (quantity_used > 0),
+    used_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
