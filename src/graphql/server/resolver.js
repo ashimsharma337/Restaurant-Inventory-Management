@@ -1,4 +1,4 @@
-import { query } from "../../utility/db";
+import pool, { query } from "../../utility/db";
 
 export const resolvers = {
   Query: {
@@ -62,6 +62,24 @@ export const resolvers = {
       const { rows } = await query("SELECT * FROM categories ORDER BY name");
       return rows;
     },
+
+    usageReport: async (_, { startDate, endDate }) => {
+      const { rows } = await query(
+        `
+        SELECT p.id AS product_id, p.name, c.name AS category,
+               SUM(su.quantity_used) AS quantity_used, p.unit
+        FROM stock_usage su
+        JOIN products p ON p.id = su.product_id
+        JOIN categories c ON c.id = p.category_id
+        WHERE su.used_at >= $1::TIMESTAMPTZ
+          AND su.used_at < $2::TIMESTAMPTZ
+        GROUP BY p.id, p.name, c.name, p.unit
+        ORDER BY SUM(su.quantity_used) DESC, p.name
+        `,
+        [startDate, endDate],
+      );
+      return rows;
+    },
   },
 
   Product: {
@@ -76,6 +94,17 @@ export const resolvers = {
   Category: {
     createdAt: (parent) => parent.created_at,
     updatedAt: (parent) => parent.updated_at,
+  },
+
+  UsageReportRow: {
+    productId: (parent) => parent.product_id,
+    quantityUsed: (parent) => Number(parent.quantity_used),
+  },
+
+  UsageEntry: {
+    productId: (parent) => parent.product_id,
+    quantityUsed: (parent) => Number(parent.quantity_used),
+    usedAt: (parent) => parent.used_at,
   },
 
   Mutation: {
@@ -190,6 +219,42 @@ export const resolvers = {
         [name, description],
       );
       return rows[0];
+    },
+
+    recordUsage: async (_, { input }) => {
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
+        const updatedProduct = await client.query(
+          `
+          UPDATE products
+          SET quantity = quantity - $1, updated_at = NOW()
+          WHERE id = $2 AND quantity >= $1
+          RETURNING id
+          `,
+          [input.quantityUsed, input.productId],
+        );
+
+        if (updatedProduct.rowCount === 0) {
+          throw new Error("Product not found or usage exceeds available stock");
+        }
+
+        const { rows } = await client.query(
+          `
+          INSERT INTO stock_usage (product_id, quantity_used)
+          VALUES ($1, $2)
+          RETURNING id, product_id, quantity_used, used_at
+          `,
+          [input.productId, input.quantityUsed],
+        );
+        await client.query("COMMIT");
+        return rows[0];
+      } catch (error) {
+        await client.query("ROLLBACK");
+        throw error;
+      } finally {
+        client.release();
+      }
     },
   },
 };

@@ -61,3 +61,26 @@ export const GET_CATEGORIES = gql`
     }
   }
 `;
+
+export const GET_USAGE_REPORT = gql`
+  query GetUsageReport($startDate: String!, $endDate: String!) {
+    usageReport(startDate: $startDate, endDate: $endDate) {
+      productId
+      name
+      category
+      quantityUsed
+      unit
+    }
+  }
+`;
+
+export const RECORD_USAGE = gql`
+  mutation RecordUsage($input: RecordUsageInput!) {
+    recordUsage(input: $input) {
+      id
+      productId
+      quantityUsed
+      usedAt
+    }
+  }
+`;

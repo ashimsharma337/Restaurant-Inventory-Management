@@ -9,3 +9,9 @@ CREATE INDEX IF NOT EXISTS mealdb_meals_category_idx
 
 CREATE INDEX IF NOT EXISTS mealdb_ingredients_meal_id_idx
     ON mealdb.ingredients (meal_id);
+
+CREATE INDEX IF NOT EXISTS stock_usage_used_at_idx
+    ON stock_usage (used_at);
+
+CREATE INDEX IF NOT EXISTS stock_usage_product_id_idx
+    ON stock_usage (product_id);
