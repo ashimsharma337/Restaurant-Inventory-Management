@@ -1,6 +1,6 @@
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/dashboard/Header";
-import ProductsTable from "@/components/dashboard/tables/ProductsTable";
+import InventoryTable from "@/components/dashboard/InventoryTable";
 
 export default function Products() {
   return (
@@ -8,7 +8,7 @@ export default function Products() {
       <Sidebar />
       <main className="dashboard-main">
         <Header />
-        <ProductsTable />
+         <InventoryTable />
       </main>
     </div>
   );
