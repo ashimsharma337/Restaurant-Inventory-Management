@@ -1,6 +1,6 @@
 import Sidebar from "../sidebar/Sidebar";
 import Header from "./Header";
-import InventoryTable from "./InventoryTable";
+import DashboardOverview from "./DashboardOverview";
 import FAB from "./FAB";
 
 const InventoryDashboard = () => {
@@ -9,7 +9,7 @@ const InventoryDashboard = () => {
       <Sidebar />
       <main className="dashboard-main">
         <Header />
-        <InventoryTable />
+        <DashboardOverview />
       </main>
       <FAB />
     </div>
