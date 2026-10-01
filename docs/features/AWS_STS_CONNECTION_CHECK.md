@@ -1,8 +1,9 @@
 # AWS STS Connection Check
 
-The Help page includes a **Check AWS connection** action. It calls the server-side
-`GET /api/aws/identity` endpoint, which uses `GetCallerIdentity` from
+The server-side `GET /api/aws/identity` endpoint uses `GetCallerIdentity` from
 `@aws-sdk/client-sts` to verify that the configured credentials can reach STS.
+This is an API-only feature; the Help page does not currently call this endpoint.
+Another feature or a future UI can call it when a connection check is needed.
 
 The response reports only the connection status, environment, and region. It does
 not return the AWS account ID or ARN, since this endpoint does not require app
